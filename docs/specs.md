@@ -24,7 +24,7 @@ Optimized for NEMA17 stepper motors, STEPFOC provides a complete solution for ro
 ## **Absolute maximum ratings**
 
 * Supply voltage -> min 12V, typ 24V, max 29V
-* Phase current -> typ 1.5A, max 2.5A wiht good cooling and in small bursts
+* Phase current -> typ 1.5A, max 2.5A with good cooling and in small bursts
 * Operating Temperature -> min -20°C, typ 25°C, max 130°C
 
 !!! Note annotate "" 
@@ -49,7 +49,7 @@ Motor phases are conneceted to U,V and W. Power is connected to DC+ and DC-
 
 !!! Note annotate "Note!" 
 
-    * termistor pin is using pulldown of 54.9 kilo ohms. 
+    * thermistor pin is using pulldown of 54.9 kilo ohms. 
     * UART is 3v3 only. Using 5V will destroy the board.
     * "ADDITIONAL2" can be used as analog input or general purpose input/output
 
@@ -68,7 +68,7 @@ STEPFOC uses same hole spacing as NEMA17 format motors.
 
 ## **CAN termination**
 
-To use CAN termination make sure to place the swith in **ON** position!
+To use CAN termination make sure to place the switch in **ON** position!
 <p align="left"> <img src="../assets/STEPFOC_CAN.png" alt="drawing" width="600"/> <br /> </p>
 
 
@@ -84,7 +84,7 @@ Default settings that come prelaoded are:
 
 - LED indication: 1  
 - Calibrated: 0
-- Using termistor: 0
+- Using thermistor: 0
 - Watchdog active: 0
 - Heartbeat active: 0
 - UART baud rate: 256000

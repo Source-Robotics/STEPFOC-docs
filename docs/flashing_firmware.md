@@ -12,7 +12,7 @@
 
    |   |   Needed hardware
     ---- | ---- 
-    You can change all variables using UART and CAN so flashing firmware a lot is not necessary<br /> You will usually flash it when:<br />  1. New version of Spectral BLDC firmware is available <br />2. You are doing custom code developement <br /> 3. You are using SimpleFOC firmware | You will need programming adapter from [here!](https://source-robotics.com/products/jtag-programming-adapter-1-27-pitch?variant=47293352903004) <p align="left"> <img src="../assets/ADAPTER2.png" alt="drawing" width="600"/> <br /> </p>
+    You can change all variables using UART and CAN so flashing firmware a lot is not necessary<br /> You will usually flash it when:<br />  1. New version of Spectral BLDC firmware is available <br />2. You are doing custom code development <br /> 3. You are using SimpleFOC firmware | You will need programming adapter from [here!](https://source-robotics.com/products/jtag-programming-adapter-1-27-pitch?variant=47293352903004) <p align="left"> <img src="../assets/ADAPTER2.png" alt="drawing" width="600"/> <br /> </p>
     
 !!! Note annotate "" 
 
@@ -32,7 +32,7 @@
 Download visual studio code: [Link](https://code.visualstudio.com/download)<br />
 
 1. Open [STEPFOC firmware](https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/main/STEPFOC%20firmware) folder in VS code. (You need to have platformio installed)
-2. Press uplaod in VS code (Bottom left corner in VS code)
+2. Press upload in VS code (Bottom left corner in VS code)
 <p align="left"> <img src="../assets/VSUPLOAD.png" alt="drawing" width="800"/> <br /> </p>
 
 !!! Note annotate "" 

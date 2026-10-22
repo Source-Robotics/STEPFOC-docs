@@ -15,7 +15,7 @@ STEPFOC firmware has autocalibration feature that allows you to automatically de
 
 ## **Positive rotation**
 
-!!! Tip annotate "In STEPFOC firmware positive rotation is always counter-clockwise. That means that positive current will result in rotation in that direction. Positive speed setpoint will rotate motor in that direction and rotating in that direction will increase motor positon!" 
+!!! Tip annotate "In STEPFOC firmware positive rotation is always counter-clockwise. That means that positive current will result in rotation in that direction. Positive speed setpoint will rotate motor in that direction and rotating in that direction will increase motor position!" 
 
 <p align="left"> <img src="../assets/STEPFOC_ORIENTATION.png" alt="drawing" width="1250"/> <br /> </p>
 
@@ -23,7 +23,7 @@ STEPFOC firmware has autocalibration feature that allows you to automatically de
 
 ## **Calibration settings**
 
-**Note that the values that STEPFOC calculate are only estimations and if you want to get exact values use high precision insturments to measure them.**
+**Note that the values that STEPFOC calculate are only estimations and if you want to get exact values use high precision instruments to measure them.**
 
 !!! Note annotate "Resistance, Inductance and pole pair" 
     You will **NEED** to enter Resistance, Inductance and pole pair manually. STEPFOC will not calculate those for you and will return error if you dont change default values. Use #R, #L and #PP to enter the values listed in the spec sheet of your stepper motor!
@@ -121,7 +121,7 @@ Good output will look like this (Your numbers will be different):
     and for cheap and poor quality motors you can get different results.
 
 **Calibration end**<br />
-In case your calibration was succesful you will get message like below. Make sure to **#Save** the config.
+In case your calibration was successful you will get message like below. Make sure to **#Save** the config.
 After the successful config is saved you dont need to re run calibration when you start your motor driver.
 
     Calibration success!
@@ -159,6 +159,6 @@ Wrong phase order. **Switch motor phases**
     Calibration failed!
 
 
-If calibration is successful but your LED is in error mode and calling #Error reports no error try to call #Info command. If you see -1 somwhere that means that default config was no loaded and eeprom is filled with junk variables. To fix that call the #Default command.
+If calibration is successful but your LED is in error mode and calling #Error reports no error try to call #Info command. If you see -1 somewhere that means that default config was no loaded and eeprom is filled with junk variables. To fix that call the #Default command.
 
 !!! Note annotate "" 
