@@ -19,7 +19,7 @@ Bit **0** represents error bit. If STEPFOC controller has any active error this 
 
 Node with smallest Node ID is strongest in CAN bus arbitration.
 
-**If you want to learn more about CAN bus we recommend you read this [article!]()**
+**If you want to learn more about CAN bus we recommend you read this [article!](https://www.csselectronics.com/pages/can-bus-simple-intro-tutorial)**
 
 **This page describes can protocol**<br />
 **You can use our [Python CAN bus API](https://github.com/Source-Robotics/Spectral-BLDC-Python/tree/main) to communicate with your Spectral BLDC controllers!** <br />
