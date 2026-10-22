@@ -16,6 +16,6 @@ In this example, we use the Robotics Toolbox for Python to model a "robotic arm"
 
 For more info check the full guide here: https://source-robotics.com/blogs/blog/gravity-compensation-in-robotics
 
-Github repos with examples are here: https://github.com/PCrnjak/Spectral-BLDC-Python/blob/main/examples/Advanced/Gravity%20compensation/BOM.md
+Github repos with examples are here: https://github.com/Source-Robotics/Spectral-BLDC-Python/blob/main/examples/Advanced/Gravity%20compensation/BOM.md
 
-https://github.com/PCrnjak/Spectral-BLDC-Python/tree/main/examples/Advanced/Gravity%20compensation
+https://github.com/Source-Robotics/Spectral-BLDC-Python/tree/main/examples/Advanced/Gravity%20compensation

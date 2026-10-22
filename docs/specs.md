@@ -57,7 +57,7 @@ Motor phases are conneceted to U,V and W. Power is connected to DC+ and DC-
 
 ## **CAD and dimensions**
 
-[You can download Spectral micro STEP files here!](https://github.com/PCrnjak/STEPFOC-stepper-controller/tree/main/STEP%20files)
+[You can download Spectral micro STEP files here!](https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/main/STEP%20files)
 <p align="left"> <img src="../assets/STEPFOC_STEP.png" alt="drawing" width="600"/> <br /> </p>
 
 STEPFOC uses same hole spacing as NEMA17 format motors.

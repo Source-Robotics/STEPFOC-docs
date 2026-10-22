@@ -82,7 +82,7 @@ Normal operation | Calibration | Error mode
 ---- | ---- | ----
 3 short flashed and a pause <p align="left"> <img src="../assets/Normal.gif" alt="drawing" width="180"/> <br /> </p> | Flashing every 0.5 seconds <p align="left"> <img src="../assets/Calib.gif" alt="drawing" width="180"/> <br /> </p> | Solid LED, no flashing. <p align="left"> <img src="../assets/Error2.PNG" alt="drawing" width="180"/> <br /> </p>
 
-If you have [STEPFOC firmware](https://github.com/PCrnjak/STEPFOC-stepper-controller/tree/main/STEPFOC%20firmware) uploaded on your STEPFOC, LEDs will be in one of 3 states.
+If you have [STEPFOC firmware](https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/main/STEPFOC%20firmware) uploaded on your STEPFOC, LEDs will be in one of 3 states.
 
 !!! Note annotate "STEPFOC controllers come **PRELOADED** with STEPFOC firmware" 
 
@@ -104,9 +104,9 @@ If you have [STEPFOC firmware](https://github.com/PCrnjak/STEPFOC-stepper-contro
 
 ## **What next?**
 
-* **Optional** - > Flash the [latest firmware](https://github.com/PCrnjak/STEPFOC-stepper-controller/tree/main/STEPFOC%20firmware) to your driver (Note that drivers arrive with preflashed firmware)
-* You will need to [calibrate your motor](https://source-robotics.github.io/STEPFOC-docs/calibration/)
-* [Tune your PID loops](https://source-robotics.github.io/STEPFOC-docs/PID_tuning/)
+* **Optional** - > Flash the [latest firmware](https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/main/STEPFOC%20firmware) to your driver (Note that drivers arrive with preflashed firmware)
+* You will need to [calibrate your motor](calibration.md)
+* [Tune your PID loops](PID_tuning.md)
 * Follow one of the guides or examples to start using Spectral driver
 
 !!! Note annotate "" 

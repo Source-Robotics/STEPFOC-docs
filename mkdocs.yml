@@ -1,5 +1,5 @@
 site_name: FOC STEPPER DOCS
-site_url: https://PCrnjak.github.io/FOC_STEPPER_DOCS/
+site_url: https://docs.source-robotics.com/STEPFOC-docs/
 theme:
   name: material
   features:

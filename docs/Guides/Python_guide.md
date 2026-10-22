@@ -1,7 +1,7 @@
 # Python guide
 
 More info can be found in this folder with bunch of other examples:
-https://github.com/PCrnjak/Spectral-BLDC-Python
+https://github.com/Source-Robotics/Spectral-BLDC-Python
 
 
 ## **Examples**

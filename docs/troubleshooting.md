@@ -7,7 +7,7 @@ Normal operation | Calibration | Error mode
 ---- | ---- | ----
 3 short flashed and a pause <p align="left"> <img src="../assets/Normal.gif" alt="drawing" width="180"/> <br /> </p> | Flashing every 0.5 seconds <p align="left"> <img src="../assets/Calib.gif" alt="drawing" width="180"/> <br /> </p> | Solid LED, no flashing. <p align="left"> <img src="../assets/Error2.PNG" alt="drawing" width="180"/> <br /> </p>
 
-If you have [STEPFOC firmware](https://github.com/PCrnjak/STEPFOC-stepper-controller/tree/main/STEPFOC%20firmware) uploaded on your STEPFOC LEDs will be in one of 3 states.
+If you have [STEPFOC firmware](https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/main/STEPFOC%20firmware) uploaded on your STEPFOC LEDs will be in one of 3 states.
 
 * **Normal operation** is when motor controller has no active errors and is calibrated
 * **Error mode** is active if any error on the motor driver is active. List of possible errors:
@@ -89,7 +89,7 @@ If driver gets over some temperature it will automatically shut down. This is ha
 
 ## **Calibration issuses**
 
-Check [calibration page](https://source-robotics.github.io/STEPFOC-docs/calibration/) for these issues.
+Check [calibration page](calibration.md) for these issues.
 
 !!! Note annotate "" 
 

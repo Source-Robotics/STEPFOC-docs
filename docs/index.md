@@ -12,25 +12,25 @@ Or buy a single motor driver here: [Link](https://source-robotics.com/products/S
 
 !!! Note annotate "" 
 
-* [STEPFOC datasheet](https://source-robotics.github.io/STEPFOC-docs/specs/)
-* [Getting started](https://source-robotics.github.io/STEPFOC-docs/getting_started/)
-* [Flashing firmware](https://source-robotics.github.io/STEPFOC-docs/flashing_firmware)
-* [Calibration](https://source-robotics.github.io/STEPFOC-docs/calibration/)
-* [PID tuning](https://source-robotics.github.io/STEPFOC-docs/PID_tuning/)
-* [UART interface](https://source-robotics.github.io/STEPFOC-docs/uart/)
-* [CAN interface](https://source-robotics.github.io/STEPFOC-docs/can/)
-* [Tested motors](https://source-robotics.github.io/STEPFOC-docs/tested_motors/)
-* [Theory corner](https://source-robotics.github.io/STEPFOC-docs/theory_corner/)
-* [Troubleshooting](https://source-robotics.github.io/STEPFOC-docs/troubleshooting/)
+* [STEPFOC datasheet](specs.md)
+* [Getting started](getting_started.md)
+* [Flashing firmware](flashing_firmware.md)
+* [Calibration](calibration.md)
+* [PID tuning](PID_tuning.md)
+* [UART interface](uart.md)
+* [CAN interface](can.md)
+* [Tested motors](tested_motors.md)
+* [Theory corner](theory_corner.md)
+* [Troubleshooting](troubleshooting.md)
 
 !!! Note annotate "" 
 
 **Guides**
 
-* [Python guide](https://source-robotics.github.io/STEPFOC-docs/Guides/Python_guide/)
-* [Quadruped robot guide](https://source-robotics.github.io/STEPFOC-docs/Guides/Quadruped_guide/)
-* [Gravity compensation guide](https://source-robotics.github.io/STEPFOC-docs/Guides/Gravity_compensation_guide/)
-* [Bilateral teleoperation guide](https://source-robotics.github.io/STEPFOC-docs/Guides/Bilateral_teleoperation_guide/)
+* [Python guide](Guides/Python_guide.md)
+* [Quadruped robot guide](Guides/Quadruped_guide.md)
+* [Gravity compensation guide](Guides/Gravity_compensation_guide.md)
+* [Bilateral teleoperation guide](Guides/Bilateral_teleoperation_guide.md)
 
 
 
