@@ -1,8 +1,16 @@
-site_name: FOC STEPPER DOCS
+site_name: STEPFOC
+# Where the site is published: the organisation's docs domain, this repository's path. Search engines take each
+# page's address from here, and the sitemap is built from it. mike adds the version under it (/STEPFOC-docs/108/).
 site_url: https://docs.source-robotics.com/STEPFOC-docs/
 site_description: Documentation for the STEPFOC stepper motor FOC driver by Source Robotics.
+# The docs repository: the button in the header and the "edit this page" target.
+repo_url: https://github.com/Source-Robotics/STEPFOC-docs
+repo_name: Source-Robotics/STEPFOC-docs
+edit_uri: edit/main/docs/
+
 theme:
   name: material
+  custom_dir: overrides        # the "older version" banner (overrides/main.html)
   features:
     - navigation.sections
     - toc.integrate
@@ -13,8 +21,11 @@ theme:
     - content.code.annotation
     - content.code.copy
     - content.code.select
+    - content.action.edit
   logo: assets/Icon2.png
   language: en
+  icon:
+    repo: fontawesome/brands/github
   palette:
     - scheme: slate
       toggle:
@@ -22,26 +33,36 @@ theme:
         name: Switch to light mode
       primary: blue
       accent: blue
-    - scheme: default 
+    - scheme: default
       toggle:
         icon: material/weather-night
-        name: Switch to dark mode    
+        name: Switch to dark mode
       primary: blue
       accent: blue
 
 plugins:
-- search
-- social:
-    cards_layout: default
+  - search
+  - social:
+      cards_layout: default
+      enabled: !ENV [ENABLE_SOCIAL, false]   # social cards only in CI (they need cairo + pillow)
+
+# The version facts of versions.yml written into the pages: the manual's version box and the list of documents.
+hooks:
+  - hooks/versions.py
 
 extra:
+  # The version selector in the header (built by mike: one entry per published firmware release + "latest").
+  version:
+    provider: mike
+    default: latest
+    alias: true
   social:
     - icon: fontawesome/brands/github-alt
       link: https://github.com/PCrnjak
     - icon: fontawesome/brands/instagram
       link: https://www.instagram.com/5arcrnjak/
     - icon: fontawesome/brands/twitter
-      link: https://twitter.com/SourceRobotics     
+      link: https://twitter.com/SourceRobotics
     - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/in/petar-crnjak-009b43180/
     - icon: fontawesome/brands/discord
@@ -82,10 +103,6 @@ nav:
     - Gravity compensation guide: Guides/Gravity_compensation_guide.md
     - Python guide: Guides/Python_guide.md
     - Quadruped guide: Guides/Quadruped_guide.md
-
-
-
-
 
 copyright: |
   &copy; 2023 <a href="https://github.com/PCrnjak"  target="_blank" rel="noopener">Petar Crnjak</a>

@@ -1,2 +1,4 @@
-# Used by .github/workflows/ci.yaml and for local builds: pip install -r requirements.txt
+# Docs build environment. Install: python -m venv .venv && .venv/Scripts/pip install -r requirements.txt
+# Serve locally: mkdocs serve        Publish: .github/workflows/publish.yml (mike), never mkdocs gh-deploy
 mkdocs-material[imaging]==9.7.7
+mike==2.1.3                      # versioned docs: one deployed version per firmware release + "latest"
