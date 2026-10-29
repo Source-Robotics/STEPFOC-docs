@@ -3486,7 +3486,7 @@
 <td><code>#Reset</code></td>
 <td>Action</td>
 <td></td>
-<td>Resets the driver. From firmware 105 the reset lands in the bootloader</td>
+<td>Resets the driver. From firmware 105 the reset lands in the bootloader, which waits 2 s for a flashing host and then starts the firmware again.</td>
 <td>nothing</td>
 </tr>
 <tr>
@@ -3500,7 +3500,7 @@
 <td><code>#Default</code></td>
 <td>Action</td>
 <td></td>
-<td>Writes the factory defaults to the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr></td>
+<td>Writes the factory defaults to the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>, including the serial number, hardware version and batch date, and clears the gripper flag, heartbeat and watchdog. Back those up first.</td>
 <td><code>Loaded default config!</code></td>
 </tr>
 <tr>
@@ -3599,7 +3599,7 @@
 <td>Set/Get</td>
 <td>int: 0 to 13</td>
 <td>The <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID. Use 0 to 13: the firmware accepts 14 and 15, but the bootloader reserves them and a driver on one of those cannot be updated over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>. Setting the ID also sets the bootloader's board ID. Kept over a power cycle after Save.</td>
-<td>the ID</td>
+<td>the ID, or <code>Invalid CAN ID</code></td>
 </tr>
 <tr>
 <td><code>#SERNUM</code></td>
@@ -3619,7 +3619,7 @@
 <td><code>#Pullconfig</code></td>
 <td>Get</td>
 <td></td>
-<td>Prints the whole configuration on one line</td>
+<td>Prints the whole configuration on one line, for Motor GUI.</td>
 <td>the configuration</td>
 </tr>
 <tr>

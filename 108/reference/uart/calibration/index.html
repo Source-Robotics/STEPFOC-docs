@@ -3486,14 +3486,14 @@
 <td><code>#Kt</code></td>
 <td>Set/Get</td>
 <td>float: Nm/A</td>
-<td>The torque constant</td>
+<td>The torque constant, found by calibration.</td>
 <td>the current value</td>
 </tr>
 <tr>
 <td><code>#KV</code></td>
 <td>Set/Get</td>
 <td>float: rpm/V</td>
-<td>The velocity constant</td>
+<td>The velocity constant, found by calibration.</td>
 <td>the current value</td>
 </tr>
 <tr>
@@ -3507,7 +3507,7 @@
 <td><code>#Cal</code></td>
 <td>Action</td>
 <td></td>
-<td>Runs the calibration routine (see Motor parameters and calibration). Enter R</td>
+<td>Runs the calibration routine (see Motor parameters and calibration). Enter R, L and PP first.</td>
 <td>the calibration log</td>
 </tr>
 <tr>
@@ -3521,7 +3521,7 @@
 <td><code>#Offset</code></td>
 <td>Set/Get</td>
 <td>float: angle in rad</td>
-<td>The angle offset between encoder zero and electrical zero</td>
+<td>The angle offset between encoder zero and electrical zero, found by calibration.</td>
 <td>the current value</td>
 </tr>
 <tr>
@@ -3556,7 +3556,7 @@
 <td><code>#Resv</code></td>
 <td>Set/Get</td>
 <td>int: voltage in mV</td>
-<td>The voltage calibration starts the resistance test at (not used by STEPFOC</td>
+<td>The voltage calibration starts the resistance test at (not used by STEPFOC, which does not measure resistance).</td>
 <td>the current value</td>
 </tr>
 <tr>
@@ -3570,7 +3570,7 @@
 <td><code>#Openv</code></td>
 <td>Set/Get</td>
 <td>int: voltage in mV</td>
-<td>The voltage of the open-loop spin</td>
+<td>The voltage of the open-loop spin, in calibration and with Openloop.</td>
 <td>the current value</td>
 </tr>
 <tr>

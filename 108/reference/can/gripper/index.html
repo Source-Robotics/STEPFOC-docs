@@ -3591,35 +3591,35 @@
 <td></td>
 <td>Position</td>
 <td>unsigned 8-bit</td>
-<td>0 fully open</td>
+<td>0 fully open, 255 fully closed</td>
 </tr>
 <tr>
 <td>1</td>
 <td></td>
 <td>Speed</td>
 <td>unsigned 8-bit</td>
-<td>0 slowest</td>
+<td>0 slowest, 255 fastest</td>
 </tr>
 <tr>
 <td>2-3</td>
 <td></td>
 <td>Current</td>
 <td>signed 16-bit</td>
-<td>current limit of the move in mA; not clamped by the firmware</td>
+<td>current limit of the move in mA; not clamped by the firmware, see the gripper manual for the safe range</td>
 </tr>
 <tr>
 <td>4</td>
 <td>7</td>
 <td>Activate</td>
 <td>bit</td>
-<td>1 activate the gripper</td>
+<td>1 activate the gripper, 0 deactivate</td>
 </tr>
 <tr>
 <td>4</td>
 <td>6</td>
 <td>Action</td>
 <td>bit</td>
-<td>1 go to the position</td>
+<td>1 go to the position, 0 idle</td>
 </tr>
 <tr>
 <td>4</td>
@@ -3668,7 +3668,7 @@
 <td></td>
 <td>gripper_position</td>
 <td>unsigned 8-bit</td>
-<td>0 fully open</td>
+<td>0 fully open, 255 fully closed</td>
 </tr>
 <tr>
 <td>1-2</td>
@@ -3689,7 +3689,7 @@
 <td>6</td>
 <td>gripper_action_status</td>
 <td>bit</td>
-<td>1 going to the position</td>
+<td>1 going to the position, 0 idle, auto-release or calibrating</td>
 </tr>
 <tr>
 <td>3</td>
