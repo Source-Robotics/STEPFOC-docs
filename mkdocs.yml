@@ -64,7 +64,7 @@ plugins:
   - glightbox                 # click any image to zoom
   - social:
       cards_layout: default
-      enabled: !ENV [ENABLE_SOCIAL, false]   # social cards only in CI (they need cairo + pillow)
+      enabled: !ENV [ENABLE_SOCIAL, false]   # social cards only in CI (ENABLE_SOCIAL=true; they need Cairo + Pillow)
   # The addresses of the pages before the manual was restructured (firmware 103 and older) keep working.
   - redirects:
       redirect_maps:

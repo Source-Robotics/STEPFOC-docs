@@ -5,7 +5,7 @@
 # the source must be "Deploy from a branch", branch gh-pages, folder / (root).
 #
 # A strict build runs first: a broken link or a missing page publishes nothing. Social cards are built here only
-# (ENABLE_SOCIAL=1; they need cairo, which the local builds skip).
+# (ENABLE_SOCIAL=true; they need the Cairo libraries, which the local builds skip).
 #
 # The root of gh-pages also carries 404.html (source: tools/root_404.html), which forwards the addresses from before
 # the versioning (/STEPFOC-docs/can/) to the same page under latest/. The last step keeps it up to date.
@@ -34,14 +34,16 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+      - name: Libraries for the social cards (Cairo, as Material for MkDocs documents)
+        run: sudo apt-get update -q && sudo apt-get install -y -q libcairo2-dev libfreetype6-dev libffi-dev libjpeg-dev libpng-dev libz-dev
       - run: pip install -r requirements.txt
       - run: python tools/test_tools.py
       - run: mkdocs build --strict
         env:
-          ENABLE_SOCIAL: "1"
+          ENABLE_SOCIAL: "true"
       - name: Publish this version with mike
         env:
-          ENABLE_SOCIAL: "1"
+          ENABLE_SOCIAL: "true"
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
