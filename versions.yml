@@ -6,15 +6,14 @@
 
 # The documentation version: the STEPFOC firmware release these pages describe. The publishing workflow publishes
 # the site under this name (the version selector in the header) and points "latest" at it. Older firmware releases
-# keep their own version of the site.
-docs_version: "103"
+# keep their own version of the site (103 is the last release from the main branch, before the bootloader).
+docs_version: "108"
 
 # The firmware release the pages describe, and the generated pages come from. Its tag must be V<docs_version>.
-# Releases are cut from the bootloader-version branch (see the firmware repository's release_guide.md); V103 was
-# the last release from main.
+# Releases are cut from the bootloader-version branch (see the firmware repository's release_guide.md).
 firmware:
   repository: https://github.com/Source-Robotics/STEPFOC-stepper-controller
-  tag: V103
+  tag: V108
 
 # One entry per document. revision: YEAR.LETTER, a new letter for every published revision of that document.
 # status: draft until the document is published; published: the date of the revision's publication, or null.
@@ -24,8 +23,8 @@ manuals:
     number: SR-5001
     title: STEPFOC Manual
     revision: 2026.A
-    status: published
-    published: 2026-10-29
+    status: draft
+    published: null
     firmware: true
     applies_to: STEPFOC driver PCB v1
-    covers: "the STEPFOC stepper driver: datasheet, setup, calibration, tuning, the CAN and UART interfaces, guides"
+    covers: "the STEPFOC stepper driver: safety, technical data, mounting, setup, operation, firmware; the CAN and UART reference; guides"

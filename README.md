@@ -1,12 +1,30 @@
 # STEPFOC documentation
 
 The documentation of the STEPFOC stepper motor FOC driver by [Source Robotics](https://source-robotics.com): the
-datasheet, setup, calibration, tuning, the CAN and UART interfaces, and guides.
+manual (safety, technical data, mounting, setup, operation, firmware), the CAN and UART reference, and guides.
 
 **Read it at [docs.source-robotics.com/STEPFOC-docs](https://docs.source-robotics.com/STEPFOC-docs/).**
 
 The firmware and hardware files are in
 [Source-Robotics/STEPFOC-stepper-controller](https://github.com/Source-Robotics/STEPFOC-stepper-controller).
+
+## What is in this repository
+
+| | |
+|---|---|
+| `docs/` | the pages: the manual chapters at the top level, `reference/`, `guides/`, `support/`, `appendix/` |
+| `docs/includes/` | text shared by pages (glossary, symbols, abbreviations) and the data the reference pages are built from |
+| `docs/includes/can_commands.yml`, `uart_commands.yml` | the hand-written descriptions of every CAN message and UART command |
+| `docs/includes/generated/` | written by `tools/sync_firmware.py` from the firmware's release tag: `firmware_facts.json`, `firmware_release_notes.md`. Never edit |
+| `versions.yml` | every version fact: the firmware release the site describes, the manual's number and revision |
+| `compatibility.yml` | which firmware release works with which bootloader, Python library, PAR6 runtime and board |
+| `hooks/` | `versions.py` writes the version facts into the pages; `firmware_pages.py` builds the reference pages |
+| `tools/` | `sync_firmware.py`, `test_tools.py`, `make_stubs.py`, `root_404.html` |
+| `overrides/` | the theme changes: the older-version banner, the edit/report line, the header's repository card |
+
+The site is built with [MkDocs](https://www.mkdocs.org/) and the
+[Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) theme, in the same form as the
+[PAR6 documentation](https://github.com/Source-Robotics/par6).
 
 ## Preview it locally
 
@@ -22,8 +40,27 @@ mkdocs serve
 
 Open `http://127.0.0.1:8000/STEPFOC-docs/`. The page reloads by itself when you save a file.
 
-Every push and pull request runs `mkdocs build --strict`, which fails on a broken link or a missing page, and
-`python tools/test_tools.py`. Run both before you open a pull request.
+Every push and pull request runs `python tools/test_tools.py` and `mkdocs build --strict`, which fails on a broken
+link or a missing page. Run both before you open a pull request.
+
+## The reference is generated from the firmware
+
+The command IDs, the frame lengths the firmware accepts, the responses it sends, the list of UART commands with
+their kind, argument type, the mode they enter and what they print, and the defaults are read from the firmware's
+source **at its release tag** by `tools/sync_firmware.py`, never from uncommitted work. The descriptions, units and
+byte layouts are written by hand in `docs/includes/can_commands.yml` and `uart_commands.yml`. The build fails when
+the two disagree: a command the firmware has and the descriptions lack, or the other way round, or a byte layout
+that does not fit the frame.
+
+```bash
+python tools/sync_firmware.py            # write docs/includes/generated/ from firmware.tag in versions.yml
+python tools/sync_firmware.py --check    # exit 1 if they are out of date
+python tools/sync_firmware.py --print uart --tag V103   # look at another release's commands
+```
+
+The tool needs a clone of the firmware repository with its tags, next to this repository or named by
+`--firmware PATH` / `STEPFOC_FIRMWARE_DIR`, and the network for the release notes (`--no-network` keeps the file
+that is there). The CI build does not run it; the generated files are committed.
 
 ## Versions and releases
 
@@ -32,34 +69,33 @@ Each release of the STEPFOC firmware has its own version of the documentation, n
 in a bar at the top. The versions are built with [mike](https://github.com/jimporter/mike) and kept in the
 `gh-pages` branch; `latest` points at the newest.
 
-**All version facts live in `versions.yml`, never in a page.** It holds:
-
-- `docs_version`: the firmware release these pages describe, which is also the name the version is published under
-- `firmware.tag`: that release's tag in the firmware repository (`V` + `docs_version`)
-- one entry per document: document number, title, revision, status, publication date, what it applies to
-
-`hooks/versions.py` writes these into the manual's version box and into the list of documents. A malformed or
-missing fact stops the build.
+**All version facts live in `versions.yml`, never in a page**: `docs_version` (the firmware release these pages
+describe, which is also the name the version is published under), `firmware.tag` (`V` + `docs_version`), and the
+manual's number, title, revision, status and publication date. `hooks/versions.py` writes them into the version
+box on the landing page and into the list of documents on the About page; a malformed or missing fact stops the
+build.
 
 ### When the firmware releases a new version
 
-1. Set `docs_version` to the new release number and `firmware.tag` to its tag in `versions.yml`.
-2. Update the pages for what changed, using the release's notes, and give the manual a new revision letter in
-   `versions.yml` with a line in its *Document history*.
-3. Commit and push to `main`. The site publishes the new version, `latest` moves to it, and the previous version
+1. Set `docs_version` and `firmware.tag` in `versions.yml`; add a row to `compatibility.yml`.
+2. Run `python tools/sync_firmware.py`. If the firmware added or removed a command, the build now fails until
+   `can_commands.yml` / `uart_commands.yml` describe it: write the description.
+3. Update the pages for what changed, using the release notes; give the manual a new revision letter in
+   `versions.yml` and a line in its *Document history* on `docs/about.md`.
+4. Commit and push to `main`. The site publishes the new version, `latest` moves to it, and the previous version
    stays as it was.
 
 ### Publishing
 
-`.github/workflows/publish.yml` publishes on every push to `main`: a strict build, then `mike deploy` for
-`docs_version` with the alias `latest`. In the repository's Settings, under Pages, the source must be "Deploy from a
-branch", branch `gh-pages`, folder `/ (root)`. Never run `mkdocs gh-deploy` on this repository: it would overwrite
-every version mike keeps there.
+`.github/workflows/publish.yml` publishes on every push to `main`: the tests, a strict build, then `mike deploy`
+for `docs_version` with the alias `latest`. In the repository's Settings, under Pages, the source must be "Deploy
+from a branch", branch `gh-pages`, folder `/ (root)`. Never run `mkdocs gh-deploy` on this repository: it would
+overwrite every version mike keeps there.
 
-The root of `gh-pages` also carries `404.html` (source: `tools/root_404.html`). It forwards addresses from before the
-versioning, such as `/STEPFOC-docs/can/`, to the same page under `latest/`, so old links keep working.
-
-To preview the published versions locally, with the version selector, run `mike serve`.
+The root of `gh-pages` also carries `404.html` (source: `tools/root_404.html`). It forwards addresses from before
+the versioning, such as `/STEPFOC-docs/can/`, to the same page under `latest/`, where the `redirects` plugin in
+`mkdocs.yml` maps the old page names to the new pages. To preview the published versions locally, with the version
+selector, run `mike serve`.
 
 ## The site's address
 
@@ -69,5 +105,6 @@ and never add a `CNAME` file or a custom domain to it (that would take it out of
 
 ## Contributing
 
-A small fix can be made from the browser: every page has a link to edit it on GitHub. For anything larger, open an
-issue first, then a pull request. Questions about the driver itself go to the firmware repository's issue tracker.
+A small fix can be made from the browser: every page ends with a link to edit it on GitHub. For anything larger,
+open an issue first, then a pull request. The *Contributing* page on the site has the house rules. Questions about
+the driver itself go to the firmware repository's issue tracker.
