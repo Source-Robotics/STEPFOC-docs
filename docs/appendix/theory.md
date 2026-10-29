@@ -1,165 +1,131 @@
 # Theory corner
 
-## Impedance Control
+The control concepts behind the driver's modes, for readers who want to know why a setting does what it does.
+Nothing here is needed to use the driver; the chapters say what to type.
 
-**Concept**:
-- Impedance control is like controlling how "stiff" or "flexible" the robot feels when it interacts with the environment. It defines how the robot resists motion in response to external forces.
-Impedance control regulates the force output of a system based on the position error.
+## Field-oriented control of a stepper
 
-**Analogy**:
-- Imagine the robot's end effector is connected to the environment by a virtual spring-damper system. The robot adjusts the force it applies to mimic a specific stiffness, damping, and inertia.
+A hybrid stepper is a two-phase synchronous motor with many pole pairs: 50 for a 1.8° motor, so one mechanical
+revolution is 50 electrical cycles. A conventional stepper driver drives it blindly: it advances the current
+pattern one step at a time and relies on the rotor following. The torque the rotor receives depends on the angle
+between the stator field and the rotor, the *load angle*; it is largest a quarter of an electrical cycle ahead of
+the rotor and zero when the two are aligned. Because the driver does not know where the rotor is, it keeps full
+current in the coils at all times, so that even a badly placed field produces enough torque, and it still loses
+steps when the load angle exceeds 90° electrical.
 
-**Implementation**:
-- The robot measures its position, velocity, and possibly the force it applies.
-- The controller calculates the desired force or torque output based on the difference between the actual and desired position/velocity, considering virtual mass, damping, and stiffness.
-- The robot then applies this calculated force/torque to maintain the desired interaction characteristics.
+Field-oriented control (FOC) closes that gap with a measurement of the rotor angle. The encoder on the motor shaft
+gives the mechanical angle $\theta$; with the pole pairs $p$ and the angle offset $\theta_0$ found by calibration,
+the electrical angle is $\theta_e = p\,\theta + \theta_0$. The two coil currents $I_A$ and $I_B$ are transformed
+into the rotor's frame of reference (the Park transform):
 
-**Example**:
-- A robot arm is drilling into a surface. Impedance control ensures the robot maintains a steady drilling force despite variations in the surface hardness. If the surface becomes harder, the robot increases its force to maintain the drilling motion.
+$$
+I_d = I_A \cos\theta_e + I_B \sin\theta_e,\qquad
+I_q = -I_A \sin\theta_e + I_B \cos\theta_e
+$$
 
-**Equation**:
+$I_q$, the *quadrature* current, is the part of the current that stands at right angles to the rotor field and
+produces torque: $\tau = K_t\, I_q$. $I_d$, the *direct* current, is aligned with the field and produces none. Two
+PI controllers regulate $I_q$ to the torque demand and $I_d$ to zero by choosing the voltages $U_q$ and $U_d$;
+the inverse transform turns those into the two coil voltages, applied by PWM at 25 kHz. The loop runs at 6250 Hz.
 
-𝐹_control = 𝑀𝑥̈ + 𝐵𝑥̇ + 𝐾𝑥
+The consequences are what makes a FOC stepper behave like a servo: the current is only what the torque needs, so
+the motor runs cool and quiet; the field is always placed where it produces the most torque per ampere; and a
+step is never lost, because the controller knows the rotor position at every instant and works from the error,
+not from a count of pulses.
 
-- 𝑀 – virtual mass  
-- 𝐵 – **virtual damping coefficient**  
-- 𝐾 – **virtual stiffness**  
-- 𝐹_ext – external force measured by a force/torque sensor  
-- 𝑥 – position  
-- 𝑥̇ – velocity  
-- 𝑥̈ – acceleration
+Calibration supplies the constants this needs. The pole pairs come from the step angle. The current loop gains
+follow from the coil's resistance $R$ and inductance $L$ and the chosen bandwidth $\omega_c = 2\pi f_c$ (`#Cbw`):
+$K_p = L\,\omega_c$ and $K_i = R\,\omega_c$ cancel the coil's electrical time constant and give a first-order
+response at $f_c$. The angle offset is found by driving a current along the $d$ axis and reading where the rotor
+settles. The velocity constant $K_V$ comes from the back-EMF the spinning motor generates, and the torque
+constant follows from it: in SI units $K_t = 1/K_V$ (with $K_V$ in rpm/V, $K_t \approx 9.55/K_V$ Nm/A).
 
----
+## The cascade of loops
 
-### Admittance Control
+Position, velocity and current are controlled by three loops nested inside one another:
 
-**Concept**:
-- Admittance control is like controlling how easily the robot moves in response to external forces. It defines how the robot adapts its position or velocity based on the forces applied by the environment.
-Admittance control regulates the position or velocity of a system based on the force error.
+$$
+\text{position loop: } \omega_d = K_{pp}\,(\theta_d - \theta)
+\qquad
+\text{velocity loop: } I_{q,d} = K_{pv}\,(\omega_d - \omega) + K_{iv}\!\int(\omega_d - \omega)\,dt
+\qquad
+\text{current loop: } U_q = \text{PI}(I_{q,d} - I_q)
+$$
 
-**Analogy**:
-- Imagine the robot's end effector is like a balloon tethered to a point. The robot adjusts its position or velocity to move compliantly with the applied forces, mimicking a specific level of compliance and damping.
+The position loop is proportional: its output is a speed demand, limited by the velocity limit. The velocity loop
+is a PI controller: its output is a current demand, limited by the current limit; the integral term removes the
+steady-state error a load would otherwise leave. The current loop is the innermost and fastest. Each loop must be
+slower than the one inside it, by a factor of five to ten, for the inner loop to look like an ideal actuator to the
+outer one; that is why the loops are tuned from the inside out, and why a current loop bandwidth of 500 Hz leaves
+room for a velocity loop of a few tens of hertz and a position loop below that.
 
-**Implementation**:
-- The robot measures the external force applied to it and its own position and velocity.
-- The controller calculates the desired position or velocity based on the measured force, considering virtual compliance and damping.
-- The robot then adjusts its motion to match the desired position or velocity.
+A command picks where the cascade is entered: a current setpoint uses the current loop alone, a speed setpoint
+the two inner loops, a position setpoint all three. The *feedforward* terms the CAN motion frames carry are added
+to the demands rather than computed from an error: a speed feedforward is added to the position loop's output, a
+current feedforward to the velocity loop's output. A host that knows the trajectory can command it directly and
+leave the loops to correct what is left, which gives a faster, smoother response than letting the loops produce
+the whole demand from the error.
 
-**Example**:
-- A robot arm is holding a tray while a person places objects on it. Admittance control allows the robot to adjust its position smoothly to accommodate the added weight, ensuring the tray remains stable.
+An integrator accumulates error over time, and keeps accumulating while the output is at its limit; the overshoot
+this causes when the limit is released is *windup*. The velocity loop's integrator is clamped to the velocity
+limit, and `#Rstint` resets the integrators on every new setpoint, which suits a host that sends one setpoint
+after another in large steps.
 
-**Equation** (for velocity admittance control):
+## Impedance control
 
-In many practical controllers, the virtual inertia 𝑀 is neglected to reduce complexity.  
-The model simplifies to:
+Impedance control does not prescribe a motion or a force. It prescribes the *relation* between the two: how much
+force the motor produces when it is displaced from its setpoint and how fast. The driver's PD mode implements a
+spring and a damper around the setpoint:
 
-𝐹_ext = 𝐵𝑥̇ + 𝐾𝑥
+$$
+\tau = K_P\,(\theta_d - \theta) + K_D\,(\dot\theta_d - \dot\theta) + K_t\, I_{ff}
+$$
 
-If we solve for the desired velocity 𝑣_desired, we get:
+with the stiffness $K_P$ in Nm/rad, the damping $K_D$ in Nm·s/rad, and a current feedforward $I_{ff}$ for a known
+load such as gravity. The torque is produced by the current loop ($I_q = \tau / K_t$), which is what makes FOC a
+prerequisite: a stepper driven blindly cannot produce a commanded torque.
 
-𝑣_desired = (𝐹_ext − 𝐾𝑥) / 𝐵
+Pushed off its setpoint by an external force $F$, the motor yields by $\Delta\theta = \tau_{ext}/K_P$ and pushes
+back with that force; let go, it returns, with the damper settling the motion. A small $K_P$ makes a soft joint,
+a large one a stiff joint; $K_D$ without $K_P$ is a pure damper. The setpoint can move, in which case the virtual
+spring drags the rotor along a trajectory with a bounded force — the property legged robots, hand-guided arms and
+anything that touches people or an uncertain environment need. The impedance loop is also what a position loop
+is *not*: the position loop's integral action removes any steady-state deflection and so makes the joint as stiff
+as the current limit allows, which is the right thing for a machine tool and the wrong thing for a leg.
 
-✅ **Meaning of terms:**  
-- 𝐵 – virtual damping coefficient, controls how *fast* the robot reacts  
-- 𝐾 – virtual stiffness, determines how much position error contributes to motion  
-- 𝐹_ext – external force input  
-- 𝑣_desired – commanded velocity  
+The full impedance model includes an inertia term, $M\ddot\theta$; the driver, like most joint controllers, leaves
+it out, so the apparent inertia is the motor's own.
 
-**Intuition:**  
-- Increasing 𝐵 → slower, more damped motion  
-- Increasing 𝐾 → stiffer response (less displacement for a given force)
+## Admittance control
 
-**Equation** (for position admittance control):
+Admittance is the inverse relation: the controller measures the force and commands a motion,
 
-You can also solve for the desired position 𝑥_desired directly:
+$$
+\dot\theta_d = \frac{\tau_{ext} - K\,(\theta - \theta_0)}{B}
+$$
 
-𝑥_desired = (1/𝐾) · 𝐹_ext − (𝐵/𝐾) · 𝑣
+on top of a stiff position controller. It is the natural form for a machine that has a force sensor and a position
+loop that cannot be made soft, such as an industrial arm; impedance control is the natural form for a machine whose
+actuator is a torque source, such as a FOC motor. The driver has no force sensor and implements impedance; a host
+that wants admittance behaviour can estimate the external torque from $K_t I_q$ minus the known load and command
+positions accordingly, with the limits of that estimate (friction, cogging, the current loop's accuracy).
 
-✅ **Meaning of terms:**  
-- (1 / 𝐾) · 𝐹_ext – position offset due to external force (compliance)  
-- (𝐵 / 𝐾) · 𝑣 – damping correction (smooths motion and reduces overshoot)  
-- 𝐵 / 𝐾 – ratio defining how strongly damping influences position response
+## Compliance and stiffness
 
----
+Stiffness $K$ is the force per unit of displacement; compliance is its inverse, $C = 1/K$, the displacement per
+unit of force. *Passive* compliance is in the mechanism — a spring, a flexible finger, a belt; *active* compliance
+is in the controller — the impedance loop above. The driver offers three points on that scale: the position mode,
+stiff up to the current limit; the PD mode, as stiff as $K_P$; and the current mode, which is no stiffness at all,
+a torque source the host shapes as it likes.
 
-### Summary
+The current limit `#Ilim` is a force limit in every mode: the largest torque the motor will produce before it
+yields, whatever the loops ask. Set it for the motor's rating, and for the mechanism's.
 
-**Impedance Control**:
-- **Robot's Role**: The robot reacts to position/velocity changes by applying forces to resist motion.
-- **Control Focus**: Force/torque output based on position/velocity error.
-- **Interaction Feel**: Defines how stiff or flexible the robot feels (resistance).
+## Which mode
 
-**Admittance Control**:
-- **Robot's Role**: The robot adjusts its motion in response to external forces.
-- **Control Focus**: Position/velocity based on external force input.
-- **Interaction Feel**: Defines how easily the robot moves (compliance).
-
----
-
-### Choosing the Control Method
-
-- **Impedance Control**: Suitable for tasks requiring precise force regulation and maintaining a specific motion despite external disturbances, such as machining or tasks where consistent force application is critical.
-- **Admittance Control**: Suitable for tasks requiring adaptive and compliant motion, especially when interacting with unpredictable environments or humans, such as assisting or collaborating with humans in handling delicate objects.
-
-By understanding these control strategies in terms of how the robot interacts with its environment, one can better appreciate their applications and benefits in various robotic tasks.
-
----
-
-## Compliance
-
-Compliance, in the context of control systems and robotics, refers to the ability of a system to yield or deform in response to an applied force. It is the inverse of stiffness (or rigidity), which measures the resistance of a system to deformation. High compliance means the system is easily deformable or flexible, whereas low compliance (high stiffness) means the system is resistant to deformation.
-
-### Key Concepts of Compliance
-
-- **Compliance** (𝐶): It is defined as the inverse of stiffness (𝐾). Mathematically:
-
-𝐶 = 1 / 𝐾
-
-- **Stiffness** (𝐾): It quantifies the resistance of a system to deformation. High stiffness means the system resists deformation strongly when a force is applied.
-
-### Compliance in Control Systems
-
-In control systems, particularly in robotics, compliance is crucial for safe and effective interaction with the environment, especially in tasks that involve human-robot interaction or handling delicate objects.
-
-### Example: Compliance in a Robotic Arm
-
-Imagine a robotic arm equipped with compliance control. Here’s how compliance plays a role:
-
-1. **Interaction with the Environment**:
-   - When the robotic arm encounters an obstacle, a compliant control system allows the arm to yield slightly, reducing the risk of damage to both the arm and the obstacle.
-   - High compliance makes the arm flexible, allowing it to absorb and adapt to external forces smoothly.
-
-2. **Human-Robot Interaction**:
-   - In collaborative tasks where a human and a robot work together, compliance ensures that the robot can adapt to the human’s movements without exerting excessive force, enhancing safety and cooperation.
-   - If the human applies a force to the robot, a compliant robot will move or adjust its position in response, preventing injury or discomfort.
-
-### Practical Implementation
-
-Compliance can be implemented in robotic systems through both passive and active means:
-
-- **Passive Compliance**:
-  - Achieved using physical elements like springs, dampers, and flexible materials.
-  - Example: A robotic gripper with soft, flexible fingers that conform to the shape of the object being held.
-
-- **Active Compliance**:
-  - Achieved using control algorithms that adjust the robot's motion or force output in real-time based on sensor feedback.
-  - Example: A robotic arm that uses force sensors to detect applied forces and adjusts its position or velocity accordingly, implementing virtual compliance through software.
-
-### Compliance in Control Equations
-
-In control equations, compliance is often reflected in how the system responds to forces. For example, in admittance control, the system's compliance is an integral part of the control law:
-
-𝑥_desired = 𝐶 · 𝐹_ext
-
-Where:
-- 𝑥_desired is the desired position.
-- 𝐶 is the compliance (inverse of stiffness).
-- 𝐹_ext is the external force applied to the system.
-
-This equation shows that the desired position change is directly proportional to the applied force, with the proportionality factor being the compliance.
-
----
-
-## Summary
-
-Compliance is a measure of how easily a system deforms in response to an applied force. In robotics and control systems, compliance is crucial for enabling smooth, adaptive, and safe interactions with the environment and humans. It is the inverse of stiffness and can be implemented both passively and actively. Understanding compliance helps in designing control systems that can effectively manage forces and movements, ensuring both precision and safety in robotic operations.
+| Mode | Behaviour under an external force | Use |
+|---|---|---|
+| Position | holds the position up to the current limit, then yields | positioning, machines, anything that must not deflect |
+| Velocity | holds the speed up to the current limit | conveyors, wheels, spindles |
+| PD (impedance) | deflects in proportion to the force, returns when released | legs, arms that touch things or people, hand guiding, teleoperation |
+| Current (torque) | produces the commanded torque, moves as the load dictates | a host that closes its own loop, gravity compensation, force-limited pressing |

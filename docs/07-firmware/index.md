@@ -8,6 +8,7 @@ a programming adapter.
 
 - [Releases and versions](releases.md): how releases are numbered, how to see which one a driver runs, what the
   release notes contain
+- [The bootloader](the-bootloader.md): what it is, how the driver boots, how it is entered, its protocol and tools
 - [Updating through the bootloader](update.md): the normal update, with Motor GUI, the bootloader's command-line
   tool, or a PAR6 control box
 - [Installing the bootloader on an older board](bootloader.md): for a driver that runs firmware 103 or older

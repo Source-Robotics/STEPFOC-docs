@@ -1,4 +1,4 @@
-# Reference
+# Protocol reference
 
 Every CAN message and every UART command of the firmware release this site describes, the defaults the firmware
 starts with, the error flags, and the map from the Python library's calls to the messages they send.
@@ -22,7 +22,7 @@ when a byte layout does not fit the frame. The firmware version is in the versio
 - **Encoder ticks**: 16384 per revolution; speeds in ticks per second; currents in mA; voltages in mV.
 - UART command names are **case-sensitive** and spelled exactly as the firmware compares them.
 
-## In the reference
+## In the protocol reference
 
 - [CAN protocol](can/index.md): the identifier, the three kinds of message, every message by group
 - [UART commands](uart/index.md): the syntax and every command by group

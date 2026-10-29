@@ -27,4 +27,4 @@ source, and GitHub turns your change into a pull request. For anything larger, o
 
 ## Licence
 
-The licence that covers this documentation is stated in the repository.
+Text and images: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/): copy, adapt and share them, also commercially, if you credit Source Robotics and share your changes under the same licence. Code: the [MIT licence](https://github.com/Source-Robotics/STEPFOC-docs/blob/main/LICENSE-CODE), which covers the code examples in the pages and the site's own code. The Source Robotics name, the product names and the logos are not covered by either. By contributing you agree that your contribution is published under these licences.

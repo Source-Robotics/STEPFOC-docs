@@ -13,4 +13,4 @@ the two tools on top of them, what happens when something goes wrong, and grippe
 - [Errors and recovery](errors.md)
 - [Gripper mode](gripper-mode.md)
 
-The exact layout of every message and command is in the [Reference](../reference/index.md).
+The exact layout of every message and command is in the [Protocol reference](../reference/index.md).

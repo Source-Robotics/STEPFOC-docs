@@ -12,7 +12,7 @@ It is written for someone who builds a robot or a machine with STEPFOC: a maker,
 solder four motor wires and open a serial terminal. It does not assume any knowledge of field-oriented control; the
 Theory corner in the appendix explains the concepts the control modes rely on.
 
-Read the Safety chapter before you power anything. The other chapters are in the order you need them.
+Read the Safety chapter before you power anything. The [Quick start](quick-start.md) is the whole first setup on one page; the chapters are in the order you need them and go deeper.
 
 ## Finding your way
 
@@ -38,6 +38,8 @@ driven by STEPFOC electronics are documented at
 
 The STEPFOC Manual describes one firmware release; one revision is kept per release, and the version selector in
 the header switches between them. The earlier version of this site, for firmware 103, is kept as version `103`.
+
+The text and the images of this documentation are licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), the code examples under the [MIT licence](https://github.com/Source-Robotics/STEPFOC-docs/blob/main/LICENSE-CODE). The Source Robotics name, the product names and the logos are not covered by either.
 
 | Revision | Date | Changes |
 |---|---|---|

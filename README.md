@@ -103,6 +103,17 @@ The site is served at `https://docs.source-robotics.com/STEPFOC-docs/`: the orga
 repository's name. Never rename this repository (its address would change and GitHub does not forward the old one),
 and never add a `CNAME` file or a custom domain to it (that would take it out of the shared domain).
 
+## License
+
+- **Text and images:** [Creative Commons Attribution-ShareAlike 4.0](https://creativecommons.org/licenses/by-sa/4.0/),
+  see [LICENSE](LICENSE). You may copy, adapt and share them, also commercially, if you credit Source Robotics and
+  share your changes under the same license.
+- **Code:** the [MIT license](LICENSE-CODE). This covers the code examples in the pages and the site's own code
+  (hooks, tools, overrides, scripts), so you can use an example in your own program without other conditions.
+- **Names and logos:** the Source Robotics name, the product names and the logos are not covered by either license.
+
+By contributing you agree that your contribution is published under these licenses.
+
 ## Contributing
 
 A small fix can be made from the browser: every page ends with a link to edit it on GitHub. For anything larger,

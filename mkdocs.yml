@@ -9,7 +9,9 @@ repo_url: https://github.com/Source-Robotics/STEPFOC-docs
 repo_name: Source-Robotics/STEPFOC-docs
 edit_uri: edit/main/docs/
 copyright: |
-  &copy; 2026 <a href="https://source-robotics.com" target="_blank" rel="noopener">Source Robotics d.o.o.</a>
+  &copy; 2026 <a href="https://source-robotics.com" target="_blank" rel="noopener">Source Robotics d.o.o.</a> ·
+  Text and images <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a> ·
+  Code examples <a href="https://github.com/Source-Robotics/STEPFOC-docs/blob/main/LICENSE-CODE" target="_blank" rel="noopener">MIT</a>
 
 theme:
   name: material
@@ -185,6 +187,7 @@ nav:
   - STEPFOC Manual:
       - index.md
       - Before you start:
+          - Quick start: quick-start.md
           - About this manual: about.md
       - Chapters:
           - 1. Overview:
@@ -224,6 +227,7 @@ nav:
           - 7. Firmware:
               - 07-firmware/index.md
               - Releases and versions: 07-firmware/releases.md
+              - The bootloader: 07-firmware/the-bootloader.md
               - Updating through the bootloader: 07-firmware/update.md
               - Installing the bootloader on an older board: 07-firmware/bootloader.md
               - Building from source: 07-firmware/building.md
@@ -237,7 +241,7 @@ nav:
           - Glossary: terminology.md
           - CAD and downloads: cad-files.md
 
-  - Reference:
+  - Protocol reference:
       - reference/index.md
       - CAN protocol:
           - reference/can/index.md
