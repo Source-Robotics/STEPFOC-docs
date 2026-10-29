@@ -23,8 +23,8 @@ between firmware releases. The text and the images are licensed CC BY-SA 4.0, th
 
     ---
 
-    [One page](quick-start.md) from the box to a calibrated motor that follows commands, with a link into the
-    manual at every step.
+    [One page](quick-start.md) from the box to a calibrated motor that follows commands, through Motor GUI or the
+    terminal, with a link into the manual at every step.
 
 -   :material-book-open-variant:{ .lg .middle } **The manual**
 
@@ -34,7 +34,14 @@ between firmware releases. The text and the images are licensed CC BY-SA 4.0, th
     [First setup](05-setup/index.md), [Operation](06-operation/index.md), [Firmware](07-firmware/index.md),
     [Troubleshooting](08-troubleshooting.md).
 
--   :material-code-braces:{ .lg .middle } **Protocol reference**
+-   :material-monitor-dashboard:{ .lg .middle } **Motor GUI**
+
+    ---
+
+    [The browser tool](motor-gui/index.md): connect, calibrate, tune with live plots, record telemetry, update the
+    firmware.
+
+-   :material-code-braces:{ .lg .middle } **API reference**
 
     ---
 

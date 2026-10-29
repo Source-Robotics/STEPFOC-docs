@@ -39,7 +39,7 @@
 
 **Command ID**
 :   The number, 0 to 63, in bits 6 to 1 of a CAN frame identifier that says which message the frame carries. The
-    Protocol reference lists every command ID.
+    API reference lists every command ID.
 
 **Commutation**
 :   Placing the stator current so that it produces torque at the rotor's present angle. FOC does it continuously

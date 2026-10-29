@@ -1,6 +1,6 @@
 # The version facts of this documentation, in ONE place (the same system as Source-Robotics/par6).
 #
-# Edit them here, never in a page. hooks/versions.py writes them into the manual's version box
+# Edit them here, never in a page. hooks/versions.py writes them into each document's version box
 # (<!-- doc-meta: KEY --> on its landing page) and into the list of documents (<!-- documents-table -->), and the
 # publishing workflow reads docs_version. README.md, "Versions and releases", says when to change what.
 
@@ -27,4 +27,12 @@ manuals:
     published: null
     firmware: true
     applies_to: STEPFOC driver PCB v1
-    covers: "the STEPFOC stepper driver: safety, technical data, mounting, setup, operation, firmware; the CAN and UART reference; guides"
+    covers: "the STEPFOC stepper driver: quick start, safety, technical data, mounting, setup, operation, firmware; the API reference; guides"
+  motor-gui:
+    number: SR-5002
+    title: Motor GUI Guide
+    revision: 2026.A
+    status: draft
+    published: null
+    applies_to: Motor GUI at motorgui.com
+    covers: "the browser tool: connecting, setup and calibration, tuning, telemetry, firmware updates"
