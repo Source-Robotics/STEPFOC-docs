@@ -64,7 +64,7 @@ reboots into the new firmware. The full wire protocol is in the bootloader repos
 
 | Tool | Transport | Use |
 |---|---|---|
-| [Motor GUI](https://motorgui.com/) | serial adapter (Web Serial) or CANvas | one driver on the bench, releases fetched from GitHub |
+| [Motor GUI](../05-setup/motor-gui.md) | serial adapter (Web Serial) or CANvas | one driver on the bench, releases fetched from GitHub |
 | `host_tools/bl_flash.py` in the bootloader repository | slcan or gs_usb CAN adapters, or UART | scripts, several boards, `list`, `set-id`, `flash --erase-first` |
 | the PAR6 control box's `flash_motor_firmware.py` and the dashboard's Firmware tab | the robot's own CAN bus | every joint of a robot, from the box |
 

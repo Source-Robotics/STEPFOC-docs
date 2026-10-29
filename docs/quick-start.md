@@ -52,7 +52,7 @@ does not matter: calibration detects it. [Wiring the stepper](04-mounting/wiring
     Open [motorgui.com](https://motorgui.com/) in Chrome or Edge, choose the serial connection and **Open port** on
     the adapter's port. The driver's identity and state appear: hardware and firmware version, serial number,
     *Not calibrated*, *No errors*. If nothing connects: the port, the cable's TX/RX, the browser (Web Serial needs
-    a Chromium browser). [Motor GUI](motor-gui/index.md).
+    a Chromium browser). [Motor GUI](05-setup/motor-gui.md).
 
 === "Terminal"
     Open a terminal on the adapter's port, 256000 baud, line ending CR+LF, and type `#Info`. The driver prints its
@@ -145,7 +145,7 @@ modes are: [Control modes](06-operation/modes.md).
 
 | You want to | Read |
 |---|---|
-| see everything Motor GUI can do: tuning with plots, telemetry recordings, firmware updates | [Motor GUI](motor-gui/index.md) |
+| get to know Motor GUI: the screen, the plots, recordings, several motors | [Motor GUI](05-setup/motor-gui.md), [Working in Motor GUI](06-operation/motor-gui.md) |
 | control the driver from a program over CAN | [Over CAN](06-operation/can.md), then [With Python](06-operation/python.md) |
 | put several drivers on one bus | give each a node ID and terminate the ends: [Power and the CAN daisy chain](04-mounting/power-and-can.md) |
 | protect the motor from overheating | [Thermistor](04-mounting/thermistor.md) |

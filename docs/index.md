@@ -38,8 +38,8 @@ between firmware releases. The text and the images are licensed CC BY-SA 4.0, th
 
     ---
 
-    [The browser tool](motor-gui/index.md): connect, calibrate, tune with live plots, record telemetry, update the
-    firmware.
+    The usual way to set up and test: [the tool](05-setup/motor-gui.md) and [working in it](06-operation/motor-gui.md)
+    — connect, calibrate, tune with live plots, record telemetry, update the firmware.
 
 -   :material-code-braces:{ .lg .middle } **API reference**
 

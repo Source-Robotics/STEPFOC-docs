@@ -49,7 +49,7 @@ E-stop command and on a watchdog that runs out. The status LED and `#Error` tell
 - **CAN**, 1 Mbit/s, up to 16 drivers on one bus: compact frames for real-time control from a PC with the CANvas
   adapter, a microcontroller or a robot control box. See [Over CAN](../06-operation/can.md).
 - **Python**, the `Spectral-BLDC` library on top of CAN. See [With Python](../06-operation/python.md).
-- **Motor GUI**, in the browser, over serial or CAN. See [With Motor GUI](../06-operation/motor-gui.md).
+- **Motor GUI**, in the browser, over serial or CAN: the usual tool for setup, testing and tuning. See [Motor GUI](../05-setup/motor-gui.md).
 
 ## The status LED
 

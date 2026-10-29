@@ -1,7 +1,11 @@
 # The serial terminal
 
-The driver talks on its UART connector at 256000 baud, 8N1, 3.3 V. Any serial terminal that can send a line ending
-in CR+LF works.
+Motor GUI is the usual way to work with the driver; a plain serial terminal is the alternative, and it is what
+the console inside Motor GUI is. Everything in this manual that is done in the GUI is also one `#` command, and
+the terminal shows the driver's answers exactly as it prints them, which is useful when something does not work.
+
+The driver talks on its UART connector at 256000 baud, 8N1, 3.3 V. Any terminal that sends a line ending in
+CR+LF works.
 
 <figure markdown="span">
   ![The UART connector and the adapter](../assets/STEPFOC_UART.png){ width="900" }
@@ -57,4 +61,5 @@ calibration state. `#Help` (firmware 108) prints a short command reference, `#Er
 
 Every command starts with `#`, and a Set/Get command takes one number after a space: `#P 16384` moves to position
 16384; `#P` alone prints the position. Names are case-sensitive. The whole set is in the
-[UART reference](../reference/uart/index.md).
+[UART commands](../reference/uart/index.md) reference, and [Over UART](../06-operation/uart.md) explains the
+protocol.

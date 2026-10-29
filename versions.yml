@@ -27,12 +27,4 @@ manuals:
     published: null
     firmware: true
     applies_to: STEPFOC driver PCB v1
-    covers: "the STEPFOC stepper driver: quick start, safety, technical data, mounting, setup, operation, firmware; the API reference; guides"
-  motor-gui:
-    number: SR-5002
-    title: Motor GUI Guide
-    revision: 2026.A
-    status: draft
-    published: null
-    applies_to: Motor GUI at motorgui.com
-    covers: "the browser tool: connecting, setup and calibration, tuning, telemetry, firmware updates"
+    covers: "the STEPFOC stepper driver: quick start, safety, technical data, mounting, setup with Motor GUI or a terminal, operation, firmware; the API reference; guides"

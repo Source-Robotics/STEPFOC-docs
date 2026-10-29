@@ -27,7 +27,7 @@ theme:
     edit: material/pencil
     view: material/eye
   features:
-    - navigation.tabs          # one tab per document: Manual, Motor GUI, API reference, Guides, Support
+    - navigation.tabs          # one tab per part: Manual, API reference, Guides, Support
     - navigation.tabs.sticky
     - navigation.sections      # the bold sidebar groups
     - navigation.indexes       # a chapter is a folder with its own page
@@ -141,9 +141,6 @@ extra:
     - prefix: ""
       name: Source-Robotics/STEPFOC-stepper-controller
       url: https://github.com/Source-Robotics/STEPFOC-stepper-controller
-    - prefix: motor-gui/
-      name: motorgui.com
-      url: https://motorgui.com/
     - prefix: guides/
       name: Source-Robotics/Spectral-BLDC-Python
       url: https://github.com/Source-Robotics/Spectral-BLDC-Python
@@ -214,6 +211,7 @@ nav:
               - Thermistor: 04-mounting/thermistor.md
           - 5. First setup:
               - 05-setup/index.md
+              - Motor GUI: 05-setup/motor-gui.md
               - The serial terminal: 05-setup/terminal.md
               - Motor parameters and calibration: 05-setup/calibration.md
               - Current limit and loop tuning: 05-setup/tuning.md
@@ -224,7 +222,7 @@ nav:
               - Over UART: 06-operation/uart.md
               - Over CAN: 06-operation/can.md
               - With Python: 06-operation/python.md
-              - With Motor GUI: 06-operation/motor-gui.md
+              - Working in Motor GUI: 06-operation/motor-gui.md
               - Errors and recovery: 06-operation/errors.md
               - Gripper mode: 06-operation/gripper-mode.md
           - 7. Firmware:
@@ -243,20 +241,6 @@ nav:
       - Resources:
           - Glossary: terminology.md
           - CAD and downloads: cad-files.md
-
-  - Motor GUI:
-      - motor-gui/index.md
-      - Before you start:
-          - About this guide: motor-gui/about.md
-      - Chapters:
-          - 1. Getting started: motor-gui/01-getting-started.md
-          - 2. Setup and calibration: motor-gui/03-setup-and-calibration.md
-          - 3. Tuning: motor-gui/04-tuning.md
-          - 4. Telemetry and recordings: motor-gui/05-telemetry.md
-          - 5. Firmware updates: motor-gui/06-firmware-updates.md
-          - 6. Several motors: motor-gui/07-several-motors.md
-          - 7. Gripper: motor-gui/08-gripper.md
-          - Troubleshooting: motor-gui/troubleshooting.md
 
   - API reference:
       - reference/index.md

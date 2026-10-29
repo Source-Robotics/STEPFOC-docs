@@ -51,8 +51,8 @@ start.
 
 ## Software
 
-- A serial terminal: PuTTY, the PlatformIO monitor in VS Code, or the Arduino serial monitor; see
+- [Motor GUI](https://motorgui.com/), in the browser, over the serial adapter or the CAN adapter: the usual tool
+  for setup, calibration, tuning, plots and firmware updates; see [Motor GUI](../05-setup/motor-gui.md).
+- Or a serial terminal: PuTTY, the PlatformIO monitor in VS Code, or the Arduino serial monitor; see
   [The serial terminal](../05-setup/terminal.md).
-- [Motor GUI](https://motorgui.com/), in the browser, over the serial adapter or the CAN adapter: tuning, plots,
-  and firmware updates.
 - The Python library `Spectral-BLDC` for CAN control from your own programs; see [With Python](../06-operation/python.md).

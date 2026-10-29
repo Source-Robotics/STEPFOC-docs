@@ -9,7 +9,7 @@ the two tools on top of them, what happens when something goes wrong, and grippe
 - [Over UART](uart.md)
 - [Over CAN](can.md)
 - [With Python](python.md)
-- [With Motor GUI](motor-gui.md)
+- [Working in Motor GUI](motor-gui.md)
 - [Errors and recovery](errors.md)
 - [Gripper mode](gripper-mode.md)
 
