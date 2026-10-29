@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
-"""Tests for hooks/versions.py. No network. Run: python tools/test_tools.py (the build check runs it on every push)."""
+"""Tests for hooks/versions.py, hooks/firmware_pages.py and the shipped data files. No network, no firmware
+repository: fixtures and the files in the repository. Run: python tools/test_tools.py (the build check runs it on
+every push)."""
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 import tempfile
 from pathlib import Path
+
+import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 fails = []
@@ -25,8 +30,10 @@ def load_module(name, path):
 
 
 hook = load_module("versions_hook", ROOT / "hooks" / "versions.py")
+pages = load_module("firmware_pages", ROOT / "hooks" / "firmware_pages.py")
 from mkdocs.exceptions import PluginError  # noqa: E402
 
+# ---------------------------------------------------------------- the version hook
 GOOD = """docs_version: "108"
 firmware: {repository: x, tag: V108}
 manuals:
@@ -83,6 +90,62 @@ check("A8 the shipped versions.yml loads", bool(shipped["docs_version"]))
 check("A9 every placeholder in the docs names a manual of versions.yml",
       all(k in shipped["manuals"]
           for p in (ROOT / "docs").rglob("*.md") for k in hook.META_RE.findall(p.read_text(encoding="utf-8"))))
+
+# ---------------------------------------------------------------- the firmware pages
+try:
+    d = pages.load()
+    loaded, load_err = True, ""
+except PluginError as exc:
+    d, loaded, load_err = None, False, str(exc)
+check("B1 the shipped facts and descriptions load and agree (every command described, layouts fit the frames)", loaded, load_err)
+if loaded:
+    facts = d["facts"]
+    check("B2 the generated facts are from the release versions.yml names", facts["tag"] == shipped["firmware"]["tag"]
+          and facts["version"] == shipped["docs_version"], f"{facts['tag']} vs {shipped['firmware']['tag']}")
+    missing = [g["page"] for src in (d["can"], d["uart"]) for g in src["groups"].values()]
+    missing = [p for p, base in zip(missing, ["can"] * len(d["can"]["groups"]) + ["uart"] * len(d["uart"]["groups"]))
+               if not (ROOT / "docs" / "reference" / base / p).exists()]
+    check("B3 every command group has its reference page", not missing, str(missing))
+    check("B4 the compatibility table has a row for this docs version",
+          any(str(r.get("firmware")) == shipped["docs_version"] for r in d["compat"]["rows"]))
+    check("B5 every column of the compatibility table has a key and a title",
+          all("key" in c and "title" in c for c in d["compat"]["columns"]))
+    gen = ROOT / "docs" / "includes" / "generated" / "firmware_release_notes.md"
+    check("B6 the release notes cover the release this site describes",
+          gen.exists() and f"## {shipped['firmware']['tag']} (" in gen.read_text(encoding="utf-8"))
+    # the hook refuses a description file that drifts from the facts
+    bad_can = json.loads(json.dumps(d["can"]))
+    bad_can["commands"].pop("IN_ESTOP")
+    try:
+        pages.check(facts, bad_can, d["uart"])
+        refused = False
+    except PluginError:
+        refused = True
+    check("B7 a CAN command the firmware has but the descriptions lack stops the build", refused)
+    bad_can = json.loads(json.dumps(d["can"]))
+    bad_can["commands"]["IN_KPP"]["forms"][0]["fields"][0]["bytes"] = "0-7"
+    try:
+        pages.check(facts, bad_can, d["uart"])
+        refused = False
+    except PluginError:
+        refused = True
+    check("B8 a byte layout that does not fit the frame stops the build", refused)
+    bad_uart = json.loads(json.dumps(d["uart"]))
+    bad_uart["commands"]["Nope"] = {"group": "utility", "description": "x"}
+    try:
+        pages.check(facts, d["can"], bad_uart)
+        refused = False
+    except PluginError:
+        refused = True
+    check("B9 a UART command the firmware lacks stops the build", refused)
+    # the rendered tables name every command
+    over = pages.can_overview(d)
+    check("B10 the CAN overview lists every command ID", all(f"| {e['id']} |" in over for e in facts["can"]["ids"]))
+    uo = pages.uart_overview(d)
+    check("B11 the UART overview lists every handler", all(f"`#{h['name']}`" in uo for h in facts["uart"]["handlers"]))
+    sec = pages.can_section("IN_DATA_PACK_1", d["can"]["commands"]["IN_DATA_PACK_1"], d)
+    check("B12 a command section: facts strip, the accepted lengths, the answer",
+          "cmd-facts" in sec and "8 bytes" in sec and "Respond_data_pack_1" in sec, sec[:200])
 
 print(f"\n{len(fails)} failure(s)" if fails else "\nall checks passed")
 sys.exit(1 if fails else 0)

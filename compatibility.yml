@@ -1,0 +1,54 @@
+# Which firmware release works with what. One row per firmware release, newest first. hooks/firmware_pages.py
+# writes it into the "Versions and compatibility" page (<!-- compatibility-table -->); tools/test_tools.py checks
+# that docs_version has a row. The firmware repository has no compatibility file of its own, so this is the source.
+columns:
+  - {key: firmware, title: Firmware}
+  - {key: date, title: Released}
+  - {key: bootloader, title: Bootloader}
+  - {key: spectral, title: Spectral Micro equivalent}
+  - {key: python, title: Python library (Spectral-BLDC)}
+  - {key: runtime, title: PAR6 runtime}
+  - {key: pcb, title: STEPFOC PCB}
+  - {key: docs, title: Docs}
+
+rows:
+  - firmware: "108"
+    date: 2026-08-26
+    bootloader: required (installed on boards shipped with 104 or newer)
+    spectral: "107"
+    python: 1.20 or newer
+    runtime: 0.9 or newer
+    pcb: v1
+    docs: "108"
+  - firmware: "107"
+    date: 2026-08-24
+    bootloader: required
+    spectral: "106"
+    python: 1.20 or newer
+    runtime: 0.9 or newer
+    pcb: v1
+    docs: not published
+  - firmware: "106"
+    date: 2026-07-05
+    bootloader: required
+    spectral: "106"
+    python: 1.19 or newer
+    runtime: 0.9 or newer
+    pcb: v1
+    docs: not published
+  - firmware: "105"
+    date: 2026-07-04
+    bootloader: required (the first release that needs it)
+    spectral: "105"
+    python: 1.19 or newer
+    runtime: 0.9 or newer
+    pcb: v1
+    docs: not published
+  - firmware: "103"
+    date: 2025-12-28
+    bootloader: none (flashed with a programming adapter)
+    spectral: "101"
+    python: 1.17 or newer
+    runtime: 0.9 or newer
+    pcb: v1
+    docs: "103"
