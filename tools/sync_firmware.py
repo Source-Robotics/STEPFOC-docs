@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read the STEPFOC firmware at a release tag and write the generated files the reference pages are built from (the
+"""Read the firmware at a release tag and write the generated files the reference pages are built from (the
 same idea as par6's tools/sync_runtime.py: facts come from the TAGGED code, never from uncommitted work).
 
     python tools/sync_firmware.py                      write docs/includes/generated/ from firmware.tag in versions.yml
