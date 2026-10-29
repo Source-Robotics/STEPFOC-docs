@@ -5,7 +5,7 @@ and B−**. Which coil is A and which is B does not matter, and neither does the
 and newer finds the wiring during calibration and compensates it.
 
 <figure markdown="span">
-  ![Motor terminals and connectors](../assets/STEPFOC_CONN.png){ width="900" }
+  ![Motor terminals and connectors](../assets/STEPFOC_CONN.webp){ width="900" }
   <figcaption>Figure 7: The motor terminals A+, A−, B+, B− and the other connectors.</figcaption>
 </figure>
 

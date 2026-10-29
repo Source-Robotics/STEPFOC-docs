@@ -30,7 +30,7 @@ while an error is active.
 ## Positive rotation
 
 <figure markdown="span">
-  ![Positive rotation](../assets/STEPFOC_ORIENTATION.png){ width="700" }
+  ![Positive rotation](../assets/STEPFOC_ORIENTATION.webp){ width="700" }
   <figcaption>Figure 15: Positive rotation is counter-clockwise looking at the encoder magnet. A positive current turns the motor that way, a positive speed too, and the position grows.</figcaption>
 </figure>
 

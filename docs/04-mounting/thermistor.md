@@ -4,7 +4,7 @@ A 100 kΩ NTC thermistor on the motor lets the driver stop before the motor over
 default; use it on any motor that runs near its rated current for long.
 
 <figure markdown="span">
-  ![The thermistor connector](../assets/STEPFOC_THERMISTOR-Photoroom.png){ width="520" }
+  ![The thermistor connector](../assets/STEPFOC_THERMISTOR-Photoroom.webp){ width="520" }
   <figcaption>Figure 11: The thermistor on its 2-pin connector.</figcaption>
 </figure>
 

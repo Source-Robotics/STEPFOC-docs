@@ -20,7 +20,7 @@ once, with a programming adapter on the JTAG connector. After that, every update
   its `README.md` names the current file.
 
 <figure markdown="span">
-  ![The JTAG pads and the adapter](../assets/STEPFOC_JTAG.png){ width="700" }
+  ![The JTAG pads and the adapter](../assets/STEPFOC_JTAG.webp){ width="700" }
   <figcaption>Figure 18: The JTAG pads. The adapter is pressed onto them; a little pressure makes the contact.</figcaption>
 </figure>
 

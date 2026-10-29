@@ -5,7 +5,7 @@ hide:
 
 # STEPFOC Manual
 
-![STEPFOC driver](assets/STEPFOC.png){ .hero }
+![STEPFOC driver](assets/STEPFOC.webp){ .hero }
 
 <!-- doc-meta: stepfoc -->
 

@@ -7,7 +7,7 @@ runs quietly and efficiently, never loses steps, reports its position, and can b
 current (torque) or impedance.
 
 <figure markdown="span">
-  ![The STEPFOC driver](../assets/STEPFOC.png){ width="520" }
+  ![The STEPFOC driver](../assets/STEPFOC.webp){ width="520" }
   <figcaption>Figure 1: The STEPFOC driver, 39 × 39 mm, with the encoder chip in the middle of the board.</figcaption>
 </figure>
 

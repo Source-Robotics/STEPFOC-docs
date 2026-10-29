@@ -47,7 +47,7 @@ value left at 0, and accepts only 50, 75, 100 or 125 pole pairs.
     ```
 
 <figure markdown="span">
-  ![An example datasheet](../assets/Motor_specs.png){ width="900" }
+  ![An example datasheet](../assets/Motor_specs.webp){ width="900" }
   <figcaption>Figure 17: The three values on a typical datasheet, here for the 17HS16-2004S1: 1.8°, 1.1 Ω, 2.6 mH.</figcaption>
 </figure>
 

@@ -13,8 +13,8 @@ coil, which is what you enter with `#R` and `#L` before calibration.
 
 <div class="grid" markdown>
 ![17HS08-1004S](../assets/17HS08-1004S.jpg){ width="160" }
-![17HS16-2004S1](../assets/17HS16-2004S1.jpg){ width="160" }
-![17HS24-2104S](../assets/17HS24-2104S.jpg){ width="160" }
+![17HS16-2004S1](../assets/17HS16-2004S1.webp){ width="160" }
+![17HS24-2104S](../assets/17HS24-2104S.webp){ width="160" }
 ![23HM22-2804S](../assets/23HM22-2804S.jpg){ width="160" }
 </div>
 
