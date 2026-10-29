@@ -1,5 +1,8 @@
 # Quadruped robot guide
 
+!!! note "Written with the Spectral Micro"
+    This guide was written with the Spectral Micro BLDC driver. STEPFOC uses the same CAN commands and the same Python library, so the same code runs on STEPFOC: where the guide says "Spectral Micro BLDC", read "STEPFOC".
+
 ## Intro
 In this guide we will show you how you can control a leg of any quadruped robot using Spectral micro BLDC drivers. <br />If you can control one of them you can control all the rest!<br />
 
@@ -354,7 +357,4 @@ def plot_data(filename):
 filename = 'C:\\Users\\xx\\Desktop\\test_code\\env\\Robot_leg\\data_2.txt'  # Replace with your actual filename
 plot_data(filename)
 
-
-!!! note "Written with the Spectral Micro"
-    This guide was written with the Spectral Micro BLDC driver. STEPFOC uses the same CAN commands and the same Python library, so the same code runs on STEPFOC: where the guide says "Spectral Micro BLDC", read "STEPFOC".
 ```

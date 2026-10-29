@@ -1,5 +1,8 @@
 # Bilateral teleoperation guide
 
+!!! note "Written with the Spectral Micro"
+    This guide was written with the Spectral Micro BLDC driver. STEPFOC uses the same CAN commands and the same Python library, so the same code runs on STEPFOC: where the guide says "Spectral Micro BLDC", read "STEPFOC".
+
 ## What is bilateral teleoperation?
 Bilateral teleoperation is a concept that Involves two-way communication where both the operator and the remote device send and receive feedback. The operator controls the device remotely and receives sensory feedback (such as force) from the device to adjust their actions.
 
@@ -132,6 +135,3 @@ while(1):
     # There are no delays here, we send as fast as possible!
 
 ```
-
-!!! note "Written with the Spectral Micro"
-    This guide was written with the Spectral Micro BLDC driver. STEPFOC uses the same CAN commands and the same Python library, so the same code runs on STEPFOC: where the guide says "Spectral Micro BLDC", read "STEPFOC".

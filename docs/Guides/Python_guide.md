@@ -1,5 +1,8 @@
 # Python guide
 
+!!! note "Written with the Spectral Micro"
+    This guide was written with the Spectral Micro BLDC driver. STEPFOC uses the same CAN commands and the same Python library, so the same code runs on STEPFOC: where the guide says "Spectral Micro BLDC", read "STEPFOC".
+
 More examples are in the [Spectral-BLDC-Python examples folder](https://github.com/Source-Robotics/Spectral-BLDC-Python/tree/main/examples).
 
 ## Examples
@@ -41,7 +44,4 @@ while True:
         print("No message after timeout period!")
     print("")
     time.sleep(1 )
-
-!!! note "Written with the Spectral Micro"
-    This guide was written with the Spectral Micro BLDC driver. STEPFOC uses the same CAN commands and the same Python library, so the same code runs on STEPFOC: where the guide says "Spectral Micro BLDC", read "STEPFOC".
 ```
