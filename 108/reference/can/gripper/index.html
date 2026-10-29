@@ -3571,7 +3571,7 @@
 <p>The commands of gripper mode (<code>#Gripper 1</code>, saved).</p>
 <h3 id="send_gripper_data_pack">Send_gripper_data_pack<a class="headerlink" href="#send_gripper_data_pack" title="Permanent link">&para;</a></h3>
 <div class="cmd-facts">
-<p><span class="fact">ID 61</span><span class="fact">host → driver</span><span class="fact">5 bytes</span><span class="fact">Python: <code>Send_gripper_data_pack()</code></span></p>
+<p><span class="fact">ID 61</span><span class="fact">host → driver</span><span class="fact">0 or 5 bytes</span><span class="fact">Python: <code>Send_gripper_data_pack()</code></span></p>
 </div>
 <p>The gripper command, for a driver set up as a gripper (<code>#Gripper 1</code>, saved). Position, speed and the current limit of the move, plus the activate, action and E-stop bits. A move is carried out only while the gripper is calibrated, activated and the action bit is 1. An empty frame (0 bytes) only asks for the state.</p>
 <p><strong>5 bytes</strong></p>
@@ -3637,7 +3637,7 @@
 </tr>
 </tbody>
 </table>
-<p>The driver does not answer this command.</p>
+<p>The driver answers with <strong>Respond_Gripper_data_pack</strong>.</p>
 <hr />
 <h3 id="send_gripper_calibrate">Send_gripper_calibrate<a class="headerlink" href="#send_gripper_calibrate" title="Permanent link">&para;</a></h3>
 <div class="cmd-facts">
