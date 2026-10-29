@@ -2,3 +2,4 @@
 # Serve locally: mkdocs serve        Publish: .github/workflows/publish.yml (mike), never mkdocs gh-deploy
 mkdocs-material[imaging]==9.7.7
 mike==2.1.3                      # versioned docs: one deployed version per firmware release + "latest"
+mkdocs-glightbox==0.4.0          # click an image to zoom (the glightbox plugin in mkdocs.yml)
