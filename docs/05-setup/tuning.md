@@ -1,106 +1,83 @@
-# PID tuning
+# Current limit and loop tuning
 
-Tuning the motor controller is crucial for maximizing the performance of any motor controller. Proper tuning ensures that the controller can swiftly respond to disturbances  like external forces or changes in the setpoint, without going unstable.
+Calibration leaves the driver with current loop gains computed for your motor and with conservative velocity and
+position gains. Two things remain: the current limit, which you must set for your motor, and the loop gains, which
+you tune if the defaults do not suit it.
 
-The process of tuning PID gains typically involves iterative adjustments, demanding a systematic approach to attain the desired performance level. Here's a fundamental guide for tuning the PID gains tailored for your STEPFOC controller:
+## The current limit
 
-*  Ensure that the motor's behavior won't lead to damage or injury in case of unexpected oscillations or erratic movements. 
-* Secure the stator assembly firmly to prevent loosening in the event of oscillations.
-* Conduct PID tuning without any gearbox or additional objects attached to the motor's rotor. This approach helps isolate the motor's response for more accurate tuning.
-* If the default PID gains induce oscillations, reduce all gains until the system stabilizes. Incrementally adjust the gains, making small changes at a time.
+```
+#Ilim 1500
+#Save
+```
 
-To tune PID loops you can use UART protocol or CAN protocol. We recommend UART and here we will showcase example commands for UART protocol.
-To tune the controller you will need to have it fully calibrated and without any active errors. Otherwise it will not allow you to enter any of the needed modes like: position, speed or current mode.
+Set `#Ilim` to the rated phase current of your motor in mA (the datasheet value; the tested motors' ratings are
+in [Tested motors](../03-technical-data/tested-motors.md)). The firmware clamps the limit to the driver's 2800 mA
+and does not trip on phase current by itself; the MOSFET driver's hardware protection only catches a hard fault.
+A limit above the motor's rating overheats the motor.
 
-## Tuning cascade position, velocity and current controller
+Crunching and whining sounds at speed usually mean the current limit, or the current loop gains, are too high.
 
-<img src="../assets/cascadeloop.png" alt="cascadeloop" width="1000"/> <br /> </p>
+## The loops
 
-For tuning the cascaded structure, we should first focus on the inner loops and move outward.
+<figure markdown="span">
+  ![The cascaded loops](../assets/cascadeloop.png){ width="800" }
+  <figcaption>Figure 13: The position loop commands the velocity loop, which commands the current loop.</figcaption>
+</figure>
 
-### Tuning the Current controller
+Tune from the inside out: the current loop first, then velocity, then position. Before you start:
 
-The innermost stage is always a current/torque controller that accepts torque/current requests and uses a PI controller to select voltage (PWM values) to achieve that current. You need to pick Kp and Ki for that loop. If they are too large, they can create audible noise or instability. If they are too small, the response to changes in commanded torque or disturbances will be reduced.
+- The motor must be calibrated and without active errors; the driver refuses the control modes otherwise.
+- Fix the motor to the bench, nothing on the shaft. A loop that oscillates can shake a loose motor off the table.
+- If the defaults oscillate, lower all gains until the motor is quiet, then raise them one at a time in small steps.
 
-Torque bandwidth (current loop bandwidth) is measure of how fast a system can respond to those commands or disturbances. 
-Current controller can be auto tuned during the calibration by selecting desired torque/current bandwidth (UART command #Cbw).  Motor calibration measures your motor’s  phase resistance and phase inductance. It uses this information and desired torque bandwidth setpoint to set its current controller gains.
-Default torque bandwidth is 500 Hz. 
+### The current loop
 
-**Generally in industry bandwidths of more than 800 Hz are standard.** Higher torque bandwidth is desired for legged robots, or other applications where it is necessary to respond to external disturbances as fast as possible. Higher torque bandwidths will result in audible noise and if they are too large in drive instability.
+The current loop is a PI controller that turns a current request into a voltage. Calibration sets its gains
+`Kpiq` and `Kiiq` from the motor's resistance and inductance and the bandwidth `#Cbw` (500 Hz by default; set it
+before `#Cal`). For a stepper these computed gains are a starting point; tune by hand if the motor hums or responds
+slowly:
 
-We recommend tuning the current controller gains with auto tune feature in #Cal command.
+1. Raise `#Kpiq` until the motor starts to hum or oscillate, then back off 20 %.
+2. Raise `#Kiiq` the same way, then back off a little.
+3. Test with `#Iq 300`: the motor should push with a steady, quiet torque. Keep the current well under the limit.
 
-If you want to tune it by hand:
+A higher bandwidth responds faster to a disturbance and is louder; 800 Hz and more is common in industry, and
+useful for legged robots.
 
-1. Increase proportional gain until system starts to become unstable (it will oscillate or create humming sounds). Use command #Kpiq
-2. Reduce that value by 20% and confirm that there is no oscillation. If it still oscillates reduce it more.
-3. Now slowly increase Ki until system starts to become unstable (it will oscillate or create humming sounds). Use command #Kiiq
-4. Reduce the value slightly until it becomes stable.
+### The velocity loop
 
-To test the current controller you will need to issue a #Iq VALUE Command. VALUE will be the value of Iq current you want as a setpoint, make sure it is not too large and that your motor can handle it.
+1. Raise `#Kpv` until the motor oscillates at a steady speed command, then back off 20 %.
+2. Raise `#Kiv` slowly until it oscillates, then back off a little. `Kiv` is an integrator: too much makes the
+   motor unstable, none leaves a steady-state error.
+3. Test with `#V 20000` (encoder ticks per second; 16384 is one revolution per second) and with different speeds.
 
-### Tuning the velocity controller
+### The position loop
 
-So after making sure the Torque loop works in an acceptable manner, we can start tuning velocity controller. 
+1. Raise `#Kpp` until the motor overshoots or oscillates when it reaches a target, then back off.
+2. Test with `#P 16384` and `#P 0`: one revolution and back. The response should be quick, without overshoot.
 
-1. Controllers come preloaded with weak gains. If it oscillates with them reduce Kp and Ki to 0.
-2. Increase proportional velocity gain until system starts to become unstable (it will oscillate or create humming sounds). Use command #Kpv
-3. Reduce that value by 20% and confirm that there is no oscillation. If it still oscillates reduce it more.
-4. Now slowly increase Ki until system starts to become unstable (it will oscillate or create humming sounds). Use command #Kiv
+### Testing
 
-!!! tip "Tip"
-    Bear in mind that the Ki gain is highly sensitive as it acts as an integrator accumulating over time. Setting excessively high values for Ki can potentially render your system unstable. For some motors, setting the Speed controller Ki to zero and relying solely on the Speed controller Kp gain might be adequate. However, in such cases, getting a zero steady-state error is hard. Therefore, the Ki gain plays a important role in both reaching the desired goal and sustaining it over time.
+Run the motor over the whole range of speeds and loads it will see, with a load if you can, and adjust. Then
+`#Save`.
 
-5. Reduce the value of Ki slightly until it becomes stable.
-6. If you think you tuned your controller start to experiment with different speeds and see how it reacts and tracks them.
+## Impedance (PD) mode
 
- Give the motor #V VALUE command. VALUE will be the value of velocity in encoder ticks/s we want to achieve, make sure it is not to large or too small and that your motor can handle it.
+<figure markdown="span">
+  ![The PD loop](../assets/PDloop.png){ width="800" }
+  <figcaption>Figure 14: The impedance loop: a spring (KP) and a damper (KD) around the position setpoint, plus a current feedforward.</figcaption>
+</figure>
 
-### Tuning the position controller
+In PD mode the motor behaves like a spring and a damper: the torque is `KP × (setpoint − position) + KD × (speed
+setpoint − speed) + feedforward current`. Set `#KP` and `#KD` (or Send_PD_Gains), then command with `#PD`, `#PDV`
+and `#PDI` or Send_data_pack_PD. Start with a small `KP` and `KD` of 0, raise `KP` until the motor holds position
+firmly, then add `KD` until it stops ringing.
 
-1. Controllers come preloaded with weak proportional gain. If it oscillates with it reduce it to 0.
-2. Start increasing the proportional gain. The system will use the already-tuned current and velocity controller as inner loops. Use command #Kpp
-3. Increase until you notice overshoot in the position response. If overshooting is excessive or oscillations start, reduce the gain slightly until satisfactory performance is achieved without instability.
-4. Ideally, the response should be quick to reach the desired position but without excessive oscillations.
+## Limits
 
-You can set motor position command by using #P VALUE. VALUE will be the value of position in encoder ticks.
-
-### Testing the cascade controller
-
-If you think you system is tuned:
-
-1. Conduct tests across the entire spectrum of operational conditions to verify stability and performance under various scenarios.
-2. If possible, introduce disturbances such as changes in load to assess the system's robustness and response to external factors.
-3. Based on real-world performance observations, adjust the gains as necessary to optimize the system's behavior and ensure consistent performance across different conditions.
-4. If you think you tuned your controller start to experiment with different speeds and see how it reacts and tracks them.
-
-## Tuning impedance PD controller
-
-<img src="../assets/PDloop.png" alt="PDloop" width="1000"/> <br /> </p>
-
-## Velocity limits
-
-To get an estimate of how fast your motor can spin use this formula:<br />
-Max_velocity [encoder ticks /s] = ((0.8 * Vbus * KV) * 16384) / 60 
-
-## Current limits
-
-Changes from motor to motor. 
-The MOSFET driver stage shuts down by itself on overcurrent or overtemperature (a hardware protection). The firmware does not trip on phase current in software: check the current limit with `#Ilim` and set it to the rated phase current of your motor before you test (the firmware clamps it to 2800 mA).
-Motor temperature is important here. To not to destroy your motor; carefully select your current limits based on rated power of the motor your testing.
-
-You hear crunching and whining sounds. Your current limit might be too high, lower it.
-
-## Integral accumulator reset
-
-Here's why resetting the integral accumulator might be advantageous:
-
-* Segmented Velocity Profile: If your velocity profile consists of distinct segments with different velocities, resetting the integral accumulator when transitioning between segments can help prevent integral windup. This ensures that the integral term doesn't accumulate excessive error during the transition, which could lead to overshoot or instability.
-
-* Reducing Error Accumulation: Resetting the integral term allows the controller to start accumulating error from the new setpoint, which can help maintain accuracy and responsiveness, particularly if there are sudden changes or disturbances in the system.
-
-* Improved Response: By resetting the integral term, you ensure that the controller responds promptly to changes in the velocity profile without being influenced by past errors that may no longer be relevant.
-
-However, it's essential to consider the dynamics of your system and the characteristics of the velocity profile. If the transitions between velocity segments are smooth and gradual, or if the feedforward component adequately compensates for changes in velocity, resetting the integral term may not be necessary.
-
-Ultimately, it may require some experimentation and tuning to determine the optimal behavior for your specific application, taking into account factors such as stability, response time, and accuracy.
+- `#Vlimit` clamps the speed the loops may command (encoder ticks per second). A rough maximum for your motor is
+  0.8 × Vbus × KV × 16384 / 60 ticks per second, with KV from calibration.
+- `#Vlim` clamps the voltage of the current loops in mV; 0 uses the supply voltage.
+- `#Rstint 1` resets the integrators on every new setpoint, which avoids windup when a program sends one setpoint
+  after another with large steps.

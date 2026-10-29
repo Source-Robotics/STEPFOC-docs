@@ -1,5 +1,8 @@
 # Gravity compensation
 
+!!! note "Written with the Spectral Micro"
+    This guide was written with the Spectral Micro BLDC driver. STEPFOC uses the same CAN commands and the same Python library, so the same code runs on STEPFOC: where the guide says "Spectral Micro BLDC", read "STEPFOC".
+
 <iframe width="560" height="315" src="https://www.youtube.com/embed/ax6jpcH3168?si=d5UKeyYru_Y35xdS" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## What is Gravity Compensation?
@@ -18,7 +21,4 @@ For more info check the full guide here: https://source-robotics.com/blogs/blog/
 
 Github repos with examples are here: https://github.com/Source-Robotics/Spectral-BLDC-Python/blob/main/examples/Advanced/Gravity%20compensation/BOM.md
 
-
-!!! note "Written with the Spectral Micro"
-    This guide was written with the Spectral Micro BLDC driver. STEPFOC uses the same CAN commands and the same Python library, so the same code runs on STEPFOC: where the guide says "Spectral Micro BLDC", read "STEPFOC".
 https://github.com/Source-Robotics/Spectral-BLDC-Python/tree/main/examples/Advanced/Gravity%20compensation

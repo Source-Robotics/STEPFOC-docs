@@ -1,159 +1,115 @@
-# Calibration
+# Motor parameters and calibration
 
-STEPFOC firmware has autocalibration feature that allows you to automatically detect and tune your motor parameters. It detects the following:
+Calibration teaches the driver its motor: it checks the magnet and the supply, takes the motor's resistance,
+inductance and pole pairs from you, computes the current loop gains, spins the motor in open loop to learn the
+direction of the wiring, finds the angle offset between the encoder and the motor's electrical zero, and measures
+the motor constants Kt, KV and the flux linkage. It runs once per motor; the result is kept with `#Save`.
 
-* Motor phase order (checked; if it is wrong you are told to swap the phases)
-* Current loop PID parameters
-* Motor Kt, KV
-* Fine tune electrical angle
+!!! danger "The motor turns"
+    Calibration spins the motor in both directions, fast at times. Fix the motor to the bench and take everything
+    off the shaft.
 
-!!! tip "Vbus voltage"
-    When calibrating the motor use 24V supply voltage for the best results! 
-    Using smaller voltage may result in incorrect Resistance, inductance and kt and other parameters!
+!!! tip "Supply voltage"
+    Calibrate at 24 V. At a lower voltage the KV and Kt come out wrong.
 
-## Positive rotation
+## 1. Enter the motor parameters
 
-!!! tip "In STEPFOC firmware positive rotation is always counter-clockwise. That means that positive current will result in rotation in that direction. Positive speed setpoint will rotate motor in that direction and rotating in that direction will increase motor position!"
+STEPFOC does not measure the resistance and inductance of a stepper (the Spectral Micro does for a BLDC); you
+enter them from the motor's datasheet, as the values of **one coil**, and the pole pairs. Calibration fails on a
+value left at 0, and accepts only 50, 75, 100 or 125 pole pairs.
 
-<p align="left"> <img src="../assets/STEPFOC_ORIENTATION.png" alt="STEPFOC ORIENTATION" width="1250"/> <br /> </p>
+```
+#PP 50          1.8° stepper: 50; 1.2°: 75; 0.9°: 100; 0.72°: 125
+#R 1.1          phase resistance in ohms
+#L 0.0026       phase inductance in henries (2.6 mH)
+```
 
-## Calibration settings
+<figure markdown="span">
+  ![An example datasheet](../assets/Motor_specs.png){ width="900" }
+  <figcaption>Figure 17: The three values on a typical datasheet, here for the 17HS16-2004S1: 1.8°, 1.1 Ω, 2.6 mH.</figcaption>
+</figure>
 
-**Note that the values that STEPFOC calculate are only estimations and if you want to get exact values use high precision instruments to measure them.**
+The current loop bandwidth `#Cbw` (500 Hz by default) decides the gains calibration computes from R and L;
+leave it for now, [Current limit and loop tuning](tuning.md) comes back to it.
 
-!!! note "Resistance, Inductance and pole pair"
-    You will **NEED** to enter Resistance, Inductance and pole pair manually. STEPFOC will not calculate those for you and will return error if you don't change default values. Use #R, #L and #PP to enter the values listed in the spec sheet of your stepper motor!
+## 2. Run it
 
-!!! example "Example motor"
-    <p align="left"> <img src="../assets/Motor_specs.png" alt="Motor specs" width="1250"/> <br /> </p>
+```
+#Cal
+```
 
-    For this motor enter:
+The LED flashes every 0.5 s while the routine runs. It prints each step as it goes:
 
-        #PP 50
-        #R 1.1
-        #L 0.0026
+```
+----------------
+Calibration mode
+----------------
+Pole pair test: Passed
+Magnet test: Passed
+Vbus test: Passed
+Resistance = 1.100000Ohm
+Inductance = 0.002600H
+Kp_iq = ...
+Ki_iq = ...
+Open loop direction: good
+Angle offset is: ...
+Phase order is good!
+KV is: ...
+Kt is: ...
+Flux linkage is: ...
+----------------
+Calibration success!
+Save config with #Save
+Going to idle!
+----------------
+```
 
-For 1.8 deg stepper enter #PP 50 <br />
-For 1.2 deg stepper enter #PP 75 <br />
-For 0.9 deg stepper enter #PP 100 <br />
-For 0.72 deg stepper enter #PP 125 <br />
+What the steps are:
 
-## Calling calibration routine
+| Step | What happens | Fails with |
+|---|---|---|
+| Pole pair test | the entered `#PP` is one of 50, 75, 100, 125 | `Pole pair test: Failed` and the list of values |
+| Magnet test | the encoder sees enough field | `Magnet test: Failed`: magnet missing, too far, or axially magnetised |
+| Vbus test | the supply is within limits | `Vbus test: Failed` |
+| Resistance, inductance | the entered `#R` and `#L` are not 0; they are printed back and Kp_iq, Ki_iq computed from them and `#Cbw` | `Resistance test: Failed` / `Inductance test: Failed`, with `Please enter your stepper resistance by using #R command` |
+| Open loop | the motor is stepped open loop; the encoder must see it turn. The direction it turned is remembered, so a reversed coil is compensated from here on | `Open loop: Failed` / `Switch motor phases and try again!`: the encoder saw no rotation |
+| Angle offset | the motor is driven to find the offset between encoder zero and electrical zero. It spins quickly one way, then the other, for up to two minutes | `Phase order is wrong!` / `Switch motor phases and try again!`: the commutation check got no response from the motor on two tries. A line `Spin-confirm delta: … ticks (need > 8192), Vbus: … mV` says how far the motor turned and at what voltage |
+| Kt, KV, flux linkage | the motor spins fast for a moment and the constants are computed from the back-EMF | — |
 
-Calibration routine can only be called from the UART interface. The command is:<br />
+!!! note "The two 'Switch motor phases' messages"
+    They are left over from firmware 103, which needed the coils wired a particular way. Since firmware 105 the
+    wiring is detected and compensated, so these messages mean the motor did not turn or did not respond: a coil
+    not connected or shorted, a current limit at 0, a supply too weak, or a magnet that slips. Swapping wires does
+    not fix them.
 
-    #Cal
+## 3. Save
 
-## Calibration routine output
+```
+#Save
+```
 
-!!! note "Note"
-    Values that our calibration routine returns here are specific to motor we tested. Your numbers WILL be different!
+Without it the calibration is gone at the next power cycle. The driver now holds position in idle? No: it goes to
+idle and the LED shows normal operation. `#Info` shows `Calibrated` and the constants.
 
-!!! tip "Tip"
-    In case your motor stays in one step of the calibration routine too long issues a **#Reset** command and try again. Also do that in case you don't get full log messages from the routine.
+## When to calibrate again
 
-After calling calibration routine the following will happen:
+- After changing the motor, the magnet or the wiring.
+- After `#Default`.
+- After a firmware update that clears the calibration (a release note says so when it does).
 
-    ----------------
-    Calibration mode
-    ----------------
-
-**Pole pair check**<br />
-Make sure you enter correct pole pair for your stepper motor. Use this as a guide:
-
-For 1.8 deg stepper enter #PP 50 <br />
-For 1.2 deg stepper enter #PP 75 <br />
-For 0.9 deg stepper enter #PP 100 <br />
-For 0.72 deg stepper enter #PP 125 <br />
-
-**Magnet and Vbus check**<br />
-Motor will check Vbus voltage and try to  detect Encoder magnet. If both passed you will get:
-
-    Magnet test: Passed
-    Vbus test: Passed
-!!! danger "Even if the magnet test "passed" your magnet could still be too far or too close (touching) the encoder IC. You need to make sure that distance between the magnet and the IC is around 1mm."
-
-**Resistance and inductance**<br />
-STEPFOC does not measure resistance and inductance. It checks that you entered them with #R and #L and prints them back, then calculates the current loop gains from them and the current loop bandwidth (#Cbw). With the example motor:
-
-    Resistance = 1.100000Ohm
-    Inductance = 0.002600H
-    Kp_iq = ...
-    Ki_iq = ...
-
-If either value is still 0 the step fails:
-
-    Resistance test: Failed
-    Please enter your stepper resistance by using #R command
-
-The calculated Kp_iq and Ki_iq are a starting point for stepper motors; it is **best to tune them by hand** (see [PID tuning](PID_tuning.md)).
-
-**Open loop dir check**<br />
-Motor will spin in one direction in open loop mode. If it spins in the **positive direction** you get `Open loop direction: good` and calibration continues. Otherwise:
-
-    Open loop: Failed
-    Switch motor phases and try again!
-
-Swap A+ and A- (or B+ and B-), then run #Cal again.
-
-**Phase order dir**<br />
-Motor will start to spin in a single direction with voltage mode.
-If it spins our phase connections are good. If it does not spin we need to switch them up and try again.
-
-**Theta offset**<br />
-
-Motor will spin rapidly in one direction and then switch to another. This can last a few minutes (max 2 minutes, after that it times out). When it finishes you get `Angle offset is: <value>` and `Phase order is good!`.
-
-**Kt, KV and flux linkage dir**<br />
-Motor will start to spin fast in one direction for a short time.<br />
-Good output will look like this (Your numbers will be different):
-
-    KV is: 39.41667 
-    Kt is: 0.20981
-    Flux linkage is: 0.012716 
-
-!!! note "Errors"
-    Note that in this step we measure motor KV and from that Kt and flux linkage. KV measurement can be wrong due the a lot of factors 
-    and for cheap and poor quality motors you can get different results.
-
-**Calibration end**<br />
-In case your calibration was successful you will get message like below. Make sure to **#Save** the config.
-After the successful config is saved you don't need to re run calibration when you start your motor driver.
-
-    Calibration success!
-    Save config with #Save
-    Going to idle!
-
-!!! note "Note"
-    You will need to re run the calibration if you change your motors or change motor phases.
-
-!!! danger "False success!"
-    There is a known issue related to the encoder magnet's attachment to the motor rotor. If the magnet is not securely fastened and can slip or rotate freely, the motor may incorrectly report that the calibration process was successful when, in fact, it was not. To avoid this problem, it's crucial to ensure that the magnet is firmly secured to the motor rotor. Proper attachment of the magnet ensures the accuracy of the calibration process and prevents potential errors in motor operation.
+A calibration that reports success but a motor that runs badly afterwards usually means the magnet moved on the
+shaft between calibration and use: fix the magnet and calibrate again.
 
 ## Troubleshooting
 
-No magnet detected
+| Message | Cause |
+|---|---|
+| `Magnet test: Failed` | no magnet, magnet too far (more than about 1.5 mm), or an axially magnetised magnet |
+| `Vbus test: Failed` | supply off, too low, or the cable the wrong way round (if the driver survived it) |
+| `Resistance test: Failed`, `Inductance test: Failed` | `#R` or `#L` still 0 |
+| `Open loop: Failed` | the motor did not turn: a coil open, `#Openv` (the open-loop voltage) too low for the motor, no supply current |
+| `Phase order is wrong!` | see the note above: the motor did not respond to the commutation check; check the wiring, the current limit and the magnet |
+| the routine stops in a step and prints nothing more | `#Reset` and try again |
+| success, but the LED stays on and `#Error` reports nothing | `#Info`: a `-1` means the EEPROM is not in the firmware's layout; `#Default`, enter the parameters, calibrate again |
 
-    Magnet test: Failed 
-
-Vbus to low or not detected
-
-    Vbus test: Failed
-
-Resistance or inductance left at 0 (enter them with #R and #L)
-
-    Resistance test: Failed
-    Please enter your stepper resistance by using #R command
-
-Wrong phase order. **Switch motor phases** (swap A+ and A-)
-
-    Open loop: Failed
-    Switch motor phases and try again!
-
-or
-
-    Phase order is wrong!
-    Switch motor phases and try again!
-    Calibration failed!
-
-If calibration is successful but your LED is in error mode and calling #Error reports no error try to call #Info command. If you see -1 somewhere that means that default config was no loaded and eeprom is filled with junk variables. To fix that call the #Default command.
+The angle-offset step alone can be repeated with `#Calangle`.

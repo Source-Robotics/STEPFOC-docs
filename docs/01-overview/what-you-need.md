@@ -1,26 +1,58 @@
-# Index
+# What you need
 
-!!! note "Spectral micro BLDC driver and STEPFOC driver"
-    **STEPFOC stepper driver is built on the same hardware and software foundation as the Spectral Micro BLDC driver. As a result, some references or images in this documentation may still show the Spectral Micro, since both drivers share about 99% of their features. They also use the same CAN and UART command sets, with only minor differences in UART-based calibration and setup procedures.** <br />
+This page lists what a STEPFOC setup is made of, what comes with the driver, and what you buy or make yourself.
 
- **STEPFOC driver is in beta stage and docs and firmware are under constant development!**
+## The driver
 
-You can buy a [STEPFOC starter kit](https://source-robotics.com/products/STEPFOC-starter-kit) or a [single STEPFOC driver](https://source-robotics.com/products/STEPFOC-stepper-controller) in the Source Robotics shop.
+STEPFOC is sold as a single driver or as a starter kit in the Source Robotics shop:
 
-* [STEPFOC datasheet](specs.md)
-* [Getting started](getting_started.md)
-* [Flashing firmware](flashing_firmware.md)
-* [Calibration](calibration.md)
-* [PID tuning](PID_tuning.md)
-* [UART interface](uart.md)
-* [CAN interface](can.md)
-* [Tested motors](tested_motors.md)
-* [Theory corner](theory_corner.md)
-* [Troubleshooting](troubleshooting.md)
+- [STEPFOC stepper driver](https://source-robotics.com/products/STEPFOC-stepper-controller)
+- [STEPFOC starter kit](https://source-robotics.com/products/STEPFOC-starter-kit), which adds the adapters, the
+  magnet, the cables and a thermistor listed below
 
-**Guides**
+Every driver is end-of-line tested and ships with the current firmware release and the bootloader already
+installed, so a driver works out of the box with a serial terminal, the Python library or Motor GUI. The firmware
+can be updated later without a programming adapter; see [Firmware](../07-firmware/index.md).
 
-* [Python guide](Guides/Python_guide.md)
-* [Quadruped robot guide](Guides/Quadruped_guide.md)
-* [Gravity compensation guide](Guides/Gravity_compensation_guide.md)
-* [Bilateral teleoperation guide](Guides/Bilateral_teleoperation_guide.md)
+## A stepper motor
+
+STEPFOC drives bipolar (4-wire) stepper motors. It is made for the NEMA 17 frame, whose mounting holes match the
+board, and it also works with NEMA 14 and NEMA 23 motors on an adapter. Look for a motor with a phase resistance
+of 1 to 5 Ω and a rated current of 3 A or less; the [tested motors](../03-technical-data/tested-motors.md) are
+known to work.
+
+## The encoder magnet
+
+A diametrically magnetised 6 × 2.5 mm neodymium magnet on the rear of the motor shaft, about 1 mm above the
+encoder chip in the middle of the board: [6 × 2.5 mm diametrical magnet](https://source-robotics.com/products/6x2-5mm-diametrical-neodymium-magnet).
+An axially magnetised magnet, or one that wobbles, makes calibration fail or report bad positions.
+[The encoder magnet](../04-mounting/magnet.md) says how to fit it.
+
+## Adapters and cables
+
+| Part | Needed for | Shop |
+|---|---|---|
+| USB-to-serial adapter (3.3 V) | the serial terminal: calibration, tuning, any `#` command | [Serial adapter](https://source-robotics.com/products/usb-to-serial-adapter) |
+| CANvas USB-to-CAN adapter | CAN control from a PC, the Python library, Motor GUI over CAN | [CAN adapter](https://source-robotics.com/products/canvas-usb-to-can-adapter) |
+| CAN cable and power cable | daisy-chaining several drivers | [CAN cable](https://source-robotics.com/products/spectral-micro-can-cable), [power cable](https://source-robotics.com/products/spectral-micro-power-cable) |
+| 100 kΩ NTC thermistor | motor temperature protection (optional but recommended) | [Thermistor](https://source-robotics.com/products/100k-ntc-thermistor) |
+| JTAG programming adapter | only for installing the bootloader on an older board, or for firmware development | [Programming adapter](https://source-robotics.com/products/jtag-programming-adapter-1-27-pitch) |
+
+!!! danger "Cable orientation"
+    The daisy-chain cables for CAN and power are keyed by their orientation, not by their connector. A cable
+    plugged in the wrong way round destroys the driver. Use the cables from the shop or follow
+    [Power and the CAN daisy chain](../04-mounting/power-and-can.md) exactly when you make your own.
+
+## A power supply
+
+12 to 29 V DC, 24 V recommended; see [Ratings and limits](../03-technical-data/ratings.md). Calibrate at 24 V:
+the motor constants come out wrong at a lower voltage. A bench supply with a current limit is the safest way to
+start.
+
+## Software
+
+- A serial terminal: PuTTY, the PlatformIO monitor in VS Code, or the Arduino serial monitor; see
+  [The serial terminal](../05-setup/terminal.md).
+- [Motor GUI](https://motorgui.com/), in the browser, over the serial adapter or the CAN adapter: tuning, plots,
+  and firmware updates.
+- The Python library `Spectral-BLDC` for CAN control from your own programs; see [With Python](../06-operation/python.md).

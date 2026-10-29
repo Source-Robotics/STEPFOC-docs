@@ -1,51 +1,69 @@
-# Flashing firmware
+# Updating through the bootloader
 
-!!! note "You can check what is the latest firmware release in the github page of STEPFOC! To check what software release is on your driver use command #Info"
+A driver with the bootloader (firmware 104 or newer) is updated over the UART connector or the CAN bus: the host
+tells the driver to reset, the bootloader waits two seconds for a host, and the host streams the new image into it.
+No programming adapter, and nothing to open.
 
-!!! tip "Note"
-    This video guide is for **Spectral Micro BLDC** driver but the steps for **STEPFOC** are exactly the same. **You just need to use STEPFOC repository not SPECTRAL MICRO!**
-    When flashing new firmware make sure you disconnect power connection and uart connection.
+!!! warning "Before you update"
+    - Park the mechanism: the motor loses torque during the update and until the new firmware is calibrated and
+      commanded.
+    - An update may clear the calibration (the release notes say so when it does); plan to calibrate and `#Save`
+      afterwards, and note the gains `#Info` prints.
+    - On a bus with several drivers, update each node; a bus with mixed releases behaves unpredictably.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/fcvL_6R1Je4?si=I4g3wQzkeJV9rXRw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+## With Motor GUI
 
-   |   |   Needed hardware
-    ---- | ---- 
-    You can change all variables using UART and CAN so flashing firmware a lot is not necessary<br /> You will usually flash it when:<br />  1. New version of the STEPFOC firmware is available <br />2. You are doing custom code development <br /> 3. You are using SimpleFOC firmware | You will need the [programming adapter](https://source-robotics.com/products/jtag-programming-adapter-1-27-pitch?variant=47293352903004) <p align="left"> <img src="../assets/ADAPTER2.png" alt="ADAPTER2" width="600"/> <br /> </p>
-    
-## Connecting to PCB
+[Motor GUI](https://motorgui.com/) in Chrome or Edge, connected over the serial adapter or the CANvas adapter:
+choose the release, and the GUI fetches the image and its manifest from the GitHub release, verifies the size and
+the SHA-256, resets the driver into its bootloader and flashes it. This is the way for one driver on the bench.
 
-=== "Using [Adapter](https://source-robotics.com/products/jtag-programming-adapter-1-27-pitch?variant=47293352903004) "
+## With the bootloader's command-line tool
 
-    Step 1 | Step 2
-    ---- | ---- 
-    Locate JTAG PINS | Press programming adapter like shown in the picture (apply small amount of pressure on the pins to get a good contact)
-    <p align="left"> <img src="../assets/STEPFOC_JTAG.png" alt="STEPFOC JTAG" width="750"/> <br /> </p> | <p align="left"> <img src="../assets/FLASHING3.png" alt="FLASHING3" width="500"/> <br /> </p> 
+The [bootloader repository](https://github.com/Source-Robotics/stm32f103c-bootloader) has `host_tools/bl_flash.py`,
+which flashes an image over CAN (slcan or candleLight/gs_usb adapters) or over UART:
 
-## Flashing using visual studio code
-Download [Visual Studio Code](https://code.visualstudio.com/download).<br />
+```
+cd host_tools
+pip install -r requirements.txt
 
-1. Open [STEPFOC firmware](https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/main/STEPFOC%20firmware) folder in VS code. (You need to have platformio installed)
-2. Press upload in VS code (Bottom left corner in VS code)
-<p align="left"> <img src="../assets/VSUPLOAD.png" alt="VSUPLOAD" width="800"/> <br /> </p>
+# over CAN with a CANvas (slcan) adapter on COM6, driver with board ID 0
+python bl_flash.py --transport can --can-interface slcan --channel COM6 flash stepfoc-firmware-V108.bin --board 0 --erase-first
 
-## Flashing using STM32 ST-LINK Utility
-Download the [STM32 ST-LINK utility](https://www.st.com/en/development-tools/stsw-link004.html).
+# over UART on COM7
+python bl_flash.py --transport uart --port COM7 --baudrate 256000 flash stepfoc-firmware-V108.bin --board 0 --erase-first
+```
 
-!!! note "HEX and binaries"
-    Using STM32 ST-LINK Utility you can flash only Binary or HEX files. These can be obtained from compiling the source code of the STEPFOC firmware
+The tool sends the reset command to the running firmware (`#Reset` over UART, Send_Reset over CAN), catches the
+bootloader's two-second window, erases the application pages and streams the image page by page, each page
+verified by a CRC; `list` shows the boards in bootloader mode, `set-id` changes a board's bootloader ID. The image
+is the `stepfoc-firmware-V<number>.bin` from the GitHub release.
 
-**Open STM32 ST-LINK utility Drag and drop the [binary file](https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/main/Binaries) inside.**
+!!! note "Board ID and node ID"
+    The bootloader has its own board ID (0 to 13), kept in its configuration page, separate from the firmware's
+    CAN node ID. The firmware keeps the two in step when the node ID is set (`#CANID`, Send_CAN_ID), so a driver's
+    bootloader ID is normally its node ID.
 
-<p align="left"> <img src="../assets/stlink2.PNG" alt="stlink2" width="700"/> <br /> </p>
+## From a PAR6 control box
 
-**Go to Target/settings and make sure they look like this.**
+A robot built on the Robot Control Box updates every joint from the box itself, over its own CAN bus, from the
+dashboard's Firmware tab or with `tools/flash_motor_firmware.py`; the
+[PAR6 documentation](https://docs.source-robotics.com/par6/) describes it.
 
-<p align="left"> <img src="../assets/stlink1.PNG" alt="stlink1" width="700"/> <br /> </p>
+## What happens in the driver
 
-**Go to Target/connect. In case you get a error try to install stlink drivers from [here!](https://www.st.com/en/development-tools/stsw-link009.html)**
+1. The host sends the reset; the firmware reboots into the bootloader.
+2. The bootloader listens for two seconds. With no host it starts the firmware; with a host it stays as long as
+   the host keeps talking (60 s during a flash).
+3. The application pages are erased, then written page by page; each page is checked by a CRC.
+4. The bootloader checks the whole image's CRC, records it, and starts the new firmware.
 
-<p align="left"> <img src="../assets/stlink_conn.png" alt="stlink conn" width="700"/> <br /> </p>
+## When it fails
 
-**Go to Target/program and verify. You should get pink output msg like below.**
+A flash that fails or is cancelled part way is not a brick: the stored CRC is invalid, so the bootloader refuses to
+start the firmware and waits for a host. Run the flash again; `bl_flash.py list` (or a passive scan from the
+control box) finds the board. A board that answers nothing: power-cycle it with the host already polling, to catch
+the two-second window.
 
-<p align="left"> <img src="../assets/stlink_prog.png" alt="stlink prog" width="700"/> <br /> </p>
+An image linked for `0x08000000` (a firmware from the `main` branch, release 103 and earlier) must never be
+flashed through the bootloader: it would overwrite the bootloader's own region if the tool did not refuse it.
+The tools validate the image first.
