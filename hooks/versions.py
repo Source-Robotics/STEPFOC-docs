@@ -38,9 +38,9 @@ def load(path) -> dict:
     if not re.fullmatch(r"\d+", docs_version):
         raise PluginError(f"versions.yml: docs_version {docs_version!r} is not a firmware release number, e.g. \"108\"")
     tag = str((data.get("firmware") or {}).get("tag", ""))
-    if not re.fullmatch(r"V\d+", tag):
+    if not re.fullmatch(r"[Vv]\d+", tag):
         raise PluginError(f"versions.yml: firmware.tag {tag!r} is not a release tag like V108")
-    if tag != f"V{docs_version}":
+    if tag.upper() != f"V{docs_version}":
         raise PluginError(f"versions.yml: firmware.tag {tag} does not belong to docs_version {docs_version}")
     manuals = data.get("manuals")
     if not isinstance(manuals, dict) or not manuals:

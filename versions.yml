@@ -14,6 +14,11 @@ docs_version: "108"
 firmware:
   repository: https://github.com/Source-Robotics/STEPFOC-stepper-controller
   tag: V108
+  # The firmware's source folder in that repository, and its Controller_mode numbers with their names (for the
+  # "enters mode" column of the UART reference). tools/sync_firmware.py reads both.
+  src: STEPFOC firmware/src
+  modes: {0: idle, 1: position, 2: velocity, 3: current, 4: PD, 5: open loop, 6: voltage torque,
+          7: gripper calibration, 8: HALL, 9: angle-offset calibration, 10: open-loop steps, 11: gripper}
 
 # One entry per document. revision: YEAR.LETTER, a new letter for every published revision of that document.
 # status: draft until the document is published; published: the date of the revision's publication, or null.

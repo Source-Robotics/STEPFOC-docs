@@ -59,7 +59,7 @@ python tools/sync_firmware.py --print uart --tag V103   # look at another releas
 ```
 
 The tool needs a clone of the firmware repository with its tags, next to this repository or named by
-`--firmware PATH` / `STEPFOC_FIRMWARE_DIR`, and the network for the release notes (`--no-network` keeps the file
+`--firmware PATH` / `FIRMWARE_DIR`, and the network for the release notes (`--no-network` keeps the file
 that is there). The CI build does not run it; the generated files are committed.
 
 ## Versions and releases

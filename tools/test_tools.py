@@ -57,6 +57,8 @@ def load_text(text):
 
 data, err = load_text(GOOD)
 check("A1 a valid versions.yml loads", data is not None, err)
+d, e = load_text(GOOD.replace("tag: V108", "tag: v108"))
+check("A1b a lowercase tag loads (the v101 tag of the Spectral firmware)", d is not None, e)
 for label, bad, word in (
         ("docs_version not a release number", GOOD.replace('"108"', '"1.08"'), "docs_version"),
         ("a tag of another release", GOOD.replace("tag: V108", "tag: V107"), "does not belong"),
