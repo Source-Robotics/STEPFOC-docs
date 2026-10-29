@@ -12,7 +12,24 @@ the motor constants Kt, KV and the flux linkage. It runs once per motor; the res
 !!! tip "Supply voltage"
     Calibrate at 24 V. At a lower voltage the KV and Kt come out wrong.
 
-## 1. Enter the motor parameters
+## 1. Restore the defaults
+
+The EEPROM of a new driver, or of one that ran another motor, can hold values that do not fit: another motor's
+parameters, or junk that shows as `-1` in `#Info`. Calibration starts from what is there, so start from the factory
+values.
+
+=== "Motor GUI"
+    *Default* in the settings.
+
+=== "Terminal"
+    ```
+    #Default
+    ```
+
+This also resets the serial number, hardware version and batch date the driver reports; note what `#Info` printed
+if you need them. [Saving the configuration](saving.md) says what else it does.
+
+## 2. Enter the motor parameters
 
 STEPFOC does not measure the resistance and inductance of a stepper (the Spectral Micro does for a BLDC); you
 enter them from the motor's datasheet, as the values of **one coil**, and the pole pairs. Calibration fails on a
@@ -37,7 +54,7 @@ value left at 0, and accepts only 50, 75, 100 or 125 pole pairs.
 The current loop bandwidth (`#Cbw`, 500 Hz by default) decides the gains calibration computes from R and L;
 leave it for now, [Current limit and loop tuning](tuning.md) comes back to it.
 
-## 2. Run it
+## 3. Run it
 
 === "Motor GUI"
     Start the calibration. The driver enters *Calibration mode* and the GUI shows its log step by step; when it
@@ -79,7 +96,7 @@ What the steps are:
 | Step | What happens | Fails with |
 |---|---|---|
 | Pole pair test | the entered pole pairs are one of 50, 75, 100, 125 | `Pole pair test: Failed` and the list of values |
-| Magnet test | the encoder sees enough field | `Magnet test: Failed`: magnet missing, too far, or axially magnetised |
+| Magnet test | the encoder sees enough field: a magnet is there and close enough. The test says nothing about centring, the gap or the glue | `Magnet test: Failed`: magnet missing, too far, or axially magnetised |
 | Vbus test | the supply is within limits | `Vbus test: Failed` |
 | Resistance, inductance | the entered values are not 0; they are printed back and Kp_iq, Ki_iq computed from them and the bandwidth | `Resistance test: Failed` / `Inductance test: Failed`, with `Please enter your stepper resistance by using #R command` |
 | Open loop | the motor is stepped open loop; the encoder must see it turn. The direction it turned is remembered, so a reversed coil is compensated from here on | `Open loop: Failed` / `Switch motor phases and try again!`: the encoder saw no rotation |
@@ -92,7 +109,7 @@ What the steps are:
     not connected or shorted, a current limit at 0, a supply too weak, or a magnet that slips. Swapping wires does
     not fix them.
 
-## 3. Save
+## 4. Save
 
 === "Motor GUI"
     **Save**. The GUI marks *Unsaved changes* until you do.

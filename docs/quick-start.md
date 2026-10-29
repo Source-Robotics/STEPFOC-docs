@@ -53,6 +53,8 @@ Read in more detail: [Wiring the stepper](04-mounting/wiring.md).
 1. The supply to a power connector: **DC+ to positive, DC− to negative**. Check twice.
 2. The serial adapter to the UART connector with the UART cable (TX to RX, RX to TX; 3.3 V only).
 3. Power on. The LED turns on steadily: the driver is not calibrated yet, which it reports as an error state.
+   (The serial adapter alone powers the driver's logic: it answers over UART without the supply, but reports a
+   Vbus error and will not calibrate or move.)
 
 === "Motor GUI"
     Open [motorgui.com](https://motorgui.com/) in Chrome or Edge, choose the serial connection and **Open port** on
@@ -71,7 +73,11 @@ Read in more detail: [Wiring the stepper](04-mounting/wiring.md).
 Read in more detail: [Power and the CAN daisy chain](04-mounting/power-and-can.md) ·
 [Connectors and pinout](03-technical-data/connectors.md).
 
-## 6. Enter the motor parameters
+## 6. Restore the defaults and enter the motor parameters
+
+First the factory defaults, so that calibration does not start from another motor's values or from junk in the
+EEPROM: *Default* in the Motor GUI settings, or `#Default` in the terminal. (It also resets the serial number the
+driver reports.) Then the parameters:
 
 From the motor's datasheet, for **one coil**: the pole pairs (50 for a 1.8° motor, 100 for 0.9°), the phase
 resistance in ohms, the phase inductance in henries (2.6 mH = 0.0026). STEPFOC does not measure these; calibration

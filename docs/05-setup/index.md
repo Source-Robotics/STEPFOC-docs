@@ -6,8 +6,8 @@ every step also gives the terminal command, for a terminal or for the console in
 1. [Motor GUI](motor-gui.md): the browser, the serial adapter, opening the port, what is on the screen.
 2. [The serial terminal](terminal.md): the alternative — PuTTY, the PlatformIO monitor or the Arduino monitor,
    and the `#` commands.
-3. [Motor parameters and calibration](calibration.md): the motor's resistance, inductance and pole pairs, then
-   the calibration run.
+3. [Motor parameters and calibration](calibration.md): the factory defaults, the motor's resistance, inductance and pole pairs,
+   then the calibration run.
 4. [Current limit and loop tuning](tuning.md): the current limit for the motor, and the loop gains if the
    defaults do not suit it.
 5. [Saving the configuration](saving.md): nothing survives a power cycle until it is saved.

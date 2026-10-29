@@ -12,7 +12,7 @@
 | Power, idle | 0.3 W |
 | PWM frequency | 25 kHz |
 | Control loop frequency | 6250 Hz |
-| Electrical frequency, maximum | 460 Hz: about 550 rpm on a 1.8° stepper (50 pole pairs), 275 rpm on a 0.9° stepper |
+| Electrical frequency, practical maximum | about 600 Hz, a tenth of the 6250 Hz control loop, which has to run several times per electrical cycle: about 720 rpm on a 1.8° stepper (50 pole pairs), 360 rpm on a 0.9° stepper (100 pole pairs) |
 | Current sensing | inline, both phases |
 | Encoder | 14-bit magnetic, 16384 ticks per revolution, diametrical magnet 1 mm above the chip |
 | UART | 3.3 V, 256000 baud by default (1 000 000 tested) |
