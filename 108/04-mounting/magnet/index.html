@@ -3611,10 +3611,18 @@ Every calibration problem that is not a wiring problem comes from this magnet.</
 <figcaption>Figure 6: About 1 mm between the magnet and the encoder chip in the middle of the board.</figcaption>
 </figure>
 <h2 id="the-magnet">The magnet<a class="headerlink" href="#the-magnet" title="Permanent link">&para;</a></h2>
-<p>A 6 × 2.5 mm neodymium magnet, <strong>diametrically</strong> magnetised (north and south across the diameter, not through the
-thickness): <a href="https://source-robotics.com/products/6x2-5mm-diametrical-neodymium-magnet">6 × 2.5 mm diametrical magnet</a>.
-An axially magnetised magnet looks the same and does not work: the magnet test may even pass, and the position
-is wrong.</p>
+<p>A neodymium disc, <strong>diametrically</strong> magnetised (north and south across the diameter, not through the thickness).
+The shop's <a href="https://source-robotics.com/products/6x2-5mm-diametrical-neodymium-magnet">6 × 2.5 mm diametrical magnet</a>
+is the size the printed spacers are made for. An axially magnetised magnet looks the same and does not work: the
+magnet test may even pass, and the position is wrong.</p>
+<div class="admonition note">
+<p class="admonition-title">The size is not fixed</p>
+<p>6 × 2.5 mm is the stock size, not a requirement. Any diametrically magnetised disc of about 6 mm diameter
+works, and the thickness is a way to set the gap: a thicker magnet brings its face closer to the encoder, a
+thinner one farther, so with a shaft or a spacer that leaves the wrong distance you can pick the thickness
+that gives 1 mm instead of changing the spacer. What matters is the 1 mm from the magnet's face to the chip,
+the magnet centred on the shaft, and the diametrical magnetisation.</p>
+</div>
 <h2 id="fitting-it">Fitting it<a class="headerlink" href="#fitting-it" title="Permanent link">&para;</a></h2>
 <ol>
 <li>The motor needs a rear shaft. Most <abbr title="the stepper motor frame size with 31 mm mounting-hole spacing">NEMA 17</abbr> motors have one; a motor without it needs a magnet holder on the
