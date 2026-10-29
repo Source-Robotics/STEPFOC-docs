@@ -1,10 +1,8 @@
 # Python guide
 
-More info can be found in this folder with bunch of other examples:
-https://github.com/Source-Robotics/Spectral-BLDC-Python
+More examples are in the [Spectral-BLDC-Python examples folder](https://github.com/Source-Robotics/Spectral-BLDC-Python/tree/main/examples).
 
-
-## **Examples**
+## Examples
 
 ``` py title="Get_encoder_data.py"
 import Spectral_BLDC as Spectral
@@ -39,9 +37,11 @@ while True:
         print(f"Motor position is: {Motor1.position}")
         print(f"Motor speed is: {Motor1.speed}")
 
-
     else:
         print("No message after timeout period!")
     print("")
     time.sleep(1 )
+
+!!! note "Written with the Spectral Micro"
+    This guide was written with the Spectral Micro BLDC driver. STEPFOC uses the same CAN commands and the same Python library, so the same code runs on STEPFOC: where the guide says "Spectral Micro BLDC", read "STEPFOC".
 ```

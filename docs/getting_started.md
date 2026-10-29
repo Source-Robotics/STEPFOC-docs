@@ -1,90 +1,73 @@
-# **Getting started**
+# Getting started
 
-## **Spectral Micro BLDC driver** 
+## Where to buy
 
-**Soon for sale**
+You can buy a [STEPFOC starter kit](https://source-robotics.com/products/STEPFOC-starter-kit) or a [single STEPFOC driver](https://source-robotics.com/products/STEPFOC-stepper-controller) in the Source Robotics shop.
 
-You can buy a STEPFOC starter kit here: [Link](https://source-robotics.com/products/STEPFOC-starter-kit) <br />
-Or buy a single motor driver here: [Link](https://source-robotics.com/products/STEPFOC-stepper-controller)  
-
-## **Recommended hardware**
+## Recommended hardware
 
 1. [Diametrically magnetized magnet](https://source-robotics.com/products/6x2-5mm-diametrical-neodymium-magnet)
-2. Stepper motor; check [here](tested_motors.md) for all tested motors
+2. Stepper motor; see the [tested motors](tested_motors.md)
 3. [Programming adapter](https://source-robotics.com/products/jtag-programming-adapter-1-27-pitch)
 4. [Serial adapter](https://source-robotics.com/products/usb-to-serial-adapter)
 5. [CAN adapter](https://source-robotics.com/products/canvas-usb-to-can-adapter) 
 6. [Thermistor](https://source-robotics.com/products/100k-ntc-thermistor)
 7. [CAN wires](https://source-robotics.com/products/spectral-micro-can-cable) and [power wires](https://source-robotics.com/products/spectral-micro-power-cable)
 
-!!! Note annotate "" 
+## Hardware setup
 
-## **Hardware setup**
-
-### **Mounting PCB to Motor**
+### Mounting PCB to Motor
 
 Some hardware considerations:
 
 * Distance between motor encoder and magnet should be around 1 mm.
-* Hole spacing of Spectral micro is 31 mm
+* Hole spacing of STEPFOC is 31 mm (NEMA 17)
 
-<p align="left"> <img src="../assets/STEPFOC_MAGNET.png" alt="drawing" width="800"/> <br /> </p>
+<p align="left"> <img src="../assets/STEPFOC_MAGNET.png" alt="STEPFOC MAGNET" width="800"/> <br /> </p>
 
-!!! Note annotate "" 
+## Electrical connections
+!!! danger "Reversing the polarity on DC+ and DC- will destroy the board."
 
-## **Electrical connections**
-!!! Danger annotate "REVERSING POLARITIY ON DC+- WILL DESTROY YOUR BOARD." 
+<p align="left"> <img src="../assets/STEPFOC_CONN.png" alt="STEPFOC CONN" width="1200"/> <br /> </p>
 
-<p align="left"> <img src="../assets/STEPFOC_CONN.png" alt="drawing" width="1200"/> <br /> </p>
-
-1. Solder motor phases to **A+, A-, B+, B-** (Note that you may latter need to desolder them to find correct phase order so make sure you dont have too short wires)
+1. Solder the motor phases to **A+, A-, B+, B-**: one coil of the stepper to A+ and A-, the other coil to B+ and B-. Find the two coils with a multimeter (the two wires of a coil have a few ohms between them, the two coils have no connection). Keep the wires long enough to swap them: if calibration reports a wrong phase order, swap A+ and A-, which reverses the direction of that coil.
 2. Connect motor power to one of the **Power connectors** terminals
 3. If you are using UART comms. Connect Uart adapter to **UART connector**
 4. If you are using thermistor, connect it to **Thermistor connector**
 5. If you are using CAN comms. Connect CAN adapter to one of **CAN connectors**
 6. When uploading code connect JTAG adapter to **JTAG connector**
 
+!!! danger "Cable orientation"
+    **ALL cables used for daisy chain (CAN and power) need to to follow orientation as shown on the image below! Failing to follow that will destroy your motor controller! All correct cables can be bought here: https://source-robotics.com/pages/connectors-and-cables** <br />
 
-!!! Danger annotate "**Cable orientation**" 
-    **ALL cables used for dasiy chain (CAN and power) need to to follow orientation as shown on the image below! Failing to follow that will destroy your motor controller! All correct cables can be bought here: https://source-robotics.com/pages/connectors-and-cables** <br />
+<p align="left"> <img src="../assets/Orientation.png" alt="Orientation" width="700"/> <br /> </p> 
 
-<p align="left"> <img src="../assets/Orientation.png" alt="drawing" width="700"/> <br /> </p> 
-
-!!! Note annotate "" 
-
-## **Connecting multiple motors (daisy chaining)**
+## Connecting multiple motors (daisy chaining)
 
 Multiple STEPFOC stepper drivers or Spectral BLDC drivers and nodes can be connected to single CAN bus using daisy-chaining. First and last nodes on can bus should have termination resistors. **You can flip the CAN switch to "ON" position to enable termination resistor.**
 
-!!! Tip annotate "Power connectors can handle max 4 A DC. It is recommended to have at most 6 motor controllers (STEPFOC or Spectral micro) in one daisy chain." 
+!!! tip "Power connectors can handle max 4 A DC. It is recommended to have at most 6 motor controllers (STEPFOC or Spectral micro) in one daisy chain."
 
+<p align="left"> <img src="../assets/Daisy_chain-Photoroom.png" alt="Daisy chain" width="700"/> <br /> </p> 
 
-<p align="left"> <img src="../assets/Daisy_chain-Photoroom.png" alt="drawing" width="700"/> <br /> </p> 
-
-!!! Note annotate "" 
-
-## **Thermistor connection**
+## Thermistor connection
 
 Solder the thermistor like shown in the image. 
-!!! Tip annotate "Thermistor is disabled by default. To enable it use command #Term 1" 
+!!! tip "Thermistor is disabled by default. To enable it use command #Term 1"
 
-<p align="left"> <img src="../assets/STEPFOC_THERMISTOR-Photoroom.png" alt="drawing" width="600"/> <br /> </p> 
+<p align="left"> <img src="../assets/STEPFOC_THERMISTOR-Photoroom.png" alt="STEPFOC THERMISTOR" width="600"/> <br /> </p> 
 
-Thermistor needs to be placed on the housing of the stepper motor. Another option is remove one of the 4 stepper screws on the bottom and place thermistor inside that hole. Apply thermal cement on the thermistor to secure it in place and improve termal conductivity. 
+Thermistor needs to be placed on the housing of the stepper motor. Another option is remove one of the 4 stepper screws on the bottom and place thermistor inside that hole. Apply thermal cement on the thermistor to secure it in place and improve thermal conductivity. 
 
- 
-
-!!! Note annotate "" 
-
-## **Status**
+## Status
 
 Normal operation | Calibration | Error mode 
 ---- | ---- | ----
-3 short flashed and a pause <p align="left"> <img src="../assets/Normal.gif" alt="drawing" width="180"/> <br /> </p> | Flashing every 0.5 seconds <p align="left"> <img src="../assets/Calib.gif" alt="drawing" width="180"/> <br /> </p> | Solid LED, no flashing. <p align="left"> <img src="../assets/Error2.PNG" alt="drawing" width="180"/> <br /> </p>
+3 short flashed and a pause <p align="left"> <img src="../assets/Normal.gif" alt="Normal" width="180"/> <br /> </p> | Flashing every 0.5 seconds <p align="left"> <img src="../assets/Calib.gif" alt="Calib" width="180"/> <br /> </p> | Solid LED, no flashing. <p align="left"> <img src="../assets/Error2.PNG" alt="Error2" width="180"/> <br /> </p>
 
 If you have [STEPFOC firmware](https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/main/STEPFOC%20firmware) uploaded on your STEPFOC, LEDs will be in one of 3 states.
 
-!!! Note annotate "STEPFOC controllers come **PRELOADED** with STEPFOC firmware" 
+!!! note "STEPFOC controllers come PRELOADED with STEPFOC firmware"
 
 * **Normal operation** is when motor controller has no active errors and is calibrated
 * **Error mode** is active if any error on the motor driver is active. List of possible errors:
@@ -99,14 +82,9 @@ If you have [STEPFOC firmware](https://github.com/Source-Robotics/STEPFOC-steppe
     9. Watchdog error
 * **Calibration** will flash when in calibration routine
 
-!!! Note annotate "" 
-
-
-## **What next?**
+## What next?
 
 * **Optional** - > Flash the [latest firmware](https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/main/STEPFOC%20firmware) to your driver (Note that drivers arrive with preflashed firmware)
 * You will need to [calibrate your motor](calibration.md)
 * [Tune your PID loops](PID_tuning.md)
-* Follow one of the guides or examples to start using Spectral driver
-
-!!! Note annotate "" 
+* Follow one of the guides or examples to start using your STEPFOC driver
