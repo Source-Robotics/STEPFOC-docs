@@ -61,20 +61,7 @@
 
     
     
-  
-<meta property="og:type" content="website" />
-<meta property="og:title" content="The encoder magnet - STEPFOC" />
-<meta property="og:description" content="Documentation for the STEPFOC stepper motor FOC driver by Source Robotics." />
-<meta property="og:image" content="https://docs.source-robotics.com/STEPFOC-docs/108/assets/images/social/04-mounting/magnet.png" />
-<meta property="og:image:type" content="image/png" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta property="og:url" content="https://docs.source-robotics.com/STEPFOC-docs/108/04-mounting/magnet/" />
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="The encoder magnet - STEPFOC" />
-<meta property="twitter:description" content="Documentation for the STEPFOC stepper motor FOC driver by Source Robotics." />
-<meta property="twitter:image" content="https://docs.source-robotics.com/STEPFOC-docs/108/assets/images/social/04-mounting/magnet.png" />
- <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+   <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
     html.glightbox-open { overflow: initial; height: 100%; }
     .gslide-title { margin-top: 0px; user-select: text; }
     .gslide-desc { color: #666; user-select: text; }
@@ -3651,8 +3638,13 @@ the magnet centred on the shaft, and the diametrical magnetisation.</p>
 </ol>
 <h2 id="checking-it">Checking it<a class="headerlink" href="#checking-it" title="Permanent link">&para;</a></h2>
 <p>With the driver powered and the serial terminal open, <code>#Magnet</code> answers <code>Magnet Good</code> when the chip sees enough
-field, <code>Magnet Bad</code> when it does not. The calibration routine runs the same test first. "Good" means the field is
-strong enough; it does not prove the magnet is centred or that it cannot slip.</p>
+field, <code>Magnet Bad</code> when it does not. The calibration routine runs the same test first. </p>
+<div class="admonition warning">
+<p class="admonition-title">What the magnet test checks</p>
+<p>Only that a magnet is close enough to the encoder. It passes with a magnet that is not glued, sits off-centre or
+can slip on the shaft, and fails only when there is no magnet or it is too far away. The 1 mm gap, the centring
+and the glue are yours to check.</p>
+</div>
 
 
 

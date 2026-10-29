@@ -61,20 +61,7 @@
 
     
     
-  
-<meta property="og:type" content="website" />
-<meta property="og:title" content="Quick start - STEPFOC" />
-<meta property="og:description" content="Documentation for the STEPFOC stepper motor FOC driver by Source Robotics." />
-<meta property="og:image" content="https://docs.source-robotics.com/STEPFOC-docs/108/assets/images/social/quick-start.png" />
-<meta property="og:image:type" content="image/png" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta property="og:url" content="https://docs.source-robotics.com/STEPFOC-docs/108/quick-start/" />
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="Quick start - STEPFOC" />
-<meta property="twitter:description" content="Documentation for the STEPFOC stepper motor FOC driver by Source Robotics." />
-<meta property="twitter:image" content="https://docs.source-robotics.com/STEPFOC-docs/108/assets/images/social/quick-start.png" />
- <link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+   <link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
     html.glightbox-open { overflow: initial; height: 100%; }
     .gslide-title { margin-top: 0px; user-select: text; }
     .gslide-desc { color: #666; user-select: text; }
@@ -686,10 +673,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-enter-the-motor-parameters" class="md-nav__link">
+  <a href="#6-restore-the-defaults-and-enter-the-motor-parameters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        6. Enter the motor parameters
+        6. Restore the defaults and enter the motor parameters
       
     </span>
   </a>
@@ -3603,10 +3590,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-enter-the-motor-parameters" class="md-nav__link">
+  <a href="#6-restore-the-defaults-and-enter-the-motor-parameters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        6. Enter the motor parameters
+        6. Restore the defaults and enter the motor parameters
       
     </span>
   </a>
@@ -3819,7 +3806,9 @@ does not matter: calibration detects it.</p>
 <ol>
 <li>The supply to a power connector: <strong>DC+ to positive, DC− to negative</strong>. Check twice.</li>
 <li>The serial adapter to the <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> connector with the <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> cable (TX to RX, RX to TX; 3.3 V only).</li>
-<li>Power on. The <abbr title="Light-Emitting Diode">LED</abbr> turns on steadily: the driver is not calibrated yet, which it reports as an error state.</li>
+<li>Power on. The <abbr title="Light-Emitting Diode">LED</abbr> turns on steadily: the driver is not calibrated yet, which it reports as an error state.
+   (The serial adapter alone powers the driver's logic: it answers over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> without the supply, but reports a
+   Vbus error and will not calibrate or move.)</li>
 </ol>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Motor GUI</label><label for="__tabbed_1_2">Terminal</label></div>
 <div class="tabbed-content">
@@ -3839,7 +3828,10 @@ hardware and firmware version and the state of everything.</p>
 </div>
 <p>Read in more detail: <a href="../04-mounting/power-and-can/">Power and the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> daisy chain</a> ·
 <a href="../03-technical-data/connectors/">Connectors and pinout</a>.</p>
-<h2 id="6-enter-the-motor-parameters">6. Enter the motor parameters<a class="headerlink" href="#6-enter-the-motor-parameters" title="Permanent link">&para;</a></h2>
+<h2 id="6-restore-the-defaults-and-enter-the-motor-parameters">6. Restore the defaults and enter the motor parameters<a class="headerlink" href="#6-restore-the-defaults-and-enter-the-motor-parameters" title="Permanent link">&para;</a></h2>
+<p>First the factory defaults, so that calibration does not start from another motor's values or from junk in the
+<abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>: <em>Default</em> in the Motor GUI settings, or <code>#Default</code> in the terminal. (It also resets the serial number the
+driver reports.) Then the parameters:</p>
 <p>From the motor's datasheet, for <strong>one coil</strong>: the pole pairs (50 for a 1.8° motor, 100 for 0.9°), the phase
 resistance in ohms, the phase inductance in henries (2.6 mH = 0.0026). STEPFOC does not measure these; calibration
 fails on a value left at 0.</p>

@@ -61,20 +61,7 @@
 
     
     
-  
-<meta property="og:type" content="website" />
-<meta property="og:title" content="The serial terminal - STEPFOC" />
-<meta property="og:description" content="Documentation for the STEPFOC stepper motor FOC driver by Source Robotics." />
-<meta property="og:image" content="https://docs.source-robotics.com/STEPFOC-docs/108/assets/images/social/05-setup/terminal.png" />
-<meta property="og:image:type" content="image/png" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta property="og:url" content="https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/terminal/" />
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="The serial terminal - STEPFOC" />
-<meta property="twitter:description" content="Documentation for the STEPFOC stepper motor FOC driver by Source Robotics." />
-<meta property="twitter:image" content="https://docs.source-robotics.com/STEPFOC-docs/108/assets/images/social/05-setup/terminal.png" />
- <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+   <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
     html.glightbox-open { overflow: initial; height: 100%; }
     .gslide-title { margin-top: 0px; user-select: text; }
     .gslide-desc { color: #666; user-select: text; }
@@ -3629,8 +3616,10 @@ CR+LF works.</p>
 <ol>
 <li>Plug the <a href="https://source-robotics.com/products/usb-to-serial-adapter">USB-to-serial adapter</a> into the <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr>
    connector with the <a href="https://source-robotics.com/products/uart-cable"><abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> cable</a>. With another adapter: 3.3 V
-   only, and cross TX and RX.</li>
-<li>Power the driver. The USB adapter does not power it.</li>
+   only, and cross TX and RX: the driver's TX to the adapter's RX, the driver's RX to the adapter's TX.</li>
+<li>Connect the motor supply. The adapter's 3.3 V powers the driver's logic, so the driver answers over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> with
+   only the adapter plugged in, but it reports a Vbus error and refuses calibration and every motion command
+   until the 12 to 29 V supply is on.</li>
 <li>Find the adapter's port: <code>COM…</code> on Windows, <code>/dev/ttyUSB…</code> or <code>/dev/ttyACM…</code> on Linux and macOS.</li>
 </ol>
 <div class="admonition danger">

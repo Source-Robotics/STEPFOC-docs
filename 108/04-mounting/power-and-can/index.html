@@ -61,20 +61,7 @@
 
     
     
-  
-<meta property="og:type" content="website" />
-<meta property="og:title" content="Power and the CAN daisy chain - STEPFOC" />
-<meta property="og:description" content="Documentation for the STEPFOC stepper motor FOC driver by Source Robotics." />
-<meta property="og:image" content="https://docs.source-robotics.com/STEPFOC-docs/108/assets/images/social/04-mounting/power-and-can.png" />
-<meta property="og:image:type" content="image/png" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta property="og:url" content="https://docs.source-robotics.com/STEPFOC-docs/108/04-mounting/power-and-can/" />
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="Power and the CAN daisy chain - STEPFOC" />
-<meta property="twitter:description" content="Documentation for the STEPFOC stepper motor FOC driver by Source Robotics." />
-<meta property="twitter:image" content="https://docs.source-robotics.com/STEPFOC-docs/108/assets/images/social/04-mounting/power-and-can.png" />
- <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+   <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
     html.glightbox-open { overflow: initial; height: 100%; }
     .gslide-title { margin-top: 0px; user-select: text; }
     .gslide-desc { color: #666; user-select: text; }
@@ -3642,15 +3629,17 @@ ends. A wrong cable destroys the driver at the moment it is powered.</p>
 <figure>
   <a class="glightbox" href="../../assets/Orientation.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Cable orientation" src="../../assets/Orientation.png" width="600" /></a>
 <br />
-<figcaption>Figure 9: The orientation of the daisy-chain cables for CAN and power.</figcaption>
+<figcaption>Figure 9: The orientation of the daisy-chain cables. The picture shows a generic 4-pin cable; the rule is the same for the 2-pin CAN and power cables.</figcaption>
 </figure>
 <p>The cables from the shop are made this way: <a href="https://source-robotics.com/products/spectral-micro-can-cable"><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> cable</a>,
 <a href="https://source-robotics.com/products/spectral-micro-power-cable">power cable</a>, and all of them under
 <a href="https://source-robotics.com/pages/connectors-and-cables">connectors and cables</a>.</p>
 <h2 id="can"><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr><a class="headerlink" href="#can" title="Permanent link">&para;</a></h2>
 <ul>
-<li><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> 2.0, 1 Mbit/s, 11-bit identifiers. Up to 16 drivers on one bus, each with its own node ID (0 by default;
-  set it with <code>#CANID</code> or Send_CAN_ID and save).</li>
+<li><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> 2.0, 1 Mbit/s, 11-bit identifiers. Up to 14 drivers on one bus, each with its own node ID, 0 to 13 (0 by default;
+  set it with <code>#CANID</code> or Send_CAN_ID and save). The firmware accepts 14 and 15 too, but the
+  <a href="../../07-firmware/the-bootloader/">bootloader</a> reserves them: a driver on one of those IDs cannot be updated
+  over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>.</li>
 <li>Twisted-pair wire; keep the bus short at 1 Mbit/s (a few metres at most).</li>
 <li><strong>Termination:</strong> the first and the last node on the bus need a 120 Ω resistor between <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> H and <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> L. The
   switch next to the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> connectors turns the driver's resistor on (<strong>ON</strong>). Drivers in the middle stay off. A bus

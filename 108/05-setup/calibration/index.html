@@ -61,20 +61,7 @@
 
     
     
-  
-<meta property="og:type" content="website" />
-<meta property="og:title" content="Motor parameters and calibration - STEPFOC" />
-<meta property="og:description" content="Documentation for the STEPFOC stepper motor FOC driver by Source Robotics." />
-<meta property="og:image" content="https://docs.source-robotics.com/STEPFOC-docs/108/assets/images/social/05-setup/calibration.png" />
-<meta property="og:image:type" content="image/png" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta property="og:url" content="https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/calibration/" />
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="Motor parameters and calibration - STEPFOC" />
-<meta property="twitter:description" content="Documentation for the STEPFOC stepper motor FOC driver by Source Robotics." />
-<meta property="twitter:image" content="https://docs.source-robotics.com/STEPFOC-docs/108/assets/images/social/05-setup/calibration.png" />
- <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+   <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
     html.glightbox-open { overflow: initial; height: 100%; }
     .gslide-title { margin-top: 0px; user-select: text; }
     .gslide-desc { color: #666; user-select: text; }
@@ -1524,10 +1511,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-enter-the-motor-parameters" class="md-nav__link">
+  <a href="#1-restore-the-defaults" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. Enter the motor parameters
+        1. Restore the defaults
       
     </span>
   </a>
@@ -1535,10 +1522,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-run-it" class="md-nav__link">
+  <a href="#2-enter-the-motor-parameters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Run it
+        2. Enter the motor parameters
       
     </span>
   </a>
@@ -1546,10 +1533,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-save" class="md-nav__link">
+  <a href="#3-run-it" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Save
+        3. Run it
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-save" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Save
       
     </span>
   </a>
@@ -3495,10 +3493,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-enter-the-motor-parameters" class="md-nav__link">
+  <a href="#1-restore-the-defaults" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. Enter the motor parameters
+        1. Restore the defaults
       
     </span>
   </a>
@@ -3506,10 +3504,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-run-it" class="md-nav__link">
+  <a href="#2-enter-the-motor-parameters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Run it
+        2. Enter the motor parameters
       
     </span>
   </a>
@@ -3517,10 +3515,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-save" class="md-nav__link">
+  <a href="#3-run-it" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Save
+        3. Run it
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-save" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Save
       
     </span>
   </a>
@@ -3672,20 +3681,37 @@ off the shaft.</p>
 <p class="admonition-title">Supply voltage</p>
 <p>Calibrate at 24 V. At a lower voltage the KV and Kt come out wrong.</p>
 </div>
-<h2 id="1-enter-the-motor-parameters">1. Enter the motor parameters<a class="headerlink" href="#1-enter-the-motor-parameters" title="Permanent link">&para;</a></h2>
+<h2 id="1-restore-the-defaults">1. Restore the defaults<a class="headerlink" href="#1-restore-the-defaults" title="Permanent link">&para;</a></h2>
+<p>The <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> of a new driver, or of one that ran another motor, can hold values that do not fit: another motor's
+parameters, or junk that shows as <code>-1</code> in <code>#Info</code>. Calibration starts from what is there, so start from the factory
+values.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Motor GUI</label><label for="__tabbed_1_2">Terminal</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><em>Default</em> in the settings.</p>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>#Default
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<p>This also resets the serial number, hardware version and batch date the driver reports; note what <code>#Info</code> printed
+if you need them. <a href="../saving/">Saving the configuration</a> says what else it does.</p>
+<h2 id="2-enter-the-motor-parameters">2. Enter the motor parameters<a class="headerlink" href="#2-enter-the-motor-parameters" title="Permanent link">&para;</a></h2>
 <p>STEPFOC does not measure the resistance and inductance of a stepper (the Spectral Micro does for a BLDC); you
 enter them from the motor's datasheet, as the values of <strong>one coil</strong>, and the pole pairs. Calibration fails on a
 value left at 0, and accepts only 50, 75, 100 or 125 pole pairs.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Motor GUI</label><label for="__tabbed_1_2">Terminal</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Motor GUI</label><label for="__tabbed_2_2">Terminal</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p>In the motor settings enter <em>Pole pairs</em> (50 for a 1.8° motor, 75 for 1.2°, 100 for 0.9°, 125 for 0.72°),
 <em>Resistance</em> in ohms and <em>Inductance</em> in henries, and apply them.</p>
 </div>
 <div class="tabbed-block">
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>#PP 50          1.8° stepper: 50; 1.2°: 75; 0.9°: 100; 0.72°: 125
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>#R 1.1          phase resistance in ohms
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>#L 0.0026       phase inductance in henries (2.6 mH)
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>#PP 50          1.8° stepper: 50; 1.2°: 75; 0.9°: 100; 0.72°: 125
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>#R 1.1          phase resistance in ohms
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>#L 0.0026       phase inductance in henries (2.6 mH)
 </span></code></pre></div>
 </div>
 </div>
@@ -3697,41 +3723,41 @@ value left at 0, and accepts only 50, 75, 100 or 125 pole pairs.</p>
 </figure>
 <p>The current loop bandwidth (<code>#Cbw</code>, 500 Hz by default) decides the gains calibration computes from R and L;
 leave it for now, <a href="../tuning/">Current limit and loop tuning</a> comes back to it.</p>
-<h2 id="2-run-it">2. Run it<a class="headerlink" href="#2-run-it" title="Permanent link">&para;</a></h2>
-<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Motor GUI</label><label for="__tabbed_2_2">Terminal</label></div>
+<h2 id="3-run-it">3. Run it<a class="headerlink" href="#3-run-it" title="Permanent link">&para;</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Motor GUI</label><label for="__tabbed_3_2">Terminal</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p>Start the calibration. The driver enters <em>Calibration mode</em> and the GUI shows its log step by step; when it
 finishes, the phase order and direction, Kt, KV and the flux linkage it found appear in the settings.</p>
 </div>
 <div class="tabbed-block">
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>#Cal
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>#Cal
 </span></code></pre></div>
 </div>
 </div>
 </div>
 <p>The <abbr title="Light-Emitting Diode">LED</abbr> flashes every 0.5 s while the routine runs, and the driver prints each step as it goes:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>----------------
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Calibration mode
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>----------------
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Pole pair test: Passed
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>Magnet test: Passed
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>Vbus test: Passed
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>Resistance = 1.100000Ohm
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>Inductance = 0.002600H
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>Kp_iq = ...
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>Ki_iq = ...
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>Open loop direction: good
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>Angle offset is: ...
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>Phase order is good!
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>KV is: ...
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>Kt is: ...
-</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>Flux linkage is: ...
-</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>----------------
-</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>Calibration success!
-</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>Save config with #Save
-</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>Going to idle!
-</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>----------------
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>----------------
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Calibration mode
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>----------------
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>Pole pair test: Passed
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>Magnet test: Passed
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>Vbus test: Passed
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>Resistance = 1.100000Ohm
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>Inductance = 0.002600H
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>Kp_iq = ...
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>Ki_iq = ...
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>Open loop direction: good
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>Angle offset is: ...
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>Phase order is good!
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>KV is: ...
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>Kt is: ...
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>Flux linkage is: ...
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>----------------
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>Calibration success!
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>Save config with #Save
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>Going to idle!
+</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a>----------------
 </span></code></pre></div>
 <p>What the steps are:</p>
 <table>
@@ -3750,7 +3776,7 @@ finishes, the phase order and direction, Kt, KV and the flux linkage it found ap
 </tr>
 <tr>
 <td>Magnet test</td>
-<td>the encoder sees enough field</td>
+<td>the encoder sees enough field: a magnet is there and close enough. The test says nothing about centring, the gap or the glue</td>
 <td><code>Magnet test: Failed</code>: magnet missing, too far, or axially magnetised</td>
 </tr>
 <tr>
@@ -3787,14 +3813,14 @@ wiring is detected and compensated, so these messages mean the motor did not tur
 not connected or shorted, a current limit at 0, a supply too weak, or a magnet that slips. Swapping wires does
 not fix them.</p>
 </div>
-<h2 id="3-save">3. Save<a class="headerlink" href="#3-save" title="Permanent link">&para;</a></h2>
-<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Motor GUI</label><label for="__tabbed_3_2">Terminal</label></div>
+<h2 id="4-save">4. Save<a class="headerlink" href="#4-save" title="Permanent link">&para;</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Motor GUI</label><label for="__tabbed_4_2">Terminal</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p><strong>Save</strong>. The GUI marks <em>Unsaved changes</em> until you do.</p>
 </div>
 <div class="tabbed-block">
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>#Save
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>#Save
 </span></code></pre></div>
 </div>
 </div>

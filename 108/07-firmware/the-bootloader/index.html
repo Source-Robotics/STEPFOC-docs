@@ -61,20 +61,7 @@
 
     
     
-  
-<meta property="og:type" content="website" />
-<meta property="og:title" content="The bootloader - STEPFOC" />
-<meta property="og:description" content="Documentation for the STEPFOC stepper motor FOC driver by Source Robotics." />
-<meta property="og:image" content="https://docs.source-robotics.com/STEPFOC-docs/108/assets/images/social/07-firmware/the-bootloader.png" />
-<meta property="og:image:type" content="image/png" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta property="og:url" content="https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/the-bootloader/" />
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="The bootloader - STEPFOC" />
-<meta property="twitter:description" content="Documentation for the STEPFOC stepper motor FOC driver by Source Robotics." />
-<meta property="twitter:image" content="https://docs.source-robotics.com/STEPFOC-docs/108/assets/images/social/07-firmware/the-bootloader.png" />
- <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+   <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
     html.glightbox-open { overflow: initial; height: 100%; }
     .gslide-title { margin-top: 0px; user-select: text; }
     .gslide-desc { color: #666; user-select: text; }
@@ -3779,8 +3766,10 @@ first <code>0x3000</code> bytes belong to the bootloader and the firmware never 
 <li><strong>Always</strong>, when there is no valid firmware.</li>
 </ul>
 <h2 id="the-board-id">The board ID<a class="headerlink" href="#the-board-id" title="Permanent link">&para;</a></h2>
-<p>The bootloader has a board ID of its own, 0 to 13, stored in its configuration page; 14 and 15 are reserved for
-the firmware's use. The firmware keeps it in step with its <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID: setting the node ID (<code>#CANID</code>,
+<p>The bootloader has a board ID of its own, 0 to 13, stored in its configuration page. 14 and 15 do not exist
+for it: its command frame, identifier <code>0x700</code>, decodes as node 14 in the firmware's identifier scheme, so those
+two node IDs are reserved. <strong>Give drivers node IDs 0 to 13.</strong> The firmware accepts <code>#CANID 14</code> and <code>15</code>, but the
+bootloader then keeps its old board ID and a firmware update over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> cannot reach the driver. The firmware keeps it in step with its <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID: setting the node ID (<code>#CANID</code>,
 Send_CAN_ID) writes the bootloader's board ID too, so a driver answers the host tools under its node ID. A
 replacement board ships as ID 0; two boards with the same ID on one bus corrupt each other's flash stream, so
 give the new board its ID alone on the bus first (<code>set-id</code> in the host tool).</p>

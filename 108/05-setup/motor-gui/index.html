@@ -61,20 +61,7 @@
 
     
     
-  
-<meta property="og:type" content="website" />
-<meta property="og:title" content="Motor GUI - STEPFOC" />
-<meta property="og:description" content="Documentation for the STEPFOC stepper motor FOC driver by Source Robotics." />
-<meta property="og:image" content="https://docs.source-robotics.com/STEPFOC-docs/108/assets/images/social/05-setup/motor-gui.png" />
-<meta property="og:image:type" content="image/png" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta property="og:url" content="https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/motor-gui/" />
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="Motor GUI - STEPFOC" />
-<meta property="twitter:description" content="Documentation for the STEPFOC stepper motor FOC driver by Source Robotics." />
-<meta property="twitter:image" content="https://docs.source-robotics.com/STEPFOC-docs/108/assets/images/social/05-setup/motor-gui.png" />
- <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+   <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
     html.glightbox-open { overflow: initial; height: 100%; }
     .gslide-title { margin-top: 0px; user-select: text; }
     .gslide-desc { color: #666; user-select: text; }
@@ -3704,7 +3691,9 @@ browsers have: Chrome, Edge, Brave, Opera. Firefox and Safari cannot open serial
 </table>
 <h2 id="opening-the-port">Opening the port<a class="headerlink" href="#opening-the-port" title="Permanent link">&para;</a></h2>
 <ol>
-<li>Plug in the adapter and power the driver (the adapter does not power it).</li>
+<li>Plug in the adapter and the motor supply. The adapter alone powers the driver's logic, enough to open the
+   port and read the settings, but the driver reports a Vbus error and will not calibrate or move until the
+   supply is on.</li>
 <li>Open <a href="https://motorgui.com/">motorgui.com</a>, choose the connection kind, and <strong>Open port</strong>. The browser asks
    which port; pick the adapter's.</li>
 <li>The driver's identity appears: hardware version, firmware version, serial number, batch date, whether it is

@@ -61,20 +61,7 @@
 
     
     
-  
-<meta property="og:type" content="website" />
-<meta property="og:title" content="Over CAN - STEPFOC" />
-<meta property="og:description" content="Documentation for the STEPFOC stepper motor FOC driver by Source Robotics." />
-<meta property="og:image" content="https://docs.source-robotics.com/STEPFOC-docs/108/assets/images/social/06-operation/can.png" />
-<meta property="og:image:type" content="image/png" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta property="og:url" content="https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/can/" />
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="Over CAN - STEPFOC" />
-<meta property="twitter:description" content="Documentation for the STEPFOC stepper motor FOC driver by Source Robotics." />
-<meta property="twitter:image" content="https://docs.source-robotics.com/STEPFOC-docs/108/assets/images/social/06-operation/can.png" />
- <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+   <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
     html.glightbox-open { overflow: initial; height: 100%; }
     .gslide-title { margin-top: 0px; user-select: text; }
     .gslide-desc { color: #666; user-select: text; }
@@ -3673,7 +3660,9 @@ error state:</p>
 </figure>
 <ul>
 <li><strong>Node ID</strong>, bits 10 to 7: which driver, 0 to 15. A driver acts only on frames with its own node ID and sends
-  with it. Set it with <code>#CANID</code> or Send_CAN_ID and save; every driver ships as node 0.</li>
+  with it. Set it with <code>#CANID</code> or Send_CAN_ID and save; every driver ships as node 0. Use 0 to 13: the
+  <a href="../../07-firmware/the-bootloader/">bootloader</a> reserves 14 and 15, and a driver on one of those cannot be
+  updated over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>.</li>
 <li><strong>Command ID</strong>, bits 6 to 1: which message, 0 to 63. The <a href="../../reference/can/"><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> reference</a> lists all of
   them.</li>
 <li><strong>Error bit</strong>, bit 0: in a frame from the driver, 1 while any error is active. In a frame from the host it is

@@ -61,20 +61,7 @@
 
     
     
-  
-<meta property="og:type" content="website" />
-<meta property="og:title" content="Status and utility - STEPFOC" />
-<meta property="og:description" content="Documentation for the STEPFOC stepper motor FOC driver by Source Robotics." />
-<meta property="og:image" content="https://docs.source-robotics.com/STEPFOC-docs/108/assets/images/social/reference/uart/utility.png" />
-<meta property="og:image:type" content="image/png" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta property="og:url" content="https://docs.source-robotics.com/STEPFOC-docs/108/reference/uart/utility/" />
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="Status and utility - STEPFOC" />
-<meta property="twitter:description" content="Documentation for the STEPFOC stepper motor FOC driver by Source Robotics." />
-<meta property="twitter:image" content="https://docs.source-robotics.com/STEPFOC-docs/108/assets/images/social/reference/uart/utility.png" />
- <link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+   <link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
     html.glightbox-open { overflow: initial; height: 100%; }
     .gslide-title { margin-top: 0px; user-select: text; }
     .gslide-desc { color: #666; user-select: text; }
@@ -3610,8 +3597,8 @@
 <tr>
 <td><code>#CANID</code></td>
 <td>Set/Get</td>
-<td>int: 0 to 15</td>
-<td>The <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID. Kept over a power cycle after Save.</td>
+<td>int: 0 to 13</td>
+<td>The <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID. Use 0 to 13: the firmware accepts 14 and 15, but the bootloader reserves them and a driver on one of those cannot be updated over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>. Setting the ID also sets the bootloader's board ID. Kept over a power cycle after Save.</td>
 <td>the ID</td>
 </tr>
 <tr>
