@@ -25,7 +25,9 @@ known to work.
 
 A diametrically magnetised 6 × 2.5 mm neodymium magnet on the rear of the motor shaft, about 1 mm above the
 encoder chip in the middle of the board: [6 × 2.5 mm diametrical magnet](https://source-robotics.com/products/6x2-5mm-diametrical-neodymium-magnet).
-An axially magnetised magnet, or one that wobbles, makes calibration fail or report bad positions.
+An axially magnetised magnet, or one that wobbles, makes calibration fail or report bad positions. The 6 × 2.5 mm size is
+the stock one, not a requirement: another thickness is a way to set the 1 mm gap when a shaft or a spacer leaves the
+wrong distance.
 [The encoder magnet](../04-mounting/magnet.md) says how to fit it.
 
 ## Adapters and cables

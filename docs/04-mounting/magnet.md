@@ -11,10 +11,17 @@ Every calibration problem that is not a wiring problem comes from this magnet.
 
 ## The magnet
 
-A 6 × 2.5 mm neodymium magnet, **diametrically** magnetised (north and south across the diameter, not through the
-thickness): [6 × 2.5 mm diametrical magnet](https://source-robotics.com/products/6x2-5mm-diametrical-neodymium-magnet).
-An axially magnetised magnet looks the same and does not work: the magnet test may even pass, and the position
-is wrong.
+A neodymium disc, **diametrically** magnetised (north and south across the diameter, not through the thickness).
+The shop's [6 × 2.5 mm diametrical magnet](https://source-robotics.com/products/6x2-5mm-diametrical-neodymium-magnet)
+is the size the printed spacers are made for. An axially magnetised magnet looks the same and does not work: the
+magnet test may even pass, and the position is wrong.
+
+!!! note "The size is not fixed"
+    6 × 2.5 mm is the stock size, not a requirement. Any diametrically magnetised disc of about 6 mm diameter
+    works, and the thickness is a way to set the gap: a thicker magnet brings its face closer to the encoder, a
+    thinner one farther, so with a shaft or a spacer that leaves the wrong distance you can pick the thickness
+    that gives 1 mm instead of changing the spacer. What matters is the 1 mm from the magnet's face to the chip,
+    the magnet centred on the shaft, and the diametrical magnetisation.
 
 ## Fitting it
 
