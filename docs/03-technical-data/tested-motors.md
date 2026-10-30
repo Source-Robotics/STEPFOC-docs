@@ -12,10 +12,10 @@ coil, which is what you enter with `#R` and `#L` before calibration.
 | 23HM22-2804S | NEMA 23, 56 mm, 0.9° | 100 | 1.16 Ω | 4.2 mH | 2.8 A | 700 g | [Stepperonline](https://www.omc-stepperonline.com/nema-23-bipolar-0-9deg-1-26nm-178-4oz-in-2-8a-2-5v-57x57x56mm-4-wires-23hm22-2804s) |
 
 <div class="grid" markdown>
-![17HS08-1004S](../assets/17HS08-1004S.jpg){ width="160" }
+![17HS08-1004S](../assets/17HS08-1004S.webp){ width="160" }
 ![17HS16-2004S1](../assets/17HS16-2004S1.webp){ width="160" }
 ![17HS24-2104S](../assets/17HS24-2104S.webp){ width="160" }
-![23HM22-2804S](../assets/23HM22-2804S.jpg){ width="160" }
+![23HM22-2804S](../assets/23HM22-2804S.webp){ width="160" }
 </div>
 
 Before the first test, set the current limit to the motor's rated current with `#Ilim`; the firmware's default is
