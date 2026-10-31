@@ -2,7 +2,6 @@
 
 The encoder reads a diametrically magnetised magnet on the rear end of the motor shaft. The magnet must sit
 centred on the shaft's axis, parallel to the board, about **1 mm** above the encoder chip, and it must not move.
-Every calibration problem that is not a wiring problem comes from this magnet.
 
 <figure markdown="span">
   ![Magnet distance to the encoder](../assets/STEPFOC_MAGNET.png){ width="700" }

@@ -14,7 +14,7 @@ on the motor shaft's axis.
 
 <figure markdown="span">
   ![Dimensions of the board](../assets/micro_dimensions.webp){ width="600" }
-  <figcaption>Figure 3: Board dimensions and hole pattern. The drawing is of the Spectral Micro, which has the same board.</figcaption>
+  <figcaption>Figure 3: Board dimensions and hole pattern. The drawing is of the Spectral Micro, which has the same outline and hole pattern.</figcaption>
 </figure>
 
 <figure markdown="span">

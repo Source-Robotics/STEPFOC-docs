@@ -141,8 +141,8 @@
     command ID, and the driver answers with a data frame under the same ID.
 
 **Spectral Micro**
-:   Source Robotics' BLDC driver, on which STEPFOC is built: the same board, firmware and commands, for
-    three-phase brushless motors.
+:   Source Robotics' BLDC driver, STEPFOC's sister: similar hardware and firmware and practically the same
+    commands, for three-phase brushless motors.
 
 **Step angle**
 :   The angle of one full step of a stepper: 1.8° for the common 200-step motor, 0.9° for a 400-step motor. It

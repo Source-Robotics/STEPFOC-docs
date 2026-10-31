@@ -11,9 +11,18 @@ and newer finds the wiring during calibration and compensates it.
 
 ## Finding the two coils
 
-With a multimeter on the resistance range, the two wires of one coil show the coil's resistance, a few ohms; two
-wires of different coils show no connection. Pair the wires that way. Most datasheets also name the pairs (A/C and
-B/D, or the colours).
+On most stepper motors the colours give the pairs away: **black and green** are one coil, **red and blue** the
+other. The Stepperonline motors of [Tested motors](../03-technical-data/tested-motors.md) are wired that way:
+black to A+, green to A−, red to B+, blue to B−.
+
+| Coil | Usual wire colours | Terminals |
+|---|---|---|
+| A | black, green | A+, A− |
+| B | red, blue | B+, B− |
+
+Not every maker follows it, so check with a multimeter on the resistance range: the two wires of one coil show the
+coil's resistance, a few ohms; two wires of different coils show no connection. Most datasheets also name the
+pairs (A/C and B/D, or the colours).
 
 ## Soldering
 

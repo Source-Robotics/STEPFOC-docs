@@ -29,7 +29,7 @@ step it belongs to.
 
 <!-- documents-table -->
 
-The Spectral Micro BLDC driver shares its hardware and firmware with STEPFOC; its documentation is at
+The Spectral Micro BLDC driver has similar hardware and firmware and is run the same way; its documentation is at
 [docs.source-robotics.com/Spectral-BLDC-docs](https://docs.source-robotics.com/Spectral-BLDC-docs/). The grippers
 driven by STEPFOC electronics are documented at
 [docs.source-robotics.com/MSG-gripper-docs](https://docs.source-robotics.com/MSG-gripper-docs/).
