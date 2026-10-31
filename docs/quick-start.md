@@ -57,7 +57,7 @@ Read in more detail: [Wiring the stepper](04-mounting/wiring.md).
    Vbus error and will not calibrate or move.)
 
 === "Motor GUI"
-    Open [motorgui.com](https://motorgui.com/) in Chrome or Edge, choose the serial connection and **Open port** on
+    Open [motorgui.com](https://motorgui.com/) in Chrome or Edge, choose the serial connection and **Connect** on
     the adapter's port. The driver's identity and state appear: hardware and firmware version, serial number,
     *Not calibrated*, *No errors*. If nothing connects: the port, the cable's TX/RX, the browser (Web Serial needs
     a Chromium browser).
@@ -72,6 +72,9 @@ Read in more detail: [Wiring the stepper](04-mounting/wiring.md).
 
 Read in more detail: [Power and the CAN daisy chain](04-mounting/power-and-can.md) ·
 [Connectors and pinout](03-technical-data/connectors.md).
+
+**Check:** the driver's identity and live state appear before you change settings. A missing connection
+is covered in [Motor GUI](05-setup/motor-gui.md#opening-the-port) or [Troubleshooting](08-troubleshooting.md).
 
 ## 6. Restore the defaults and enter the motor parameters
 
@@ -123,6 +126,9 @@ slip.
 Read in more detail: [Motor parameters and calibration](05-setup/calibration.md), with the whole log and every
 message.
 
+**Check:** the calibration log ends with `Calibration success!`. If it does not, use the failed step in
+[Calibration troubleshooting](05-setup/calibration.md#troubleshooting); do not treat a stopped motor as success.
+
 ## 8. Set the current limit and save
 
 The current limit is the motor's rated phase current in mA; the firmware's default is higher than a small motor's
@@ -142,6 +148,9 @@ pause: normal operation.
 
 Read in more detail: [Current limit and loop tuning](05-setup/tuning.md) ·
 [Saving the configuration](05-setup/saving.md).
+
+**Check:** after **Save**, Motor GUI no longer marks unsaved changes. [Saving](05-setup/saving.md) explains
+which settings are kept.
 
 ## 9. Move it
 
@@ -163,6 +172,9 @@ Position is in encoder ticks, 16384 per revolution; speed in ticks per second; c
 or whines, lower the current limit or tune the loops.
 
 Read in more detail: [Control modes](06-operation/modes.md) · [Current limit and loop tuning](05-setup/tuning.md).
+
+**Check:** the position/speed feedback follows the request, and **Idle** stops driving the motor. A motor
+that does not follow needs [Troubleshooting](08-troubleshooting.md) before a load is attached.
 
 ## 10. Where to go next
 
