@@ -28,8 +28,8 @@ manuals:
     number: SR-5001
     title: STEPFOC Manual
     revision: 2026.A
-    status: draft
-    published: null
+    status: published
+    published: 2026-11-03
     firmware: true
     applies_to: STEPFOC driver PCB v1
     covers: "the STEPFOC stepper driver: quick start, safety, technical data, mounting, setup with Motor GUI or a terminal, operation, firmware; the API reference; guides"
