@@ -17,9 +17,12 @@ commands only work with the flag set.
 
 ## Calibrating the gripper
 
-After every power-up the gripper has to find its end stops: `#Gripcal` or Send_gripper_calibrate. The jaws move
-to both ends; the positions become 0 (open) and 255 (closed). The motor itself must be calibrated (`#Cal`) and
-saved before that, once.
+After every power-up the gripper has to find its end stops: `#Gripcal` or Send_gripper_calibrate. The jaws open
+until they stop, then close until they stop, slowly and at 500 mA; the positions become 0 (open) and 255 (closed).
+The driver prints nothing when it is done. If it has not found both end stops within about 24 s it gives up, and
+the gripper stays uncalibrated. Check the result with `#Gripinfo` (`Gripper calibrated is: 1`) or the
+`gripper_calibrated` bit of Respond_Gripper_data_pack: a move is carried out only once the gripper is calibrated.
+The motor itself must be calibrated (`#Cal`) and saved before that, once.
 
 ## Moving
 
@@ -43,11 +46,14 @@ and the object detection:
 | 3 | the position was reached |
 
 An empty Send_gripper_data_pack (0 bytes) only asks for the state. Send_gripper_data_pack's E-stop bit raises the
-gripper E-stop error; `#Gripstop 1` does the same over UART.
+gripper E-stop error; `#Gripstop 1` does the same over UART. The error stays: while the E-stop bit is 1 the driver
+raises it again on every control cycle, and `#Error` prints only `In error state!`. To recover, clear the bit
+(`#Gripstop 0`, or a Send_gripper_data_pack with the bit 0), then `#Clear` or Send_Clear_Error.
 
 !!! warning "Current"
     The firmware does not limit the current you give a gripper move. The safe range depends on the gripper's
-    mechanics and motor; the gripper's manual gives it. The driver's hard limit is 2800 mA.
+    mechanics and motor; the gripper's manual gives it. The driver is rated for 2.8 A, but nothing enforces that
+    here: a gripper move uses the current as sent.
 
 ## Where the details are
 

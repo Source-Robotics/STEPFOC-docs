@@ -2279,9 +2279,15 @@ you tune if the defaults do not suit it. Motor GUI shows the motor's response on
 which is what makes tuning quick.</p>
 <h2 id="the-current-limit">The current limit<a class="headerlink" href="#the-current-limit" title="Permanent link">&para;</a></h2>
 <p>Set the current limit to the rated phase current of your motor in mA (the datasheet value; the tested motors'
-ratings are in <a href="../../03-technical-data/tested-motors/">Tested motors</a>). The firmware clamps the limit to the
-driver's 2800 mA and does not trip on phase current by itself; the MOSFET driver's hardware protection only
-catches a hard fault. A limit above the motor's rating overheats the motor.</p>
+ratings are in <a href="../../03-technical-data/tested-motors/">Tested motors</a>). It is 1700 mA after <code>#Default</code>, and
+calibration leaves it at 1600 mA, whatever it was before. <code>#Ilim</code> clamps the limit to the driver's 2800 mA. The
+firmware does not trip on phase current by itself and does not monitor the driver stage. A limit above the motor's
+rating overheats the motor.</p>
+<div class="admonition warning">
+<p class="admonition-title">Over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> the limit is not clamped</p>
+<p>Send_Limits stores the current limit as sent, without the 2800 mA clamp of <code>#Ilim</code>. A host program must keep
+it within the motor's rating and 2800 mA.</p>
+</div>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Motor GUI</label><label for="__tabbed_1_2">Terminal</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -2299,7 +2305,7 @@ catches a hard fault. A limit above the motor's rating overheats the motor.</p>
 <figure>
   <a class="glightbox" href="../../assets/cascadeloop.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The cascaded loops" src="../../assets/cascadeloop.webp" width="800" /></a>
 <br />
-<figcaption>Figure 13: The position loop commands the velocity loop, which commands the current loop.</figcaption>
+<figcaption>Figure 14: The position loop commands the velocity loop, which commands the current loop.</figcaption>
 </figure>
 <p>Tune from the inside out: the current loop first, then velocity, then position. Before you start:</p>
 <ul>
@@ -2352,7 +2358,7 @@ useful for legged robots.</p>
 <figure>
   <a class="glightbox" href="../../assets/PDloop.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The PD loop" src="../../assets/PDloop.webp" width="800" /></a>
 <br />
-<figcaption>Figure 14: The impedance loop: a spring (KP) and a damper (KD) around the position setpoint, plus a current feedforward.</figcaption>
+<figcaption>Figure 15: The impedance loop: a spring (KP) and a damper (KD) around the position setpoint, plus a current feedforward.</figcaption>
 </figure>
 <p>In <abbr title="Proportional-Derivative controller, the impedance control mode">PD</abbr> mode the motor behaves like a spring and a damper: the torque is <code>KP × (setpoint − position) + KD × (speed
 setpoint − speed) + feedforward current</code>. Set <code>KP</code> and <code>KD</code> (the gains, or <code>#KP</code>, <code>#KD</code>, or Send_PD_Gains), then
@@ -2361,9 +2367,13 @@ the motor holds position firmly, then add <code>KD</code> until it stops ringing
 explains the loop.</p>
 <h2 id="limits">Limits<a class="headerlink" href="#limits" title="Permanent link">&para;</a></h2>
 <ul>
-<li>The velocity limit (<code>#Vlimit</code>) clamps the speed the loops may command, in encoder ticks per second. A rough
-  maximum for your motor is 0.8 × Vbus × KV × 16384 / 60 ticks per second, with KV from calibration.</li>
-<li>The voltage limit (<code>#Vlim</code>) clamps the voltage of the current loops in mV; 0 uses the supply voltage.</li>
+<li>The velocity limit (<code>#Vlimit</code>, 800000 by default) clamps the speed the loops may command, in encoder ticks per
+  second. A rough maximum for your motor is 0.8 × V × KV × 16384 / 60 ticks per second, with KV from calibration
+  and V the lower of the voltage limit and the supply voltage.</li>
+<li>The voltage limit (<code>#Vlim</code>) clamps the voltage of the current loops in mV. It is 6000 mV by default: a stepper's
+  low resistance makes the current loop unstable with the full supply voltage, and the firmware's own guidance is
+  6000 mV for a phase resistance below 2 Ω. The limit also caps the top speed. 0, or a value above the supply
+  voltage, uses the supply voltage.</li>
 <li><code>#Rstint 1</code> resets the integrators on every new setpoint, which avoids windup when a program sends one setpoint
   after another with large steps.</li>
 </ul>
@@ -2387,7 +2397,7 @@ explains the loop.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 29, 2026 22:59:36 UTC">October 29, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 3, 2026 14:48:56 UTC">November 3, 2026</span>
   </span>
 
     

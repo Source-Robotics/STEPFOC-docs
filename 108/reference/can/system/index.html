@@ -1699,7 +1699,7 @@
 <div class="cmd-facts">
 <p><span class="fact">ID 11</span><span class="fact">host → driver</span><span class="fact">1 bytes</span><span class="fact">Python: <code>Send_CAN_ID()</code></span></p>
 </div>
-<p>Gives the driver a new node ID, 0 to 13 (the firmware accepts up to 15, but the bootloader reserves 14 and 15: a driver on one of those cannot be updated over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>). Setting the ID also sets the bootloader's board ID. The driver answers to the new ID at once; the ID is kept over a power cycle only after Send_Save_config.</p>
+<p>Gives the driver a new node ID, 0 to 13 (the firmware accepts up to 15, but the bootloader reserves 14 and 15: a driver on one of those cannot be updated over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>). Saving the configuration (Send_Save_config) also writes the ID into the bootloader's board ID. The driver answers to the new ID at once; the ID is kept over a power cycle only after Send_Save_config.</p>
 <p><strong>1 bytes</strong></p>
 <table>
 <thead>
@@ -1717,7 +1717,7 @@
 <td></td>
 <td>ID</td>
 <td>unsigned 8-bit</td>
-<td>0 to 15</td>
+<td>0 to 13; 14 and 15 are accepted but reserved by the bootloader</td>
 </tr>
 </tbody>
 </table>
@@ -1741,7 +1741,7 @@
 <div class="cmd-facts">
 <p><span class="fact">ID 13</span><span class="fact">host → driver</span><span class="fact">0 bytes</span><span class="fact">Python: <code>Send_Save_config()</code></span></p>
 </div>
-<p>Writes the current configuration (gains, limits, calibration, <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> ID, heartbeat, watchdog, gripper flag) to the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>.</p>
+<p>Writes the current configuration (gains, limits, calibration, <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> ID, heartbeat, watchdog, gripper flag) to the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>, and the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> ID into the bootloader's board ID. The idle behaviour of Send_Settings and the current loop bandwidth are not kept. It also writes the serial number held in RAM, which is 1 after a power-up unless <code>#SERNUM</code> set it, over the stored one.</p>
 <p>The driver does not answer this command.</p>
 <hr />
 <h3 id="send_reset">Send_Reset<a class="headerlink" href="#send_reset" title="Permanent link">&para;</a></h3>
@@ -1755,14 +1755,14 @@
 <div class="cmd-facts">
 <p><span class="fact">ID 1</span><span class="fact">host → driver</span><span class="fact">0 bytes</span><span class="fact">Python: <code>Send_Clear_Error()</code></span></p>
 </div>
-<p>Clears the error flags and goes to idle. An error whose cause is still present comes straight back. A calibration error is cleared only by calibrating.</p>
+<p>Clears the error flags and goes to idle. An error whose cause is still present comes straight back. A calibration error is cleared only by calibrating. A gripper E-stop comes back until the E-stop bit of Send_gripper_data_pack is 0 again.</p>
 <p>The driver does not answer this command.</p>
 <hr />
 <h3 id="send_watchdog">Send_Watchdog<a class="headerlink" href="#send_watchdog" title="Permanent link">&para;</a></h3>
 <div class="cmd-facts">
 <p><span class="fact">ID 15</span><span class="fact">host → driver</span><span class="fact">5 bytes</span><span class="fact">Python: <code>Send_Watchdog()</code></span></p>
 </div>
-<p>Sets the watchdog: every valid <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> frame the driver receives resets it; when the time runs out the driver reports a watchdog error and stops. 0 turns it off (the default). The action byte is stored but not acted on by this firmware: the driver always stops into its idle behaviour.</p>
+<p>Sets the watchdog: when the time runs out the driver reports a watchdog error and stops. Every valid motion frame (Send_data_pack_1, Send_data_pack_PD, Send_data_pack_HALL, Send_gripper_data_pack) and every status request the driver answers resets it; the setting frames (gains, limits, Idle, Clear, Save, Settings and Send_Watchdog itself) do not. 0 turns it off (the default). The action byte is stored but not acted on by this firmware: the driver always stops into its idle behaviour. Send_Save_config keeps the watchdog, and a kept watchdog runs from power-up: a host that sends no motion frame or status request within the time finds the driver in watchdog error, and clears it with Send_Clear_Error.</p>
 <p><strong>5 bytes</strong></p>
 <table>
 <thead>
@@ -1824,7 +1824,7 @@
 <div class="cmd-facts">
 <p><span class="fact">ID 35</span><span class="fact">host → driver</span><span class="fact">0 bytes</span></p>
 </div>
-<p>Sets boolean settings that have no command of their own: a mask byte says which settings the frame touches, a value byte gives their new values; settings outside the mask are left alone. Bit 0 is the idle behaviour: 1 brake (phases shorted), 0 coast. Added in firmware 108 (Spectral Micro 107). The Python library has no call for it yet.</p>
+<p>Sets boolean settings that have no command of their own: a mask byte says which settings the frame touches, a value byte gives their new values; settings outside the mask are left alone. Bit 0 is the idle behaviour: 1 brake (phases shorted), 0 coast. The setting is not kept by Send_Save_config: at power-up the driver brakes. Added in firmware 107. The Python library has no call for it yet.</p>
 <p><strong>2 bytes</strong></p>
 <table>
 <thead>

@@ -58,8 +58,9 @@ CR+LF works.
 #Info
 ```
 
-prints the driver's identity: the hardware and firmware version, the serial number, the motor parameters and the
-calibration state. `#Help` (firmware 108) prints a short command reference, `#Error` the active errors.
+prints the driver's identity and state: the hardware and firmware version, the CAN ID, the calibration state and
+the motor parameters. `#Help` (firmware 106 and newer) prints a short command reference, `#Error` the active
+errors, `#Param` the gains and limits.
 
 Every command starts with `#`, and a Set/Get command takes one number after a space: `#P 16384` moves to position
 16384; `#P` alone prints the position. Names are case-sensitive. The whole set is in the

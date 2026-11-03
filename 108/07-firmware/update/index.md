@@ -1,6 +1,6 @@
 # Updating through the bootloader
 
-A driver with the bootloader (firmware 104 or newer) is updated over the UART connector or the CAN bus: the host
+A driver with the bootloader (firmware 105 or newer) is updated over the UART connector or the CAN bus: the host
 tells the driver to reset, the bootloader waits two seconds for a host, and the host streams the new image into it.
 No programming adapter, and nothing to open.
 
@@ -40,8 +40,8 @@ is the `stepfoc-firmware-V<number>.bin` from the GitHub release.
 
 !!! note "Board ID and node ID"
     The bootloader has its own board ID (0 to 13), kept in its configuration page, separate from the firmware's
-    CAN node ID. The firmware keeps the two in step when the node ID is set (`#CANID`, Send_CAN_ID), so a driver's
-    bootloader ID is normally its node ID.
+    CAN node ID. The firmware keeps the two in step when the configuration is saved (`#Save`, Send_Save_config),
+    so a driver's bootloader ID is normally its node ID. After `#CANID`, save before you flash over CAN.
 
 ## From a PAR6 control box
 

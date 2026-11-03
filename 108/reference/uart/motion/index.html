@@ -1472,28 +1472,28 @@
 <td><code>#Ud</code></td>
 <td>Set/Get</td>
 <td>int: voltage in mV</td>
-<td>The d-axis voltage used in voltage-torque mode; does not change the mode. Enters <strong>voltage torque</strong> mode.</td>
+<td>The d-axis voltage used in voltage-torque mode; does not change the mode.</td>
 <td>the Ud setpoint in mV</td>
 </tr>
 <tr>
 <td><code>#Brake</code></td>
 <td>Action</td>
 <td></td>
-<td>Goes to idle with the motor braking (phases shorted); also the idle behaviour from then on. Enters <strong>idle</strong> mode.</td>
+<td>Goes to idle with the motor braking (phases shorted); also the idle behaviour from then on. Not kept by Save: the driver brakes at every power-up. Enters <strong>idle</strong> mode.</td>
 <td><code>Brake 1</code></td>
 </tr>
 <tr>
 <td><code>#HALL</code></td>
 <td>Action</td>
 <td></td>
-<td>Homing against the sensor on ADDITIONAL2 at 3000 ticks/s (see Send_data_pack_HALL for the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> form with a chosen speed and trigger). Enters <strong>HALL</strong> mode.</td>
+<td>Homing against the sensor on ADDITIONAL2 at 3000 ticks/s, triggered when the pin is low. It holds while the pin stays low and spins on when the pin goes high again (see Send_data_pack_HALL for the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> form with a chosen speed and trigger). Enters <strong>HALL</strong> mode.</td>
 <td><code>HALL</code></td>
 </tr>
 <tr>
 <td><code>#Coast</code></td>
 <td>Action</td>
 <td></td>
-<td>Goes to idle with the motor coasting (phases open); also the idle behaviour from then on. Enters <strong>idle</strong> mode.</td>
+<td>Goes to idle with the motor coasting (phases open); also the idle behaviour until the next power-up, which brakes again. Not kept by Save. Enters <strong>idle</strong> mode.</td>
 <td><code>Coast 0</code></td>
 </tr>
 <tr>
@@ -1541,29 +1541,29 @@
 <tr>
 <td><code>#microstep</code></td>
 <td>Set/Get</td>
-<td>int: microsteps per full step</td>
-<td>The microstepping used by gosteps.</td>
+<td>int: microsteps per electrical cycle</td>
+<td>The microsteps gosteps makes per electrical cycle (four full steps), 16 by default.</td>
 <td>the microstep setting</td>
 </tr>
 <tr>
 <td><code>#stepinterval</code></td>
 <td>Set/Get</td>
-<td>int: step time</td>
-<td>The time between steps for gosteps.</td>
+<td>int: step time in µs</td>
+<td>The time between two microsteps of gosteps, 1000 µs by default. It is rounded down to whole control cycles of 160 µs, and is 160 µs at the least.</td>
 <td>the step interval</td>
 </tr>
 <tr>
 <td><code>#gosteps</code></td>
 <td>Set/Get</td>
-<td>int: number of steps (sign = direction)</td>
-<td>Moves the given number of steps open loop, with the timing of stepinterval and microstep. Enters <strong>open-loop steps</strong> mode.</td>
+<td>int: number of microsteps (sign = direction)</td>
+<td>Moves the given number of microsteps open loop, one every stepinterval, at the voltage set by Openv, then goes to idle. With microstep 16, 16 steps are one electrical cycle: four full steps, 7.2° on a 1.8° motor. Enters <strong>open-loop steps</strong> mode.</td>
 <td><code>Moving for N steps</code></td>
 </tr>
 <tr>
 <td><code>#Openloop</code></td>
 <td>Set/Get</td>
-<td>float: electrical speed</td>
-<td>Spins the motor open loop, as a plain stepper, with the voltage set by Openv. Enters <strong>open loop</strong> mode.</td>
+<td>float: electrical speed in rad/s</td>
+<td>Spins the motor open loop, as a plain stepper, with the voltage set by Openv. The voltage is not current-controlled and Ilim does not apply: see Open-loop stepping on Control modes. Enters <strong>open loop</strong> mode.</td>
 <td>the open-loop speed</td>
 </tr>
 </tbody>

@@ -2166,8 +2166,8 @@
 <td>the name's spelling and case: <code>#Kpiq</code>, not <code>#kpiq</code></td>
 </tr>
 <tr>
-<td>the <abbr title="Light-Emitting Diode">LED</abbr> is off and nothing works after a firmware update</td>
-<td>the bootloader has no valid firmware: flash again, see <a href="../07-firmware/update/">Updating through the bootloader</a></td>
+<td>the <abbr title="Light-Emitting Diode">LED</abbr> keeps blinking and nothing answers after a firmware update</td>
+<td>the bootloader has no valid firmware, or its <abbr title="Cyclic Redundancy Check">CRC</abbr> does not match after an upload with the programming adapter: flash again through the bootloader, see <a href="../07-firmware/update/">Updating through the bootloader</a></td>
 </tr>
 </tbody>
 </table>
@@ -2206,7 +2206,7 @@
 </tr>
 <tr>
 <td>the firmware update finds no bootloader</td>
-<td>a driver with firmware 103 has no bootloader: <a href="../07-firmware/bootloader/">Installing the bootloader on an older board</a></td>
+<td>power-cycle the driver while the GUI scans, to catch the bootloader's 2 s window. A driver with firmware 103 or older from the <code>main</code> branch has no bootloader: <a href="../07-firmware/bootloader/">Installing the bootloader on an older board</a></td>
 </tr>
 </tbody>
 </table>
@@ -2230,8 +2230,8 @@ come back most:</p>
 <td>one coil is not connected</td>
 </tr>
 <tr>
-<td><code>Open loop: Failed</code></td>
-<td>the motor did not turn: a coil open, the open-loop voltage (<code>#Openv</code>) too low</td>
+<td>the motor does not move in the open-loop step</td>
+<td>a coil open or not soldered; calibration then fails at the next step with <code>Phase order is wrong!</code></td>
 </tr>
 <tr>
 <td><code>Phase order is wrong!</code></td>
@@ -2243,7 +2243,7 @@ come back most:</p>
 </tr>
 <tr>
 <td>calibration succeeds but the <abbr title="Light-Emitting Diode">LED</abbr> stays on and <code>#Error</code> shows nothing</td>
-<td><code>#Info</code> shows <code>-1</code>: <code>#Default</code>, parameters, calibrate again</td>
+<td>should not happen with firmware 106 and newer, which replaces a damaged configuration block with the defaults at power-up; if <code>#Info</code> shows <code>-1</code>: <code>#Default</code>, parameters, calibrate again</td>
 </tr>
 </tbody>
 </table>
@@ -2278,7 +2278,7 @@ come back most:</p>
 </tr>
 <tr>
 <td>it stops with a velocity error</td>
-<td>the speed limit <code>#Vlimit</code>, or a load that lets the motor overrun</td>
+<td>the speed passed 30,000,000 ticks/s, a fixed threshold that <code>#Vlimit</code> does not change: a runaway, so check the magnet and the calibration</td>
 </tr>
 <tr>
 <td>it loses position with a load</td>
@@ -2301,9 +2301,9 @@ poorly and run rough. The <a href="../03-technical-data/tested-motors/">tested m
 <li>The magnet must be diametrically magnetised and centred on the shaft.</li>
 </ul>
 <h2 id="the-driver-gets-hot-or-shuts-down">The driver gets hot or shuts down<a class="headerlink" href="#the-driver-gets-hot-or-shuts-down" title="Permanent link">&para;</a></h2>
-<p>The MOSFET driver stage shuts down on its own overtemperature or overcurrent and reports a driver error. Lower
-the current limit, give the board airflow, check the motor leads for a short. Near 2.8 A the driver needs
-cooling.</p>
+<p>The firmware does not monitor the driver stage: if the stage stops on its own, for heat or a short, the motor
+loses torque and no error is reported. Lower the current limit, give the board airflow, check the motor leads for
+a short. Near 2.8 A the driver needs cooling.</p>
 <h2 id="after-a-firmware-update">After a firmware update<a class="headerlink" href="#after-a-firmware-update" title="Permanent link">&para;</a></h2>
 <p><code>#Info</code> shows the new release. If the values look wrong or the <abbr title="Light-Emitting Diode">LED</abbr> stays on: <code>#Default</code>, enter the motor
 parameters, <code>#Cal</code>, <code>#Save</code>. A release note says when an update clears the calibration.</p>
@@ -2329,7 +2329,7 @@ parameters, <code>#Cal</code>, <code>#Save</code>. A release note says when an u
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 30, 2026 15:20:15 UTC">October 30, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 3, 2026 14:48:56 UTC">November 3, 2026</span>
   </span>
 
     

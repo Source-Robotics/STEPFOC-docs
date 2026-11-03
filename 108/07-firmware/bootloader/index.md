@@ -21,7 +21,7 @@ once, with a programming adapter on the JTAG connector. After that, every update
 
 <figure markdown="span">
   ![The JTAG pads and the adapter](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_JTAG.webp){ width="700" }
-  <figcaption>Figure 18: The JTAG pads. The adapter is pressed onto them; a little pressure makes the contact.</figcaption>
+  <figcaption>Figure 18: The JTAG pads, marked 3V3, GND, SWCLK, SWDIO. The adapter is pressed onto them; a little pressure makes the contact.</figcaption>
 </figure>
 
 ## Steps
@@ -31,7 +31,7 @@ once, with a programming adapter on the JTAG connector. After that, every update
 3. Erase the chip, or at least the application region: the old firmware and the bootloader must not overlap.
 4. Program the bootloader binary at address **`0x08000000`**.
 5. Disconnect the adapter, power the driver. The bootloader finds no valid application and waits in bootloader
-   mode (the LED stays off).
+   mode, with the LED blinking.
 6. Flash the firmware release through the bootloader, over UART or CAN, as in
    [Updating through the bootloader](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/update/).
 7. `#Info` shows the new release. `#Default`, enter the motor parameters, calibrate, `#Save`.

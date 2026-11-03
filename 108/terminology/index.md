@@ -14,14 +14,14 @@
 
 **Back-EMF**
 :   The voltage a turning motor generates in its own coils, proportional to speed. It opposes the supply, limits the
-    top speed at a given voltage, and is what calibration measures to find KV, Kt and the flux linkage.
+    top speed at a given voltage. Calibration estimates KV from the speed the motor reaches per volt.
 
 **Board ID**
-:   The bootloader's own address, 0 to 13, stored in its configuration page. The firmware keeps it equal to the CAN
-    node ID.
+:   The bootloader's own address, 0 to 13, stored in its configuration page. Saving the configuration (`#Save`)
+    writes the CAN node ID into it.
 
 **Bootloader**
-:   The program in the first 12 KB of the driver's flash on boards shipped with firmware 104 or newer. It starts the
+:   The program in the first 12 KB of the driver's flash on boards shipped with firmware 105 or newer. It starts the
     firmware, and loads a new firmware over UART or CAN. See [The bootloader](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/the-bootloader/).
 
 **Calibration**
@@ -30,7 +30,8 @@
     and measures Kt, KV and the flux linkage. Its result is kept with `#Save`.
 
 **CAN ID** (node ID)
-:   The address of the driver on the CAN bus, 0 to 15. It occupies bits 10 to 7 of the 11-bit CAN frame identifier;
+:   The address of the driver on the CAN bus, 0 to 13 (the bootloader reserves 14 and 15). It occupies bits 10 to 7
+    of the 11-bit CAN frame identifier;
     the command ID occupies bits 6 to 1 and the error bit is bit 0.
 
 **CANvas**
@@ -86,13 +87,12 @@
     which gives smooth, quiet, efficient motion with no lost steps and a known position.
 
 **Firmware release**
-:   One build of the firmware, numbered 103, 104, 105, … and tagged `V103`, `V104`, … in the firmware repository.
+:   One build of the firmware, numbered 103, 105, 106, … and tagged `V103`, `V105`, … in the firmware repository.
     `#Info` prints the release a driver runs. This documentation describes one release; the version selector
     switches between them.
 
 **Flux linkage**
-:   The rotor's magnetic flux as seen by a coil, in weber; found by calibration from the back-EMF, together with
-    KV and Kt.
+:   The rotor's magnetic flux as seen by a coil, in weber; calibration computes it from Kt.
 
 **Gripper mode**
 :   The driver running a gripper (`#Gripper 1`): jaw positions from 0 (open) to 255 (closed), a speed, a current
@@ -100,7 +100,7 @@
 
 **HALL mode**
 :   Homing against a sensor on ADDITIONAL2: the motor turns at a set speed until the sensor triggers, then holds
-    the position reached.
+    the position reached. With a level trigger it holds only while the pin stays at that level.
 
 **Heartbeat**
 :   A frame (Respond_Heartbeat) the driver sends at a set interval so the host knows it is alive. Off by default.
@@ -156,5 +156,5 @@
     error.
 
 **Watchdog**
-:   A timer the driver resets with every valid CAN frame it receives. When it is set (Send_Watchdog) and runs out,
-    the driver reports a watchdog error and stops.
+:   A timer the driver resets with every motion frame and every status request it answers. When it is set
+    (Send_Watchdog) and runs out, the driver reports a watchdog error and stops.

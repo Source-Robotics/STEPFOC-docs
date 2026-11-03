@@ -1479,15 +1479,15 @@
 <td><code>#Cal</code></td>
 <td>Action</td>
 <td></td>
-<td>Runs the calibration routine (see Motor parameters and calibration). Enter R, L and PP first.</td>
+<td>Runs the calibration routine (see Motor parameters and calibration), over the serial port only. Enter R, L and PP first. It leaves the current limit at 1600 mA.</td>
 <td>the calibration log</td>
 </tr>
 <tr>
 <td><code>#Calangle</code></td>
 <td>Action</td>
 <td></td>
-<td>Runs only the angle-offset step of the calibration. Enters <strong>angle-offset calibration</strong> mode.</td>
-<td><code>Idle</code> when done</td>
+<td>Runs only an angle-offset search. It uses an older routine than the one in Cal, which gives up after about two minutes and keeps the offset it reached. Prints <code>Idle</code> at once, before the search starts. Enters <strong>angle-offset calibration</strong> mode.</td>
+<td><code>Idle</code>, at once</td>
 </tr>
 <tr>
 <td><code>#Offset</code></td>
@@ -1514,7 +1514,7 @@
 <td><code>#Dir</code></td>
 <td>Set/Get</td>
 <td>int: 0 or 1</td>
-<td>The counting direction of the encoder (1 is the default).</td>
+<td>A stored flag that Info prints as <code>Phase direction</code>. The control code does not use it in this release; #Default writes 0.</td>
 <td>the current value</td>
 </tr>
 <tr>
@@ -1542,21 +1542,21 @@
 <td><code>#Openv</code></td>
 <td>Set/Get</td>
 <td>int: voltage in mV</td>
-<td>The voltage of the open-loop spin, in calibration and with Openloop.</td>
+<td>The voltage of the open-loop modes (Openloop, gosteps), 5000 mV at power-up. Calibration does not use it: its open-loop spin has a fixed 5000 mV. Not kept by Save.</td>
 <td>the current value</td>
 </tr>
 <tr>
 <td><code>#Opens</code></td>
 <td>Set/Get</td>
 <td>float: electrical speed in rad/s</td>
-<td>The speed of the open-loop spin in calibration.</td>
+<td>The electrical speed of Openloop, the same value Openloop sets. Calibration does not use it.</td>
 <td>the current value</td>
 </tr>
 <tr>
 <td><code>#Vp</code></td>
 <td>Set/Get</td>
 <td>int: voltage in mV</td>
-<td>The voltage of the phase-order search in calibration.</td>
+<td>Stored, but not used by this firmware: the phase-order check of calibration uses a fixed 3000 mV.</td>
 <td>the current value</td>
 </tr>
 <tr>

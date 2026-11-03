@@ -43,5 +43,7 @@ physical swap would do), so the motor calibrates identically with any wiring, an
 counter-clockwise seen from the magnet side. With firmware 103, a reversed coil fails the open-loop step with
 `Open loop: Failed / Switch motor phases and try again!`; swap A+ and A− and calibrate again.
 
-If you want the other direction to be positive, swap the two wires of one coil and calibrate again, or keep the
-wiring and use negative setpoints.
+Because calibration compensates the wiring, the positive direction is tied to the encoder: with firmware 105 and
+newer, swapping the wires of a coil and calibrating again does not change it. The firmware has no setting that
+reverses it (`#Dir` is stored but not used). If you want the other direction to be positive, negate the setpoints
+and the position, speed and current you read back in your host program.

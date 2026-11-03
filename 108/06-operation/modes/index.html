@@ -1215,6 +1215,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#open-loop-stepping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open-loop stepping
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#positive-rotation" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2098,6 +2109,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#open-loop-stepping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open-loop stepping
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#positive-rotation" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2230,8 +2252,8 @@
 
 <h1 id="control-modes">Control modes<a class="headerlink" href="#control-modes" title="Permanent link">&para;</a></h1>
 <p>The driver is always in one control mode. A command that carries a setpoint switches to the mode that uses it;
-<code>#Idle</code> or Send_Idle switches back to idle. The driver refuses the closed-loop modes while it is not calibrated or
-while an error is active.</p>
+<code>#Idle</code> or Send_Idle switches back to idle. The driver refuses every mode except idle, open loop included, while it
+is not calibrated or while an error is active.</p>
 <pre class="mermaid"><code>stateDiagram-v2
     [*] --&gt; NotCalibrated: power-up, no saved calibration
     [*] --&gt; Idle: power-up, saved calibration
@@ -2287,19 +2309,19 @@ passing through idle; a fault is any of the errors on <a href="../errors/">Error
 </tr>
 <tr>
 <td>Voltage torque</td>
-<td>applies a voltage on the q axis directly, without the current loop</td>
+<td>applies a voltage on the q axis directly, without the current loop: clamped to <code>#Vlim</code>, not current-limited</td>
 <td><code>#Uq</code></td>
 <td>mV</td>
 </tr>
 <tr>
 <td>Open loop</td>
-<td>steps the motor like a plain stepper driver, without the encoder</td>
-<td><code>#Openloop</code> (continuous), <code>#gosteps</code> (a number of steps)</td>
-<td>electrical speed; steps</td>
+<td>steps the motor like a plain stepper driver, without the encoder and without a current limit; see <a href="#open-loop-stepping">Open-loop stepping</a></td>
+<td><code>#Openloop</code> (continuous), <code>#gosteps</code> (a number of microsteps)</td>
+<td>electrical rad/s; microsteps</td>
 </tr>
 <tr>
 <td>HALL</td>
-<td>spins until a sensor on ADDITIONAL2 triggers, then holds the position reached</td>
+<td>spins until a sensor on ADDITIONAL2 triggers, then holds the position reached; with a level trigger only while the pin stays at that level</td>
 <td><code>#HALL</code>, Send_data_pack_HALL</td>
 <td>encoder ticks/s</td>
 </tr>
@@ -2353,15 +2375,37 @@ passing through idle; a fault is any of the errors on <a href="../errors/">Error
 <p>The units of this page, with your numbers: 16384 encoder ticks per turn, the practical speed limit from the
 electrical frequency the control loop can follow (<a href="../../03-technical-data/ratings/">Ratings and limits</a>), and
 the torque as Kt times the current.</p>
+<h2 id="open-loop-stepping">Open-loop stepping<a class="headerlink" href="#open-loop-stepping" title="Permanent link">&para;</a></h2>
+<p><code>#Openloop</code> and <code>#gosteps</code> drive the coils like a plain stepper driver, without the encoder in the loop. Like every
+other mode, they need a calibrated driver without errors.</p>
+<ul>
+<li><code>#Openloop 50</code> turns the field at 50 electrical rad/s and keeps turning until another command. On a motor with
+  50 pole pairs that is 50 ÷ (2π × 50), about 0.16 revolutions per second.</li>
+<li><code>#gosteps 64</code> makes 64 microsteps, then goes to idle; a negative number goes the other way. <code>#microstep</code> (16 by
+  default) is the number of microsteps per electrical cycle, which is four full steps: with 16, <code>#gosteps 16</code> turns
+  a 1.8° motor by 7.2°. <code>#stepinterval</code> (1000 µs by default) is the time between two microsteps, rounded down to
+  whole control cycles of 160 µs.</li>
+<li><code>#Openv</code> (5000 mV by default) is the voltage both put on the coils.</li>
+</ul>
+<p>None of these settings is saved.</p>
+<div class="admonition warning">
+<p class="admonition-title">Open loop is not current-limited</p>
+<p>Open loop applies a voltage, not a current, and <code>#Ilim</code> does not apply. At standstill and low speed the coil
+current is about <code>#Openv</code> ÷ R: the default 5000 mV drives about 4.5 A through a 1.1 Ω coil, more than the
+driver's 2.8 A and the motor's rating. Set <code>#Openv</code> to the rated current × R first (2 A × 1.1 Ω = 2200 mV), and
+keep the test short.</p>
+</div>
 <h2 id="positive-rotation">Positive rotation<a class="headerlink" href="#positive-rotation" title="Permanent link">&para;</a></h2>
 <figure>
   <a class="glightbox" href="../../assets/STEPFOC_ORIENTATION.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Positive rotation" src="../../assets/STEPFOC_ORIENTATION.webp" width="700" /></a>
 <br />
-<figcaption>Figure 15: Positive rotation is counter-clockwise looking at the encoder magnet. A positive current turns the motor that way, a positive speed too, and the position grows.</figcaption>
+<figcaption>Figure 16: Positive rotation is counter-clockwise looking at the encoder magnet. A positive current turns the motor that way, a positive speed too, and the position grows.</figcaption>
 </figure>
 <h2 id="which-mode-am-i-in">Which mode am I in?<a class="headerlink" href="#which-mode-am-i-in" title="Permanent link">&para;</a></h2>
-<p><code>#Mode</code> prints the mode. Its text for the voltage-torque mode reads <code>Gripper mode</code> in this firmware release (a
-leftover label); <code>#Info</code> and the behaviour of the motor are the reliable check.</p>
+<p><code>#Mode</code> prints the mode: <code>Idle mode</code>, <code>Position control</code>, <code>Speed control</code>, <code>Current control</code>, <code>PD control</code>,
+<code>Open loop</code>, <code>Gripper mode</code> or <code>Gripper calib mode</code>. In this firmware release the voltage-torque mode reads
+<code>Gripper mode</code> too (a leftover label), and HALL mode, the angle-offset search (<code>#Calangle</code>), open-loop steps
+(<code>#gosteps</code>) and gripper mode print nothing. The behaviour of the motor is the reliable check there.</p>
 
 
 
@@ -2382,7 +2426,7 @@ leftover label); <code>#Info</code> and the behaviour of the motor are the relia
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 31, 2026 16:25:05 UTC">October 31, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 3, 2026 14:48:56 UTC">November 3, 2026</span>
   </span>
 
     

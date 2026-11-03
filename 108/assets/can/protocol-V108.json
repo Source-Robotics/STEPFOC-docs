@@ -156,7 +156,7 @@
       "key": "IN_HALL_INDEX",
       "id": 31,
       "name": "Send_data_pack_HALL",
-      "description": "Homing against a sensor: the driver spins at the given speed until the input on the ADDITIONAL2 pin shows the trigger condition, then latches the position it reached as its position setpoint and holds it. Sending the command again while the driver is already in HALL mode does not re-arm it; leave the mode first.",
+      "description": "Homing against a sensor: the driver spins at the given speed until the input on the ADDITIONAL2 pin shows the trigger condition, then latches the position it reached as its position setpoint and holds it. With a level trigger (0 or 1) it holds only while the pin stays at that level: when the pin changes back, the driver spins on again until the level returns. The edge trigger (2) holds after the first edge. Sending the command again while the driver is already in HALL mode does not re-arm it; leave the mode first.",
       "forms": [
         {
           "direction": "host",
@@ -273,7 +273,7 @@
               "signed": false,
               "float": false,
               "lsb_first": false,
-              "meaning": "1 while the driver waits for the trigger, 0 once it triggered and holds"
+              "meaning": "1 while the driver waits for the trigger (with a level trigger, also again after the pin left the level), 0 while it holds"
             },
             {
               "name": "additional_pin2",
@@ -450,7 +450,7 @@
       "key": "IN_LIMITS",
       "id": 20,
       "name": "Send_Limits",
-      "description": "Sets the speed limit and the current limit the loops may reach. The current limit is clamped by the firmware to the driver's maximum of 2800 mA.",
+      "description": "Sets the speed limit and the current limit the loops may reach. The firmware stores the current limit as sent: unlike `#Ilim` over UART, it is not clamped to the driver's maximum of 2800 mA. Send 2800 mA or less, and no more than the motor's rated current.",
       "forms": [
         {
           "direction": "host",
@@ -632,7 +632,7 @@
       "key": "OUT_IN_DEVICE_INFO_CAN",
       "id": 25,
       "name": "Send_Respond_Device_Info",
-      "description": "Asks for the driver's identity: hardware version, batch date and serial number from the EEPROM, and the firmware release (from firmware 105 on this is the build's own version; before, a value from the EEPROM).",
+      "description": "Asks for the driver's identity: hardware version and batch date from the EEPROM, the serial number, and the firmware release (from firmware 105 on this is the build's own version; before, a value from the EEPROM). This firmware does not read the serial number back from the EEPROM at power-up: it reports 1 until `#SERNUM` sets it.",
       "forms": [
         {
           "direction": "host",
@@ -689,7 +689,7 @@
               "signed": false,
               "float": false,
               "lsb_first": false,
-              "meaning": "serial number"
+              "meaning": "serial number as held in RAM: 1 after a power-up"
             }
           ]
         }
@@ -751,7 +751,7 @@
               "signed": false,
               "float": false,
               "lsb_first": false,
-              "meaning": "magnet not detected or misaligned"
+              "meaning": "the encoder reports no magnet (too weak a field)"
             },
             {
               "name": "vbus_error",
@@ -777,7 +777,7 @@
               "signed": false,
               "float": false,
               "lsb_first": false,
-              "meaning": "the MOSFET driver reports undervoltage, thermal shutdown or overcurrent"
+              "meaning": "reserved; never set by this firmware (STEPFOC does not read a fault output of its driver stage)"
             },
             {
               "name": "velocity_error",
@@ -790,7 +790,7 @@
               "signed": false,
               "float": false,
               "lsb_first": false,
-              "meaning": "speed over the limit"
+              "meaning": "speed above 30,000,000 ticks/s, a fixed threshold (not #Vlimit)"
             },
             {
               "name": "current_error",
@@ -993,7 +993,7 @@
       "key": "IN_CAN_ID",
       "id": 11,
       "name": "Send_CAN_ID",
-      "description": "Gives the driver a new node ID, 0 to 13 (the firmware accepts up to 15, but the bootloader reserves 14 and 15: a driver on one of those cannot be updated over CAN). Setting the ID also sets the bootloader's board ID. The driver answers to the new ID at once; the ID is kept over a power cycle only after Send_Save_config.",
+      "description": "Gives the driver a new node ID, 0 to 13 (the firmware accepts up to 15, but the bootloader reserves 14 and 15: a driver on one of those cannot be updated over CAN). Saving the configuration (Send_Save_config) also writes the ID into the bootloader's board ID. The driver answers to the new ID at once; the ID is kept over a power cycle only after Send_Save_config.",
       "forms": [
         {
           "direction": "host",
@@ -1010,7 +1010,7 @@
               "signed": false,
               "float": false,
               "lsb_first": false,
-              "meaning": "0 to 15"
+              "meaning": "0 to 13; 14 and 15 are accepted but reserved by the bootloader"
             }
           ]
         }
@@ -1050,7 +1050,7 @@
       "key": "IN_SAVE_CONFIG",
       "id": 13,
       "name": "Send_Save_config",
-      "description": "Writes the current configuration (gains, limits, calibration, CAN ID, heartbeat, watchdog, gripper flag) to the EEPROM.",
+      "description": "Writes the current configuration (gains, limits, calibration, CAN ID, heartbeat, watchdog, gripper flag) to the EEPROM, and the CAN ID into the bootloader's board ID. The idle behaviour of Send_Settings and the current loop bandwidth are not kept. It also writes the serial number held in RAM, which is 1 after a power-up unless `#SERNUM` set it, over the stored one.",
       "forms": [
         {
           "direction": "host",
@@ -1080,7 +1080,7 @@
       "key": "IN_CLEAR_ERROR",
       "id": 1,
       "name": "Send_Clear_Error",
-      "description": "Clears the error flags and goes to idle. An error whose cause is still present comes straight back. A calibration error is cleared only by calibrating.",
+      "description": "Clears the error flags and goes to idle. An error whose cause is still present comes straight back. A calibration error is cleared only by calibrating. A gripper E-stop comes back until the E-stop bit of Send_gripper_data_pack is 0 again.",
       "forms": [
         {
           "direction": "host",
@@ -1095,7 +1095,7 @@
       "key": "IN_WATCHDOG_TIMEOUT",
       "id": 15,
       "name": "Send_Watchdog",
-      "description": "Sets the watchdog: every valid CAN frame the driver receives resets it; when the time runs out the driver reports a watchdog error and stops. 0 turns it off (the default). The action byte is stored but not acted on by this firmware: the driver always stops into its idle behaviour.",
+      "description": "Sets the watchdog: when the time runs out the driver reports a watchdog error and stops. Every valid motion frame (Send_data_pack_1, Send_data_pack_PD, Send_data_pack_HALL, Send_gripper_data_pack) and every status request the driver answers resets it; the setting frames (gains, limits, Idle, Clear, Save, Settings and Send_Watchdog itself) do not. 0 turns it off (the default). The action byte is stored but not acted on by this firmware: the driver always stops into its idle behaviour. Send_Save_config keeps the watchdog, and a kept watchdog runs from power-up: a host that sends no motion frame or status request within the time finds the driver in watchdog error, and clears it with Send_Clear_Error.",
       "forms": [
         {
           "direction": "host",
@@ -1160,7 +1160,7 @@
       "key": "IN_SETTINGS",
       "id": 35,
       "name": "Send_Settings",
-      "description": "Sets boolean settings that have no command of their own: a mask byte says which settings the frame touches, a value byte gives their new values; settings outside the mask are left alone. Bit 0 is the idle behaviour: 1 brake (phases shorted), 0 coast. Added in firmware 108 (Spectral Micro 107). The Python library has no call for it yet.",
+      "description": "Sets boolean settings that have no command of their own: a mask byte says which settings the frame touches, a value byte gives their new values; settings outside the mask are left alone. Bit 0 is the idle behaviour: 1 brake (phases shorted), 0 coast. The setting is not kept by Send_Save_config: at power-up the driver brakes. Added in firmware 107. The Python library has no call for it yet.",
       "forms": [
         {
           "direction": "host",
@@ -1237,7 +1237,7 @@
               "signed": true,
               "float": false,
               "lsb_first": false,
-              "meaning": "current limit of the move in mA; not clamped by the firmware, see the gripper manual for the safe range"
+              "meaning": "current limit of the move in mA; not clamped by the firmware, not even to the driver's 2800 mA; see the gripper manual for the safe range"
             },
             {
               "name": "Activate",
@@ -1276,7 +1276,7 @@
               "signed": false,
               "float": false,
               "lsb_first": false,
-              "meaning": "1 raises the gripper E-stop error"
+              "meaning": "1 raises the gripper E-stop error, again on every control cycle until a frame with this bit 0 arrives; then Send_Clear_Error"
             },
             {
               "name": "Release direction",
@@ -1402,7 +1402,7 @@
               "signed": false,
               "float": false,
               "lsb_first": false,
-              "meaning": ""
+              "meaning": "a copy of the thermistor temperature error"
             },
             {
               "name": "gripper_timeout_error",
@@ -1415,7 +1415,7 @@
               "signed": false,
               "float": false,
               "lsb_first": false,
-              "meaning": ""
+              "meaning": "a copy of the CAN watchdog error (Send_Watchdog), not a move timeout"
             },
             {
               "name": "gripper_estop_error",
@@ -1428,7 +1428,7 @@
               "signed": false,
               "float": false,
               "lsb_first": false,
-              "meaning": ""
+              "meaning": "the E-stop bit of Send_gripper_data_pack (or #Gripstop 1) was set"
             },
             {
               "name": "gripper_calibrated",

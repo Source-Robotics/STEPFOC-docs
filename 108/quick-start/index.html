@@ -2198,7 +2198,8 @@ does not matter: calibration detects it.</p>
 <ol>
 <li>The supply to a power connector: <strong>DC+ to positive, DC− to negative</strong>. Check twice.</li>
 <li>The serial adapter to the <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> connector with the <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> cable (TX to RX, RX to TX; 3.3 V only).</li>
-<li>Power on. The <abbr title="Light-Emitting Diode">LED</abbr> turns on steadily: the driver is not calibrated yet, which it reports as an error state.
+<li>Power on. The <abbr title="Light-Emitting Diode">LED</abbr> blinks for about two seconds while the bootloader waits for a host, then the firmware
+   starts and the <abbr title="Light-Emitting Diode">LED</abbr> stays on steadily: the driver is not calibrated yet, which it reports as an error state.
    (The serial adapter alone powers the driver's logic: it answers over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> without the supply, but reports a
    Vbus error and will not calibrate or move.)</li>
 </ol>
@@ -2213,7 +2214,8 @@ a Chromium browser).</p>
 </div>
 <div class="tabbed-block">
 <p>Open a terminal on the adapter's port, 256000 baud, line ending CR+LF, and type <code>#Info</code>. The driver prints its
-hardware and firmware version and the state of everything.</p>
+hardware and firmware version, its calibration state and the motor parameters; <code>#Error</code> prints the active
+errors.</p>
 <p>Read in more detail: <a href="../05-setup/terminal/">The serial terminal</a>.</p>
 </div>
 </div>
@@ -2224,8 +2226,8 @@ hardware and firmware version and the state of everything.</p>
 is covered in <a href="../05-setup/motor-gui/#opening-the-port">Motor GUI</a> or <a href="../08-troubleshooting/">Troubleshooting</a>.</p>
 <h2 id="6-restore-the-defaults-and-enter-the-motor-parameters">6. Restore the defaults and enter the motor parameters<a class="headerlink" href="#6-restore-the-defaults-and-enter-the-motor-parameters" title="Permanent link">&para;</a></h2>
 <p>First the factory defaults, so that calibration does not start from another motor's values or from junk in the
-<abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>: <em>Default</em> in the Motor GUI settings, or <code>#Default</code> in the terminal. (It also resets the serial number the
-driver reports.) Then the parameters:</p>
+<abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>: <em>Default</em> in the Motor GUI settings, or <code>#Default</code> in the terminal. (It also sets the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID to 0,
+and resets the serial number, hardware version and batch date stored in the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>.) Then the parameters:</p>
 <p>From the motor's datasheet, for <strong>one coil</strong>: the pole pairs (50 for a 1.8° motor, 100 for 0.9°), the phase
 resistance in ohms, the phase inductance in henries (2.6 mH = 0.0026). STEPFOC does not measure these; calibration
 fails on a value left at 0.</p>
@@ -2262,16 +2264,16 @@ the supply, the parameters you entered, the open-loop spin, the angle offset, th
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Save config with #Save
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Going to idle!
 </span></code></pre></div>
-<p>A failed step names itself. <code>Magnet test: Failed</code> is the magnet; <code>Open loop: Failed</code> or <code>Phase order is wrong!</code>
-means the motor did not turn or did not respond: check the four wires, the supply, and that the magnet does not
-slip.</p>
+<p>A failed step names itself, and the log ends with <code>Calibration failed!</code>. <code>Magnet test: Failed</code> is the magnet;
+<code>Phase order is wrong!</code> means the motor did not turn or did not respond: check the four wires, the supply, and
+that the magnet does not slip.</p>
 <p>Read in more detail: <a href="../05-setup/calibration/">Motor parameters and calibration</a>, with the whole log and every
 message.</p>
 <p><strong>Check:</strong> the calibration log ends with <code>Calibration success!</code>. If it does not, use the failed step in
 <a href="../05-setup/calibration/#troubleshooting">Calibration troubleshooting</a>; do not treat a stopped motor as success.</p>
 <h2 id="8-set-the-current-limit-and-save">8. Set the current limit and save<a class="headerlink" href="#8-set-the-current-limit-and-save" title="Permanent link">&para;</a></h2>
-<p>The current limit is the motor's rated phase current in mA; the firmware's default is higher than a small motor's
-rating.</p>
+<p>The current limit is the motor's rated phase current in mA. It is 1700 mA after <code>#Default</code>, and calibration leaves
+it at 1600 mA: both are more than a small motor's rating, so set it now, after calibrating.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Motor GUI</label><label for="__tabbed_4_2">Terminal</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -2372,7 +2374,7 @@ that does not follow needs <a href="../08-troubleshooting/">Troubleshooting</a> 
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 31, 2026 19:58:17 UTC">October 31, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 3, 2026 14:48:56 UTC">November 3, 2026</span>
   </span>
 
     

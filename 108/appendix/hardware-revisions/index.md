@@ -5,7 +5,7 @@ it. The board reports its hardware revision in `#Info` (`Hardware version`) and 
 
 | Revision | Since | Changes | Firmware | Manual |
 |---|---|---|---|---|
-| v1 | first production | — | 103 and newer; 104 and newer ship with the bootloader | this manual |
+| v1 | first production | — | 101 and newer; 105 and newer ship with the bootloader | this manual |
 
-Boards shipped before firmware 104 have no bootloader; [Installing the bootloader on an older board](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/bootloader/)
+Boards shipped with firmware 103 or older have no bootloader; [Installing the bootloader on an older board](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/bootloader/)
 brings them to the current firmware.

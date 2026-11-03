@@ -20,9 +20,17 @@ size fails to link.
 - **Through the bootloader**: flash the built `firmware.bin` with `bl_flash.py` or Motor GUI as in
   [Updating through the bootloader](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/update/). This is how a release is installed, and works on any driver with
   the bootloader.
-- **With the programming adapter**: *Upload* in PlatformIO uses ST-LINK and writes the image at `0x08003000`. The
-  bootloader must already be on the board; the upload does not touch it. The serial monitor (the plug icon) opens
-  the UART at 256000 with `send_on_enter`, so you can type commands to the driver from the same window.
+- **With the programming adapter**: *Upload* in PlatformIO uses ST-LINK and writes the image at `0x08003000`. It
+  leaves the bootloader alone, but it does not update the image CRC the bootloader keeps; see the warning below.
+  The serial monitor (the plug icon) opens the UART at 256000 with `send_on_enter`, so you can type commands to
+  the driver from the same window.
+
+!!! warning "After an ST-LINK upload the firmware does not start"
+    At every power-up the bootloader checks the firmware against the CRC it stored at the last flash through the
+    bootloader. After an upload with the programming adapter that CRC no longer matches, so the bootloader stays in
+    bootloader mode, with the LED blinking, instead of starting the new firmware. Flash the same `firmware.bin`
+    once more through the bootloader to recover. Once the bootloader is on the board, install every firmware
+    through it.
 
 <figure markdown="span">
   ![Upload in VS Code](https://docs.source-robotics.com/STEPFOC-docs/108/assets/VSUPLOAD.png){ width="700" }

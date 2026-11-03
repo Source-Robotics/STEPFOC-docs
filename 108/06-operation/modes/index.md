@@ -1,8 +1,8 @@
 # Control modes
 
 The driver is always in one control mode. A command that carries a setpoint switches to the mode that uses it;
-`#Idle` or Send_Idle switches back to idle. The driver refuses the closed-loop modes while it is not calibrated or
-while an error is active.
+`#Idle` or Send_Idle switches back to idle. The driver refuses every mode except idle, open loop included, while it
+is not calibrated or while an error is active.
 
 ```mermaid
 stateDiagram-v2
@@ -28,9 +28,9 @@ passing through idle; a fault is any of the errors on [Errors and recovery](http
 | Velocity | turns at a speed with the velocity and current loops | `#V`, Send_data_pack_1 (5 bytes) | encoder ticks/s |
 | Current (torque) | applies a current, so a torque, with the current loop alone | `#Iq`, Send_data_pack_1 (2 bytes) | mA |
 | PD (impedance) | behaves like a spring and a damper around a position, with `KP` and `KD` | `#PD`, Send_data_pack_PD | encoder ticks |
-| Voltage torque | applies a voltage on the q axis directly, without the current loop | `#Uq` | mV |
-| Open loop | steps the motor like a plain stepper driver, without the encoder | `#Openloop` (continuous), `#gosteps` (a number of steps) | electrical speed; steps |
-| HALL | spins until a sensor on ADDITIONAL2 triggers, then holds the position reached | `#HALL`, Send_data_pack_HALL | encoder ticks/s |
+| Voltage torque | applies a voltage on the q axis directly, without the current loop: clamped to `#Vlim`, not current-limited | `#Uq` | mV |
+| Open loop | steps the motor like a plain stepper driver, without the encoder and without a current limit; see [Open-loop stepping](#open-loop-stepping) | `#Openloop` (continuous), `#gosteps` (a number of microsteps) | electrical rad/s; microsteps |
+| HALL | spins until a sensor on ADDITIONAL2 triggers, then holds the position reached; with a level trigger only while the pin stays at that level | `#HALL`, Send_data_pack_HALL | encoder ticks/s |
 | Gripper | runs the gripper state machine: move to a jaw position with a speed and a current limit | `#Grippos`, Send_gripper_data_pack (with `#Gripper 1`) | 0 to 255 |
 | Calibration | the calibration routine, and the angle-offset step alone | `#Cal`, `#Calangle`, `#Gripcal` | — |
 
@@ -72,14 +72,37 @@ The units of this page, with your numbers: 16384 encoder ticks per turn, the pra
 electrical frequency the control loop can follow ([Ratings and limits](https://docs.source-robotics.com/STEPFOC-docs/108/03-technical-data/ratings/)), and
 the torque as Kt times the current.
 
+## Open-loop stepping
+
+`#Openloop` and `#gosteps` drive the coils like a plain stepper driver, without the encoder in the loop. Like every
+other mode, they need a calibrated driver without errors.
+
+- `#Openloop 50` turns the field at 50 electrical rad/s and keeps turning until another command. On a motor with
+  50 pole pairs that is 50 ÷ (2π × 50), about 0.16 revolutions per second.
+- `#gosteps 64` makes 64 microsteps, then goes to idle; a negative number goes the other way. `#microstep` (16 by
+  default) is the number of microsteps per electrical cycle, which is four full steps: with 16, `#gosteps 16` turns
+  a 1.8° motor by 7.2°. `#stepinterval` (1000 µs by default) is the time between two microsteps, rounded down to
+  whole control cycles of 160 µs.
+- `#Openv` (5000 mV by default) is the voltage both put on the coils.
+
+None of these settings is saved.
+
+!!! warning "Open loop is not current-limited"
+    Open loop applies a voltage, not a current, and `#Ilim` does not apply. At standstill and low speed the coil
+    current is about `#Openv` ÷ R: the default 5000 mV drives about 4.5 A through a 1.1 Ω coil, more than the
+    driver's 2.8 A and the motor's rating. Set `#Openv` to the rated current × R first (2 A × 1.1 Ω = 2200 mV), and
+    keep the test short.
+
 ## Positive rotation
 
 <figure markdown="span">
   ![Positive rotation](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_ORIENTATION.webp){ width="700" }
-  <figcaption>Figure 15: Positive rotation is counter-clockwise looking at the encoder magnet. A positive current turns the motor that way, a positive speed too, and the position grows.</figcaption>
+  <figcaption>Figure 16: Positive rotation is counter-clockwise looking at the encoder magnet. A positive current turns the motor that way, a positive speed too, and the position grows.</figcaption>
 </figure>
 
 ## Which mode am I in?
 
-`#Mode` prints the mode. Its text for the voltage-torque mode reads `Gripper mode` in this firmware release (a
-leftover label); `#Info` and the behaviour of the motor are the reliable check.
+`#Mode` prints the mode: `Idle mode`, `Position control`, `Speed control`, `Current control`, `PD control`,
+`Open loop`, `Gripper mode` or `Gripper calib mode`. In this firmware release the voltage-torque mode reads
+`Gripper mode` too (a leftover label), and HALL mode, the angle-offset search (`#Calangle`), open-loop steps
+(`#gosteps`) and gripper mode print nothing. The behaviour of the motor is the reliable check there.

@@ -1864,8 +1864,8 @@ Code examples <a href="https://github.com/Source-Robotics/STEPFOC-docs/blob/main
 <div class="doc-meta">
 <p><strong>Document number:</strong> SR-5001</p>
 <p><strong>Firmware version:</strong> 108</p>
-<p><strong>Revision:</strong> 2026.A (draft)</p>
-<p><strong>Published:</strong> —</p>
+<p><strong>Revision:</strong> 2026.A</p>
+<p><strong>Published:</strong> 2026-11-03</p>
 <p><strong>Applies to:</strong> STEPFOC driver <abbr title="Printed Circuit Board">PCB</abbr> v1, firmware 108</p>
 <p><em>Original instructions</em></p>
 </div>
@@ -2001,7 +2001,8 @@ does not matter: calibration detects it.</p>
 <ol>
 <li>The supply to a power connector: <strong>DC+ to positive, DC− to negative</strong>. Check twice.</li>
 <li>The serial adapter to the <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> connector with the <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> cable (TX to RX, RX to TX; 3.3 V only).</li>
-<li>Power on. The <abbr title="Light-Emitting Diode">LED</abbr> turns on steadily: the driver is not calibrated yet, which it reports as an error state.
+<li>Power on. The <abbr title="Light-Emitting Diode">LED</abbr> blinks for about two seconds while the bootloader waits for a host, then the firmware
+   starts and the <abbr title="Light-Emitting Diode">LED</abbr> stays on steadily: the driver is not calibrated yet, which it reports as an error state.
    (The serial adapter alone powers the driver's logic: it answers over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> without the supply, but reports a
    Vbus error and will not calibrate or move.)</li>
 </ol>
@@ -2016,7 +2017,8 @@ a Chromium browser).</p>
 </div>
 <div class="tabbed-block">
 <p>Open a terminal on the adapter's port, 256000 baud, line ending CR+LF, and type <code>#Info</code>. The driver prints its
-hardware and firmware version and the state of everything.</p>
+hardware and firmware version, its calibration state and the motor parameters; <code>#Error</code> prints the active
+errors.</p>
 <p>Read in more detail: <a href="#05-setup-terminal">The serial terminal</a>.</p>
 </div>
 </div>
@@ -2027,8 +2029,8 @@ hardware and firmware version and the state of everything.</p>
 is covered in <a href="#05-setup-motor-gui-opening-the-port">Motor GUI</a> or <a href="#08-troubleshooting">Troubleshooting</a>.</p>
 <h2 id="quick-start-6-restore-the-defaults-and-enter-the-motor-parameters">6. Restore the defaults and enter the motor parameters<a class="headerlink" href="#quick-start-6-restore-the-defaults-and-enter-the-motor-parameters" title="Permanent link">&para;</a></h2>
 <p>First the factory defaults, so that calibration does not start from another motor's values or from junk in the
-<abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>: <em>Default</em> in the Motor GUI settings, or <code>#Default</code> in the terminal. (It also resets the serial number the
-driver reports.) Then the parameters:</p>
+<abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>: <em>Default</em> in the Motor GUI settings, or <code>#Default</code> in the terminal. (It also sets the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID to 0,
+and resets the serial number, hardware version and batch date stored in the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>.) Then the parameters:</p>
 <p>From the motor's datasheet, for <strong>one coil</strong>: the pole pairs (50 for a 1.8° motor, 100 for 0.9°), the phase
 resistance in ohms, the phase inductance in henries (2.6 mH = 0.0026). STEPFOC does not measure these; calibration
 fails on a value left at 0.</p>
@@ -2065,16 +2067,16 @@ the supply, the parameters you entered, the open-loop spin, the angle offset, th
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#quick-start-__codelineno-2-2"></a>Save config with #Save
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#quick-start-__codelineno-2-3"></a>Going to idle!
 </span></code></pre></div>
-<p>A failed step names itself. <code>Magnet test: Failed</code> is the magnet; <code>Open loop: Failed</code> or <code>Phase order is wrong!</code>
-means the motor did not turn or did not respond: check the four wires, the supply, and that the magnet does not
-slip.</p>
+<p>A failed step names itself, and the log ends with <code>Calibration failed!</code>. <code>Magnet test: Failed</code> is the magnet;
+<code>Phase order is wrong!</code> means the motor did not turn or did not respond: check the four wires, the supply, and
+that the magnet does not slip.</p>
 <p>Read in more detail: <a href="#05-setup-calibration">Motor parameters and calibration</a>, with the whole log and every
 message.</p>
 <p><strong>Check:</strong> the calibration log ends with <code>Calibration success!</code>. If it does not, use the failed step in
 <a href="#05-setup-calibration-troubleshooting">Calibration troubleshooting</a>; do not treat a stopped motor as success.</p>
 <h2 id="quick-start-8-set-the-current-limit-and-save">8. Set the current limit and save<a class="headerlink" href="#quick-start-8-set-the-current-limit-and-save" title="Permanent link">&para;</a></h2>
-<p>The current limit is the motor's rated phase current in mA; the firmware's default is higher than a small motor's
-rating.</p>
+<p>The current limit is the motor's rated phase current in mA. It is 1700 mA after <code>#Default</code>, and calibration leaves
+it at 1600 mA: both are more than a small motor's rating, so set it now, after calibrating.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="quick-start-__tabbed_4_1" name="quick-start-__tabbed_4" type="radio" /><input id="quick-start-__tabbed_4_2" name="quick-start-__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="quick-start-__tabbed_4_1">Motor GUI</label><label for="quick-start-__tabbed_4_2">Terminal</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -2185,7 +2187,7 @@ step it belongs to.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Notice</p>
-<p>The robot, the tool, or data on the control box can be damaged or lost if this is ignored. Nobody is at risk.</p>
+<p>The driver, the motor, the machine or data can be damaged or lost if this is ignored. Nobody is at risk.</p>
 </div>
 <div class="admonition danger">
 <p class="admonition-title">Danger</p>
@@ -2227,8 +2229,8 @@ the header switches between them. The earlier version of this site, for firmware
 </thead>
 <tbody>
 <tr>
-<td>2026.A (draft)</td>
-<td>—</td>
+<td>2026.A</td>
+<td>2026-11-03</td>
 <td>First version in this form: the manual chapters, the generated <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> and <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> reference, firmware 108</td>
 </tr>
 </tbody>
@@ -2305,7 +2307,7 @@ current (torque) or impedance.</p>
 <td>an input or output you can use: HALL mode homes against a sensor wired here</td>
 </tr>
 <tr>
-<td>JTAG connector (1.27 mm)</td>
+<td>JTAG pads (1.27 mm)</td>
 <td>the programming adapter, for installing the bootloader or for development</td>
 </tr>
 <tr>
@@ -2321,15 +2323,15 @@ position loop around that, plus an impedance (<abbr title="Proportional-Derivati
 A command picks the loop: a current setpoint, a speed, a position or a <abbr title="Proportional-Derivative controller, the impedance control mode">PD</abbr> setpoint. Open-loop stepping, a
 voltage-torque mode and a homing mode against a sensor exist beside them; <a href="#06-operation-modes">Control modes</a>
 describes each.</p>
-<p>The driver protects itself and the motor: it stops on a supply voltage outside the limits, on an encoder fault, on
-an over-speed, on a motor over-temperature (with the thermistor), on a hardware fault of the driver stage, on an
-E-stop command and on a watchdog that runs out. The status <abbr title="Light-Emitting Diode">LED</abbr> and <code>#Error</code> tell which; see
-<a href="#06-operation-errors">Errors and recovery</a>.</p>
+<p>The driver protects itself and the motor: it stops on a supply voltage outside the limits, on an encoder fault (no
+magnet), on a motor over-temperature (with the thermistor), on an E-stop command and on a watchdog that runs out.
+The status <abbr title="Light-Emitting Diode">LED</abbr> and <code>#Error</code> tell which; see <a href="#06-operation-errors">Errors and recovery</a>. It does not monitor
+its driver stage: a fault there is not reported.</p>
 <h2 id="01-overview-driver-at-a-glance-how-it-is-controlled">How it is controlled<a class="headerlink" href="#01-overview-driver-at-a-glance-how-it-is-controlled" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr></strong>, a 3.3 V serial port at 256000 baud: human-readable commands such as <code>#P 16384</code>, and the only way to
   run the calibration. See <a href="#06-operation-uart">Over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr></a>.</li>
-<li><strong><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr></strong>, 1 Mbit/s, up to 16 drivers on one bus: compact frames for real-time control from a PC with the CANvas
+<li><strong><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr></strong>, 1 Mbit/s, up to 14 drivers on one bus (node IDs 0 to 13): compact frames for real-time control from a PC with the CANvas
   adapter, a microcontroller or a robot control box. See <a href="#06-operation-can">Over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr></a>.</li>
 <li><strong>Python</strong>, the <code>Spectral-BLDC</code> library on top of <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>. See <a href="#06-operation-python">With Python</a>.</li>
 <li><strong>Motor GUI</strong>, in the browser, over serial or <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>: the usual tool for setup, testing and tuning. See <a href="#05-setup-motor-gui">Motor GUI</a>.</li>
@@ -2348,7 +2350,7 @@ E-stop command and on a watchdog that runs out. The status <abbr title="Light-Em
 <td>normal operation: no error, calibrated</td>
 </tr>
 <tr>
-<td>flashing every 0.5 s</td>
+<td>fast flashing, about ten times a second</td>
 <td>the calibration routine is running</td>
 </tr>
 <tr>
@@ -2369,7 +2371,7 @@ E-stop command and on a watchdog that runs out. The status <abbr title="Light-Em
 <tbody>
 <tr>
 <td><a class="glightbox" href="../assets/Normal.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Three short flashes and a pause" src="../assets/Normal.webp" width="180" /></a></td>
-<td><a class="glightbox" href="../assets/Calib.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Flashing every 0.5 s" src="../assets/Calib.webp" width="180" /></a></td>
+<td><a class="glightbox" href="../assets/Calib.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Fast flashing during calibration" src="../assets/Calib.webp" width="180" /></a></td>
 <td><a class="glightbox" href="../assets/Error2.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="On, steady" src="../assets/Error2.webp" width="180" /></a></td>
 </tr>
 </tbody>
@@ -2384,9 +2386,9 @@ same Python library, Motor GUI and bootloader.</p>
 <li><strong>The commands are practically the same.</strong> The <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> messages and <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> commands of the Reference have the same
   IDs, names and layouts on both drivers; STEPFOC adds a few that only make sense on a stepper (homing against a
   sensor, open-loop stepping). A program written for one runs on the other.</li>
-<li><strong>The firmware releases go in step.</strong> A STEPFOC release has a Spectral Micro counterpart with the same changes;
-  the <a href="#appendix-compatibility">compatibility table</a> lists the pairs. The numbers differ by one (STEPFOC 108
-  is Spectral Micro 107).</li>
+<li><strong>The firmware releases go in step.</strong> A change that applies to both drivers comes to both, but not always in
+  releases with the same number: the <a href="#appendix-compatibility">compatibility table</a> lists the pairs. STEPFOC
+  108 matches Spectral Micro 107.</li>
 <li><strong>Calibration differs.</strong> A BLDC driver measures the motor's resistance and inductance and finds its pole pairs;
   STEPFOC cannot, so you enter the three values from the motor's datasheet before calibrating. See
   <a href="#05-setup-calibration">Motor parameters and calibration</a>.</li>
@@ -2408,7 +2410,7 @@ installed, so a driver works out of the box with a serial terminal, the Python l
 can be updated later without a programming adapter; see <a href="#07-firmware">Firmware</a>.</p>
 <h2 id="01-overview-what-you-need-a-stepper-motor">A stepper motor<a class="headerlink" href="#01-overview-what-you-need-a-stepper-motor" title="Permanent link">&para;</a></h2>
 <p>STEPFOC drives bipolar (4-wire) stepper motors. It is made for the <abbr title="the stepper motor frame size with 31 mm mounting-hole spacing">NEMA 17</abbr> frame, whose mounting holes match the
-board, and it also works with NEMA 14 and NEMA 23 motors on an adapter. Look for a motor with a phase resistance
+board; it also works with NEMA 23 motors on the NEMA 23 spacer, and with other frames on an adapter you make. Look for a motor with a phase resistance
 of 1 to 5 Ω and a rated current of 3 A or less; the <a href="#03-technical-data-tested-motors">tested motors</a> are
 known to work.</p>
 <h2 id="01-overview-what-you-need-the-encoder-magnet">The encoder magnet<a class="headerlink" href="#01-overview-what-you-need-the-encoder-magnet" title="Permanent link">&para;</a></h2>
@@ -2495,9 +2497,9 @@ from the shop.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Supply voltage</p>
-<p>12 to 29 V DC. The driver raises a Vbus error outside 9 to 29.5 V, but the hardware limit is 29 V: do not
-connect a supply that can rise above it, and allow for the voltage a decelerating motor pushes back into the
-supply. A bench supply with a current limit is the safest way to start.</p>
+<p>12 to 29 V DC. The driver raises a Vbus error below 9 V and above 29 V (<code>#Vmax</code>, 29000 mV after <code>#Default</code>),
+and 29 V is also the hardware limit: do not connect a supply that can rise above it, and allow for the voltage a
+decelerating motor pushes back into the supply. A bench supply with a current limit is the safest way to start.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Do not disconnect a running motor</p>
@@ -2521,7 +2523,8 @@ damage the microcontroller; a magnet too far away gives a wrong position. Mount 
 <p class="admonition-title">Hot motor and driver</p>
 <p>A stepper running at its rated current gets hot enough to burn. Set the current limit for your motor
 (<a href="#05-setup-tuning">Current limit and loop tuning</a>), use the thermistor, and give the driver airflow when it
-runs near 2.8 A.</p>
+runs near 2.8 A. <code>#Ilim</code> is clamped to 2800 mA, but the current limit of Send_Limits over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> and the current
+of a gripper move are used as sent: a host must keep them within the motor's rating and 2800 mA.</p>
 </div>
 <h2 id="02-safety-stopping-the-motor">Stopping the motor<a class="headerlink" href="#02-safety-stopping-the-motor" title="Permanent link">&para;</a></h2>
 <ul>
@@ -2566,7 +2569,7 @@ tested with the driver.</p>
 </tr>
 <tr>
 <td>Vbus error limits (firmware)</td>
-<td>below 9 V or above 29.5 V</td>
+<td>below 9 V or above 29 V (<code>#Vmax</code>, 29000 mV after <code>#Default</code>)</td>
 </tr>
 <tr>
 <td>Phase current, continuous</td>
@@ -2574,7 +2577,11 @@ tested with the driver.</p>
 </tr>
 <tr>
 <td>Phase current, maximum</td>
-<td>2.8 A, the firmware's limit (<code>#Ilim</code> is clamped to 2800 mA); needs good cooling and short bursts</td>
+<td>2.8 A; needs good cooling and short bursts. <code>#Ilim</code> is clamped to 2800 mA; Send_Limits over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> is not clamped</td>
+</tr>
+<tr>
+<td>Current limit, default</td>
+<td>1700 mA after <code>#Default</code>; calibration leaves it at 1600 mA</td>
 </tr>
 <tr>
 <td>Power, maximum</td>
@@ -2610,7 +2617,7 @@ tested with the driver.</p>
 </tr>
 <tr>
 <td><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr></td>
-<td><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> 2.0, 1 Mbit/s, 11-bit identifiers, node IDs 0 to 15, 120 Ω termination by switch</td>
+<td><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> 2.0, 1 Mbit/s, 11-bit identifiers, node IDs 0 to 13 (the bootloader reserves 14 and 15), 120 Ω termination by switch</td>
 </tr>
 <tr>
 <td>Thermistor input</td>
@@ -2622,12 +2629,13 @@ tested with the driver.</p>
 </tr>
 <tr>
 <td>Driver stage protection</td>
-<td>hardware overcurrent, undervoltage and overtemperature shutdown; shown as a driver error</td>
+<td>not monitored: the firmware reads no fault output of the driver stage, and its driver error flag stays 0</td>
 </tr>
 </tbody>
 </table>
 <div class="admonition warning">
-<p class="admonition-title">Reversing the polarity on DC+ and DC− destroys the board.</p>
+<p class="admonition-title">Polarity</p>
+<p>Reversing the polarity on DC+ and DC− destroys the board.</p>
 </div>
 <h2 id="03-technical-data-ratings-thermal-and-environmental">Thermal and environmental<a class="headerlink" href="#03-technical-data-ratings-thermal-and-environmental" title="Permanent link">&para;</a></h2>
 <table>
@@ -2667,7 +2675,7 @@ tested with the driver.</p>
 </tr>
 <tr>
 <td>Mounting</td>
-<td>the <abbr title="the stepper motor frame size with 31 mm mounting-hole spacing">NEMA 17</abbr> pattern, 31 mm hole spacing; NEMA 14 and 23 motors with an adapter</td>
+<td>the <abbr title="the stepper motor frame size with 31 mm mounting-hole spacing">NEMA 17</abbr> pattern, 31 mm hole spacing; NEMA 23 motors with the NEMA 23 spacer, other frames with an adapter you make</td>
 </tr>
 </tbody>
 </table>
@@ -2732,7 +2740,7 @@ tested with the driver.</p>
 </tr>
 <tr>
 <td><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>, two of them</td>
-<td><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> H, <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> L</td>
+<td><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> L, <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> H</td>
 <td>JST ZH, 2 pins</td>
 <td><a href="https://source-robotics.com/products/spectral-micro-can-cable"><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> cable</a>; the second connector feeds the next driver</td>
 </tr>
@@ -2750,9 +2758,9 @@ tested with the driver.</p>
 </tr>
 <tr>
 <td>JTAG</td>
-<td>3.3 V, GND, SWDIO, SWCLK</td>
-<td>1.27 mm header</td>
-<td><a href="https://source-robotics.com/products/jtag-programming-adapter-1-27-pitch">Programming adapter</a></td>
+<td>3.3 V, GND, SWCLK, SWDIO</td>
+<td>pads, 1.27 mm pitch</td>
+<td><a href="https://source-robotics.com/products/jtag-programming-adapter-1-27-pitch">Programming adapter</a>, pressed onto the pads; the order is marked in <a href="#07-firmware-bootloader">Installing the bootloader</a></td>
 </tr>
 <tr>
 <td>ADDITIONAL2</td>
@@ -2876,12 +2884,14 @@ coil, which is what you enter with <code>#R</code> and <code>#L</code> before ca
 </tr>
 </tbody>
 </table>
-<p>Before the first test, set the current limit to the motor's rated current with <code>#Ilim</code>; the firmware's default is
-higher than the 17HS08's rating. See <a href="#05-setup-tuning">Current limit and loop tuning</a>.</p>
+<p>After calibration, and before the first test, set the current limit to the motor's rated current with <code>#Ilim</code>:
+calibration leaves it at 1600 mA (1700 mA after <code>#Default</code>), more than the 17HS08's rating. See
+<a href="#05-setup-tuning">Current limit and loop tuning</a>.</p>
 <div class="admonition tip">
 <p class="admonition-title">Choosing a motor</p>
 <p>A lower phase resistance and inductance give a higher speed at a given supply voltage; the velocity constant
-<code>KV</code> that calibration finds tells how fast the motor can turn: roughly 0.8 × Vbus × KV revolutions per minute.
+<code>KV</code> that calibration finds tells how fast the motor can turn: roughly 0.8 × V × KV revolutions per minute,
+where V is the voltage limit <code>#Vlim</code> (6 V by default) or the supply voltage, whichever is lower.
 Motors with visibly uneven windings or a resistance that differs between the two coils calibrate badly.</p>
 </div></section></section>
                     <section class='print-page md-section' id='section-1-3-4' heading-number='1.3.4'>
@@ -2960,8 +2970,8 @@ rear screws, with a spacer between the motor and the board that sets the magnet 
    <abbr title="the stepper motor frame size with 31 mm mounting-hole spacing">NEMA 17</abbr>). Tighten them evenly; the board must be parallel to the magnet.</li>
 <li>Check the gap: about 1 mm, the magnet not touching the chip.</li>
 </ol>
-<p>A NEMA 14 or NEMA 23 motor needs an adapter plate between the motor and the board; the NEMA 23 spacer is in the
-same folder.</p>
+<p>A NEMA 23 motor takes the NEMA 23 spacer from the same folder. A smaller frame, such as NEMA 14, needs an adapter
+plate you make yourself: the repository has none.</p>
 <div class="admonition warning">
 <p class="admonition-title">The board is bare</p>
 <p>Nothing on the back of the board may touch the motor's housing. Make sure the spacer keeps the board clear of
@@ -3021,8 +3031,10 @@ detected and compensated in software (the firmware applies a reflection of the c
 physical swap would do), so the motor calibrates identically with any wiring, and positive commands turn the motor
 counter-clockwise seen from the magnet side. With firmware 103, a reversed coil fails the open-loop step with
 <code>Open loop: Failed / Switch motor phases and try again!</code>; swap A+ and A− and calibrate again.</p>
-<p>If you want the other direction to be positive, swap the two wires of one coil and calibrate again, or keep the
-wiring and use negative setpoints.</p></section><section class="print-page" id="04-mounting-power-and-can" heading-number="1.3.4.5"><h1 id="04-mounting-power-and-can-power-and-the-can-daisy-chain">Power and the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> daisy chain<a class="headerlink" href="#04-mounting-power-and-can-power-and-the-can-daisy-chain" title="Permanent link">&para;</a></h1>
+<p>Because calibration compensates the wiring, the positive direction is tied to the encoder: with firmware 105 and
+newer, swapping the wires of a coil and calibrating again does not change it. The firmware has no setting that
+reverses it (<code>#Dir</code> is stored but not used). If you want the other direction to be positive, negate the setpoints
+and the position, speed and current you read back in your host program.</p></section><section class="print-page" id="04-mounting-power-and-can" heading-number="1.3.4.5"><h1 id="04-mounting-power-and-can-power-and-the-can-daisy-chain">Power and the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> daisy chain<a class="headerlink" href="#04-mounting-power-and-can-power-and-the-can-daisy-chain" title="Permanent link">&para;</a></h1>
 <p>Each driver has two power connectors (JST XH) and two <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> connectors (JST ZH). The second connector of each pair
 feeds the next driver, so a chain of drivers hangs on one supply cable and one <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> cable.</p>
 <figure>
@@ -3038,7 +3050,8 @@ feeds the next driver, so a chain of drivers hangs on one supply cable and one <
   most two or three drivers per chain that draw their full current at the same time, and feed a longer chain from
   both ends or from several supplies.</li>
 <li>A motor that decelerates pushes energy back into the supply. A lab supply or a battery absorbs it; a supply that
-  cannot (some switch-mode supplies) sees its voltage rise, and the driver raises a Vbus error above 29.5 V.</li>
+  cannot (some switch-mode supplies) sees its voltage rise, and the driver raises a Vbus error above 29 V
+  (<code>#Vmax</code>).</li>
 </ul>
 <h2 id="04-mounting-power-and-can-the-cable-orientation">The cable orientation<a class="headerlink" href="#04-mounting-power-and-can-the-cable-orientation" title="Permanent link">&para;</a></h2>
 <div class="admonition danger">
@@ -3164,7 +3177,7 @@ browsers have: Chrome, Edge, Brave, Opera. Firefox and Safari cannot open serial
 <li>Open <a href="https://motorgui.com/">motorgui.com</a>, choose the connection kind, and <strong>Connect</strong>. The browser asks
    which port; pick the adapter's.</li>
 <li>The driver's identity appears: hardware version, firmware version, serial number, batch date, whether it is
-   calibrated and activated, and the active errors — what <code>#Info</code> prints in a terminal.</li>
+   calibrated and activated, and the active errors: what <code>#Info</code>, <code>#SERNUM</code> and <code>#Error</code> print in a terminal.</li>
 </ol>
 <p>If the port is not offered, the browser is not Chromium-based, or another program holds the port (a terminal left
 open, PlatformIO's monitor). If the port opens and nothing appears: the driver is unpowered, or TX and RX are
@@ -3293,8 +3306,9 @@ Enter.</p>
 <h2 id="05-setup-terminal-the-first-commands">The first commands<a class="headerlink" href="#05-setup-terminal-the-first-commands" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#05-setup-terminal-__codelineno-0-1"></a>#Info
 </span></code></pre></div>
-<p>prints the driver's identity: the hardware and firmware version, the serial number, the motor parameters and the
-calibration state. <code>#Help</code> (firmware 108) prints a short command reference, <code>#Error</code> the active errors.</p>
+<p>prints the driver's identity and state: the hardware and firmware version, the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> ID, the calibration state and
+the motor parameters. <code>#Help</code> (firmware 106 and newer) prints a short command reference, <code>#Error</code> the active
+errors, <code>#Param</code> the gains and limits.</p>
 <p>Every command starts with <code>#</code>, and a Set/Get command takes one number after a space: <code>#P 16384</code> moves to position
 16384; <code>#P</code> alone prints the position. Names are case-sensitive. The whole set is in the
 <a href="#reference-uart"><abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> commands</a> reference, and <a href="#06-operation-uart">Over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr></a> explains the
@@ -3313,9 +3327,10 @@ off the shaft.</p>
 <p>Calibrate at 24 V. At a lower voltage the KV and Kt come out wrong.</p>
 </div>
 <h2 id="05-setup-calibration-1-restore-the-defaults">1. Restore the defaults<a class="headerlink" href="#05-setup-calibration-1-restore-the-defaults" title="Permanent link">&para;</a></h2>
-<p>The <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> of a new driver, or of one that ran another motor, can hold values that do not fit: another motor's
-parameters, or junk that shows as <code>-1</code> in <code>#Info</code>. Calibration starts from what is there, so start from the factory
-values.</p>
+<p>The <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> of a new driver, or of one that ran another motor, can hold values that do not fit, such as another
+motor's parameters. Calibration starts from what is there, so start from the factory values. (A damaged
+configuration should not show up with firmware 106 and newer, which checks the stored blocks at power-up and
+replaces a damaged one with the defaults; if <code>#Info</code> still shows <code>-1</code> somewhere, restoring the defaults fixes it.)</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="05-setup-calibration-__tabbed_1_1" name="05-setup-calibration-__tabbed_1" type="radio" /><input id="05-setup-calibration-__tabbed_1_2" name="05-setup-calibration-__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="05-setup-calibration-__tabbed_1_1">Motor GUI</label><label for="05-setup-calibration-__tabbed_1_2">Terminal</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -3327,8 +3342,9 @@ values.</p>
 </div>
 </div>
 </div>
-<p>This also resets the serial number, hardware version and batch date the driver reports; note what <code>#Info</code> printed
-if you need them. <a href="#05-setup-saving">Saving the configuration</a> says what else it does.</p>
+<p>This also sets the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID to 0 and resets the serial number, hardware version and batch date stored in the
+<abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>; note the hardware version and batch date <code>#Info</code> prints if you need them.
+<a href="#05-setup-saving">Saving the configuration</a> says what else it does.</p>
 <h2 id="05-setup-calibration-2-enter-the-motor-parameters">2. Enter the motor parameters<a class="headerlink" href="#05-setup-calibration-2-enter-the-motor-parameters" title="Permanent link">&para;</a></h2>
 <p>STEPFOC does not measure the resistance and inductance of a stepper (the Spectral Micro does for a BLDC); you
 enter them from the motor's datasheet, as the values of <strong>one coil</strong>, and the pole pairs. Calibration fails on a
@@ -3350,10 +3366,11 @@ value left at 0, and accepts only 50, 75, 100 or 125 pole pairs.</p>
 <figure>
   <a class="glightbox" href="../assets/Motor_specs.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="An example datasheet" src="../assets/Motor_specs.webp" width="900" /></a>
 <br />
-<figcaption>Figure 17: The three values on a typical datasheet, here for the 17HS16-2004S1: 1.8°, 1.1 Ω, 2.6 mH.</figcaption>
+<figcaption>Figure 13: The three values on a typical datasheet, here for the 17HS16-2004S1: 1.8°, 1.1 Ω, 2.6 mH.</figcaption>
 </figure>
 <p>The current loop bandwidth (<code>#Cbw</code>, 500 Hz by default) decides the gains calibration computes from R and L;
-leave it for now, <a href="#05-setup-tuning">Current limit and loop tuning</a> comes back to it.</p>
+leave it for now, <a href="#05-setup-tuning">Current limit and loop tuning</a> comes back to it. It is not saved: after a power
+cycle it is 500 Hz again.</p>
 <h2 id="05-setup-calibration-3-run-it">3. Run it<a class="headerlink" href="#05-setup-calibration-3-run-it" title="Permanent link">&para;</a></h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="05-setup-calibration-__tabbed_3_1" name="05-setup-calibration-__tabbed_3" type="radio" /><input id="05-setup-calibration-__tabbed_3_2" name="05-setup-calibration-__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="05-setup-calibration-__tabbed_3_1">Motor GUI</label><label for="05-setup-calibration-__tabbed_3_2">Terminal</label></div>
 <div class="tabbed-content">
@@ -3367,7 +3384,7 @@ finishes, the phase order and direction, Kt, KV and the flux linkage it found ap
 </div>
 </div>
 </div>
-<p>The <abbr title="Light-Emitting Diode">LED</abbr> flashes every 0.5 s while the routine runs, and the driver prints each step as it goes:</p>
+<p>The <abbr title="Light-Emitting Diode">LED</abbr> flashes fast while the routine runs, and the driver prints each step as it goes:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#05-setup-calibration-__codelineno-3-1"></a>----------------
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#05-setup-calibration-__codelineno-3-2"></a>Calibration mode
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#05-setup-calibration-__codelineno-3-3"></a>----------------
@@ -3379,16 +3396,18 @@ finishes, the phase order and direction, Kt, KV and the flux linkage it found ap
 </span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#05-setup-calibration-__codelineno-3-9"></a>Kp_iq = ...
 </span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#05-setup-calibration-__codelineno-3-10"></a>Ki_iq = ...
 </span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#05-setup-calibration-__codelineno-3-11"></a>Open loop direction: good
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#05-setup-calibration-__codelineno-3-12"></a>Angle offset is: ...
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#05-setup-calibration-__codelineno-3-13"></a>Phase order is good!
-</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#05-setup-calibration-__codelineno-3-14"></a>KV is: ...
-</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#05-setup-calibration-__codelineno-3-15"></a>Kt is: ...
-</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#05-setup-calibration-__codelineno-3-16"></a>Flux linkage is: ...
-</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#05-setup-calibration-__codelineno-3-17"></a>----------------
-</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#05-setup-calibration-__codelineno-3-18"></a>Calibration success!
-</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#05-setup-calibration-__codelineno-3-19"></a>Save config with #Save
-</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#05-setup-calibration-__codelineno-3-20"></a>Going to idle!
-</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#05-setup-calibration-__codelineno-3-21"></a>----------------
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#05-setup-calibration-__codelineno-3-12"></a>Calibrating angle offset... stage 1/13, sweep point 0
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#05-setup-calibration-__codelineno-3-13"></a>...
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#05-setup-calibration-__codelineno-3-14"></a>Angle offset is: ...
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#05-setup-calibration-__codelineno-3-15"></a>Phase order is good!
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#05-setup-calibration-__codelineno-3-16"></a>KV is: ...
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#05-setup-calibration-__codelineno-3-17"></a>Kt is: ...
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#05-setup-calibration-__codelineno-3-18"></a>Flux linkage is: ...
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#05-setup-calibration-__codelineno-3-19"></a>----------------
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#05-setup-calibration-__codelineno-3-20"></a>Calibration success!
+</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#05-setup-calibration-__codelineno-3-21"></a>Save config with #Save
+</span><span id="__span-3-22"><a id="__codelineno-3-22" name="__codelineno-3-22" href="#05-setup-calibration-__codelineno-3-22"></a>Going to idle!
+</span><span id="__span-3-23"><a id="__codelineno-3-23" name="__codelineno-3-23" href="#05-setup-calibration-__codelineno-3-23"></a>----------------
 </span></code></pre></div>
 <p>What the steps are:</p>
 <table>
@@ -3422,27 +3441,37 @@ finishes, the phase order and direction, Kt, KV and the flux linkage it found ap
 </tr>
 <tr>
 <td>Open loop</td>
-<td>the motor is stepped open loop; the encoder must see it turn. The direction it turned is remembered, so a reversed coil is compensated from here on</td>
-<td><code>Open loop: Failed</code> / <code>Switch motor phases and try again!</code>: the encoder saw no rotation</td>
+<td>the motor is stepped open loop at a fixed 5000 mV. The direction the encoder saw is remembered, so a reversed coil is compensated from here on</td>
+<td>nothing in this firmware: the step always reports <code>good</code>, and a motor that did not turn fails the next step</td>
 </tr>
 <tr>
 <td>Angle offset</td>
-<td>the motor is driven to find the offset between encoder zero and electrical zero. It spins quickly one way, then the other, for up to two minutes</td>
-<td><code>Phase order is wrong!</code> / <code>Switch motor phases and try again!</code>: the commutation check got no response from the motor on two tries. A line <code>Spin-confirm delta: … ticks (need &gt; 8192), Vbus: … mV</code> says how far the motor turned and at what voltage</td>
+<td>a short spin checks that the motor turns (two tries, 90 electrical degrees apart); then the field locks the rotor and a sweep finds the offset at which both directions turn alike. It prints <code>Calibrating angle offset...</code> with its progress every half second</td>
+<td><code>Phase order is wrong!</code> / <code>Switch motor phases and try again!</code>: the motor did not turn on either try. A line <code>Spin-confirm delta: … ticks (need &gt; 8192), Vbus: … mV</code> says how far it turned and at what voltage</td>
 </tr>
 <tr>
 <td>Kt, KV, flux linkage</td>
-<td>the motor spins fast for a moment and the constants are computed from the back-EMF</td>
+<td>the motor spins at 500 mA for about a second; KV is the speed it reaches per volt of supply, Kt follows as 8.27 ÷ KV and the flux linkage from Kt</td>
 <td>—</td>
 </tr>
 </tbody>
 </table>
+<p>A whole run takes up to about a minute, most of it in the angle-offset search. When a step fails, the log ends
+with <code>Calibration failed!</code>, the driver goes to idle, the motor counts as not calibrated and the <abbr title="Light-Emitting Diode">LED</abbr> stays on
+steadily. Nothing is saved; fix the cause and run <code>#Cal</code> again.</p>
 <div class="admonition note">
-<p class="admonition-title">The two 'Switch motor phases' messages</p>
-<p>They are left over from firmware 103, which needed the coils wired a particular way. Since firmware 105 the
-wiring is detected and compensated, so these messages mean the motor did not turn or did not respond: a coil
-not connected or shorted, a current limit at 0, a supply too weak, or a magnet that slips. Swapping wires does
-not fix them.</p>
+<p class="admonition-title">The 'Switch motor phases' message</p>
+<p>It is left over from firmware 103, which needed the coils wired a particular way. Since firmware 105 the
+wiring is detected and compensated, so <code>Phase order is wrong!</code> / <code>Switch motor phases and try again!</code> means the
+motor did not turn or did not respond: a coil not connected or shorted, a supply too weak, or a magnet that
+slips. Swapping wires does not fix it. (<code>Open loop: Failed</code> with the same advice cannot appear in this
+release.)</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">The measured values are estimates</p>
+<p>KV, Kt and the flux linkage come from one short spin and differ a little from one run to the next, more on
+motors with uneven windings. For the loops this does not matter; for a torque estimate in newton-metres,
+measure Kt yourself.</p>
 </div>
 <h2 id="05-setup-calibration-4-save">4. Save<a class="headerlink" href="#05-setup-calibration-4-save" title="Permanent link">&para;</a></h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="05-setup-calibration-__tabbed_4_1" name="05-setup-calibration-__tabbed_4" type="radio" /><input id="05-setup-calibration-__tabbed_4_2" name="05-setup-calibration-__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="05-setup-calibration-__tabbed_4_1">Motor GUI</label><label for="05-setup-calibration-__tabbed_4_2">Terminal</label></div>
@@ -3458,6 +3487,12 @@ not fix them.</p>
 </div>
 <p>Without it the calibration is gone at the next power cycle. The driver goes to idle and the <abbr title="Light-Emitting Diode">LED</abbr> shows normal
 operation; the state shows <em>Calibrated</em> and the constants.</p>
+<div class="admonition warning">
+<p class="admonition-title">Set the current limit next</p>
+<p>Calibration leaves the current limit at 1600 mA, whatever it was before: more than a small motor's rating.
+Set it for your motor with <code>#Ilim</code> before the motor runs, and save again
+(<a href="#05-setup-tuning">Current limit and loop tuning</a>).</p>
+</div>
 <h2 id="05-setup-calibration-when-to-calibrate-again">When to calibrate again<a class="headerlink" href="#05-setup-calibration-when-to-calibrate-again" title="Permanent link">&para;</a></h2>
 <ul>
 <li>After changing the motor, the magnet or the wiring.</li>
@@ -3488,33 +3523,38 @@ shaft between calibration and use: fix the magnet and calibrate again.</p>
 <td>the resistance or the inductance still 0</td>
 </tr>
 <tr>
-<td><code>Open loop: Failed</code></td>
-<td>the motor did not turn: a coil open, the open-loop voltage (<code>#Openv</code>) too low for the motor, no supply current</td>
-</tr>
-<tr>
 <td><code>Phase order is wrong!</code></td>
-<td>see the note above: the motor did not respond to the commutation check; check the wiring, the current limit and the magnet</td>
+<td>see the note above: the motor did not turn on the spin check; check the four wires and their solder joints, the supply and its current limit, and the magnet</td>
 </tr>
 <tr>
 <td>the routine stops in a step and prints nothing more</td>
-<td>reset the driver (<code>#Reset</code>) and try again</td>
+<td>reset the driver (<code>#Reset</code>) and try again; the angle-offset search prints a progress line every half second, so wait for a minute before you decide</td>
 </tr>
 <tr>
 <td>success, but the <abbr title="Light-Emitting Diode">LED</abbr> stays on and no error is reported</td>
-<td>the state shows <code>-1</code> somewhere: the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> is not in the firmware's layout; restore the defaults, enter the parameters, calibrate again</td>
+<td>should not happen with firmware 106 and newer, which replaces a damaged configuration block with the defaults at power-up. If <code>#Info</code> shows <code>-1</code> somewhere, restore the defaults, enter the parameters and calibrate again</td>
 </tr>
 </tbody>
 </table>
-<p>The angle-offset step alone can be repeated with <code>#Calangle</code>.</p></section><section class="print-page" id="05-setup-tuning" heading-number="1.3.5.5"><h1 id="05-setup-tuning-current-limit-and-loop-tuning">Current limit and loop tuning<a class="headerlink" href="#05-setup-tuning-current-limit-and-loop-tuning" title="Permanent link">&para;</a></h1>
+<p><code>#Calangle</code> runs an angle-offset search on its own, with an older routine than the one <code>#Cal</code> uses: it gives up
+after about two minutes and keeps the offset it reached. After a change of motor, magnet or wiring, run the whole
+<code>#Cal</code> instead.</p>
+<p>Calibration runs over the serial connection only: a terminal, or Motor GUI over the serial adapter, not over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>.</p></section><section class="print-page" id="05-setup-tuning" heading-number="1.3.5.5"><h1 id="05-setup-tuning-current-limit-and-loop-tuning">Current limit and loop tuning<a class="headerlink" href="#05-setup-tuning-current-limit-and-loop-tuning" title="Permanent link">&para;</a></h1>
 <p>Calibration leaves the driver with current loop gains computed for your motor and with conservative velocity and
 position gains. Two things remain: the current limit, which you must set for your motor, and the loop gains, which
 you tune if the defaults do not suit it. Motor GUI shows the motor's response on its plots while you change a gain,
 which is what makes tuning quick.</p>
 <h2 id="05-setup-tuning-the-current-limit">The current limit<a class="headerlink" href="#05-setup-tuning-the-current-limit" title="Permanent link">&para;</a></h2>
 <p>Set the current limit to the rated phase current of your motor in mA (the datasheet value; the tested motors'
-ratings are in <a href="#03-technical-data-tested-motors">Tested motors</a>). The firmware clamps the limit to the
-driver's 2800 mA and does not trip on phase current by itself; the MOSFET driver's hardware protection only
-catches a hard fault. A limit above the motor's rating overheats the motor.</p>
+ratings are in <a href="#03-technical-data-tested-motors">Tested motors</a>). It is 1700 mA after <code>#Default</code>, and
+calibration leaves it at 1600 mA, whatever it was before. <code>#Ilim</code> clamps the limit to the driver's 2800 mA. The
+firmware does not trip on phase current by itself and does not monitor the driver stage. A limit above the motor's
+rating overheats the motor.</p>
+<div class="admonition warning">
+<p class="admonition-title">Over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> the limit is not clamped</p>
+<p>Send_Limits stores the current limit as sent, without the 2800 mA clamp of <code>#Ilim</code>. A host program must keep
+it within the motor's rating and 2800 mA.</p>
+</div>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="05-setup-tuning-__tabbed_1_1" name="05-setup-tuning-__tabbed_1" type="radio" /><input id="05-setup-tuning-__tabbed_1_2" name="05-setup-tuning-__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="05-setup-tuning-__tabbed_1_1">Motor GUI</label><label for="05-setup-tuning-__tabbed_1_2">Terminal</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -3532,7 +3572,7 @@ catches a hard fault. A limit above the motor's rating overheats the motor.</p>
 <figure>
   <a class="glightbox" href="../assets/cascadeloop.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The cascaded loops" src="../assets/cascadeloop.webp" width="800" /></a>
 <br />
-<figcaption>Figure 13: The position loop commands the velocity loop, which commands the current loop.</figcaption>
+<figcaption>Figure 14: The position loop commands the velocity loop, which commands the current loop.</figcaption>
 </figure>
 <p>Tune from the inside out: the current loop first, then velocity, then position. Before you start:</p>
 <ul>
@@ -3585,7 +3625,7 @@ useful for legged robots.</p>
 <figure>
   <a class="glightbox" href="../assets/PDloop.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The PD loop" src="../assets/PDloop.webp" width="800" /></a>
 <br />
-<figcaption>Figure 14: The impedance loop: a spring (KP) and a damper (KD) around the position setpoint, plus a current feedforward.</figcaption>
+<figcaption>Figure 15: The impedance loop: a spring (KP) and a damper (KD) around the position setpoint, plus a current feedforward.</figcaption>
 </figure>
 <p>In <abbr title="Proportional-Derivative controller, the impedance control mode">PD</abbr> mode the motor behaves like a spring and a damper: the torque is <code>KP × (setpoint − position) + KD × (speed
 setpoint − speed) + feedforward current</code>. Set <code>KP</code> and <code>KD</code> (the gains, or <code>#KP</code>, <code>#KD</code>, or Send_PD_Gains), then
@@ -3594,9 +3634,13 @@ the motor holds position firmly, then add <code>KD</code> until it stops ringing
 explains the loop.</p>
 <h2 id="05-setup-tuning-limits">Limits<a class="headerlink" href="#05-setup-tuning-limits" title="Permanent link">&para;</a></h2>
 <ul>
-<li>The velocity limit (<code>#Vlimit</code>) clamps the speed the loops may command, in encoder ticks per second. A rough
-  maximum for your motor is 0.8 × Vbus × KV × 16384 / 60 ticks per second, with KV from calibration.</li>
-<li>The voltage limit (<code>#Vlim</code>) clamps the voltage of the current loops in mV; 0 uses the supply voltage.</li>
+<li>The velocity limit (<code>#Vlimit</code>, 800000 by default) clamps the speed the loops may command, in encoder ticks per
+  second. A rough maximum for your motor is 0.8 × V × KV × 16384 / 60 ticks per second, with KV from calibration
+  and V the lower of the voltage limit and the supply voltage.</li>
+<li>The voltage limit (<code>#Vlim</code>) clamps the voltage of the current loops in mV. It is 6000 mV by default: a stepper's
+  low resistance makes the current loop unstable with the full supply voltage, and the firmware's own guidance is
+  6000 mV for a phase resistance below 2 Ω. The limit also caps the top speed. 0, or a value above the supply
+  voltage, uses the supply voltage.</li>
 <li><code>#Rstint 1</code> resets the integrators on every new setpoint, which avoids windup when a program sends one setpoint
   after another with large steps.</li>
 </ul></section><section class="print-page" id="05-setup-saving" heading-number="1.3.5.6"><h1 id="05-setup-saving-saving-the-configuration">Saving the configuration<a class="headerlink" href="#05-setup-saving-saving-the-configuration" title="Permanent link">&para;</a></h1>
@@ -3612,9 +3656,25 @@ explains the loop.</p>
 </div>
 </div>
 </div>
-<p>Saving writes the whole configuration to the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>: the motor parameters and the calibration, every gain and
-limit, the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID, the heartbeat and watchdog settings, the thermistor and <abbr title="Light-Emitting Diode">LED</abbr> settings and the gripper flag.
-Over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>, Send_Save_config does the same. Save after calibration, after tuning, and after changing the node ID.</p>
+<p>Saving writes the configuration to the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>: the motor parameters and the calibration, every gain and limit,
+the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID (and the bootloader's board ID with it), the heartbeat and watchdog settings, the thermistor and <abbr title="Light-Emitting Diode">LED</abbr>
+settings and the gripper flag. Over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>, Send_Save_config does the same. Save after calibration, after tuning, and
+after changing the node ID.</p>
+<p>Some settings are not kept and start from their defaults at every power-up: the current loop bandwidth (<code>#Cbw</code>,
+500 Hz), the idle behaviour (<code>#Brake</code> / <code>#Coast</code> or Send_Settings: brake), and the open-loop and calibration
+settings (<code>#Openv</code>, <code>#Opens</code>, <code>#Vp</code>, <code>#Iqoffset</code>, <code>#microstep</code>, <code>#stepinterval</code>). The
+<a href="#reference-defaults">Defaults</a> reference marks each setting.</p>
+<div class="admonition warning">
+<p class="admonition-title">A saved watchdog runs from power-up</p>
+<p>With a watchdog saved (Send_Watchdog), the driver starts its count at power-up. A host that sends no motion
+frame or status request within the watchdog time finds the driver in watchdog error, and clears it with
+Send_Clear_Error. See <a href="#06-operation-can-a-control-loop">Over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr></a>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">The serial number</p>
+<p>This firmware does not read the serial number back from the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> at power-up: <code>#SERNUM</code> reports 1 until it
+is set, and every save writes the value held in RAM over the stored one.</p>
+</div>
 <h2 id="05-setup-saving-the-defaults">The defaults<a class="headerlink" href="#05-setup-saving-the-defaults" title="Permanent link">&para;</a></h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="05-setup-saving-__tabbed_2_1" name="05-setup-saving-__tabbed_2" type="radio" /><input id="05-setup-saving-__tabbed_2_2" name="05-setup-saving-__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="05-setup-saving-__tabbed_2_1">Motor GUI</label><label for="05-setup-saving-__tabbed_2_2">Terminal</label></div>
 <div class="tabbed-content">
@@ -3627,18 +3687,21 @@ Over <abbr title="Controller Area Network, the bus between the host and the driv
 </div>
 </div>
 </div>
-<p>Restoring the defaults writes the factory values to the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> and reloads them. It also resets the serial
-number, the hardware version and the batch date the driver reports, and clears the gripper flag, the heartbeat
-rate and the watchdog; note what the driver reports before you use it. The defaults are listed in the
+<p>Restoring the defaults writes the factory values to the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> and reloads them. It also sets the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID to
+0 and the thermistor to off, resets the serial number, the hardware version and the batch date stored in the
+<abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>, and clears the gripper flag, the heartbeat rate and the watchdog. Note the hardware version and batch date
+<code>#Info</code> prints before you use it, and give the driver its node ID again afterwards. The defaults are listed in the
 <a href="#reference-defaults">Defaults</a> reference.</p>
 <p>Use it before the first calibration of a motor, after a firmware update when the driver behaves oddly, and when
-the state shows nonsense values (a <code>-1</code>
-where a number should be): the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> then holds a layout the firmware does not expect.</p>
+the state shows nonsense values (a <code>-1</code> where a number should be). With firmware 106 and newer that should not
+happen: the driver checks the stored configuration at power-up and replaces a damaged block with the defaults by
+itself.</p>
 <h2 id="05-setup-saving-what-the-driver-reports">What the driver reports<a class="headerlink" href="#05-setup-saving-what-the-driver-reports" title="Permanent link">&para;</a></h2>
-<p>The state Motor GUI shows, and <code>#Info</code> prints, is what is in the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> and what the driver measures: hardware
-and firmware version, serial number, calibration state, resistance, inductance, pole pairs, Kt and KV, the gains
-and limits, the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> ID, and the active errors. It is the first thing to look at when something is off, and the
-thing to copy into a bug report.</p></section></section>
+<p>The state Motor GUI shows is what is in the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> and what the driver measures. In a terminal it takes three
+commands: <code>#Info</code> prints the hardware and firmware version, the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> ID, the calibration state and the motor
+parameters (pole pairs, resistance, inductance, Kt and KV); <code>#Param</code> prints the gains and limits; <code>#Error</code> the
+active errors. They are the first thing to look at when something is off, and the thing to copy into a bug
+report.</p></section></section>
                     <section class='print-page md-section' id='section-1-3-6' heading-number='1.3.6'>
                         <h1>6. Operation<a class='headerlink' href='#section-1-3-6' title='Permanent link'></a>
                         </h1>
@@ -3657,8 +3720,8 @@ the two tools on top of them, what happens when something goes wrong, and grippe
 </ul>
 <p>The exact layout of every message and command is in the <a href="#reference">API reference</a>.</p></section><section class="print-page" id="06-operation-modes" heading-number="1.3.6.2"><h1 id="06-operation-modes-control-modes">Control modes<a class="headerlink" href="#06-operation-modes-control-modes" title="Permanent link">&para;</a></h1>
 <p>The driver is always in one control mode. A command that carries a setpoint switches to the mode that uses it;
-<code>#Idle</code> or Send_Idle switches back to idle. The driver refuses the closed-loop modes while it is not calibrated or
-while an error is active.</p>
+<code>#Idle</code> or Send_Idle switches back to idle. The driver refuses every mode except idle, open loop included, while it
+is not calibrated or while an error is active.</p>
 <pre class="mermaid"><code>stateDiagram-v2
     [*] --&gt; NotCalibrated: power-up, no saved calibration
     [*] --&gt; Idle: power-up, saved calibration
@@ -3714,19 +3777,19 @@ passing through idle; a fault is any of the errors on <a href="#06-operation-err
 </tr>
 <tr>
 <td>Voltage torque</td>
-<td>applies a voltage on the q axis directly, without the current loop</td>
+<td>applies a voltage on the q axis directly, without the current loop: clamped to <code>#Vlim</code>, not current-limited</td>
 <td><code>#Uq</code></td>
 <td>mV</td>
 </tr>
 <tr>
 <td>Open loop</td>
-<td>steps the motor like a plain stepper driver, without the encoder</td>
-<td><code>#Openloop</code> (continuous), <code>#gosteps</code> (a number of steps)</td>
-<td>electrical speed; steps</td>
+<td>steps the motor like a plain stepper driver, without the encoder and without a current limit; see <a href="#06-operation-modes-open-loop-stepping">Open-loop stepping</a></td>
+<td><code>#Openloop</code> (continuous), <code>#gosteps</code> (a number of microsteps)</td>
+<td>electrical rad/s; microsteps</td>
 </tr>
 <tr>
 <td>HALL</td>
-<td>spins until a sensor on ADDITIONAL2 triggers, then holds the position reached</td>
+<td>spins until a sensor on ADDITIONAL2 triggers, then holds the position reached; with a level trigger only while the pin stays at that level</td>
 <td><code>#HALL</code>, Send_data_pack_HALL</td>
 <td>encoder ticks/s</td>
 </tr>
@@ -3780,15 +3843,37 @@ passing through idle; a fault is any of the errors on <a href="#06-operation-err
 <p>The units of this page, with your numbers: 16384 encoder ticks per turn, the practical speed limit from the
 electrical frequency the control loop can follow (<a href="#03-technical-data-ratings">Ratings and limits</a>), and
 the torque as Kt times the current.</p>
+<h2 id="06-operation-modes-open-loop-stepping">Open-loop stepping<a class="headerlink" href="#06-operation-modes-open-loop-stepping" title="Permanent link">&para;</a></h2>
+<p><code>#Openloop</code> and <code>#gosteps</code> drive the coils like a plain stepper driver, without the encoder in the loop. Like every
+other mode, they need a calibrated driver without errors.</p>
+<ul>
+<li><code>#Openloop 50</code> turns the field at 50 electrical rad/s and keeps turning until another command. On a motor with
+  50 pole pairs that is 50 ÷ (2π × 50), about 0.16 revolutions per second.</li>
+<li><code>#gosteps 64</code> makes 64 microsteps, then goes to idle; a negative number goes the other way. <code>#microstep</code> (16 by
+  default) is the number of microsteps per electrical cycle, which is four full steps: with 16, <code>#gosteps 16</code> turns
+  a 1.8° motor by 7.2°. <code>#stepinterval</code> (1000 µs by default) is the time between two microsteps, rounded down to
+  whole control cycles of 160 µs.</li>
+<li><code>#Openv</code> (5000 mV by default) is the voltage both put on the coils.</li>
+</ul>
+<p>None of these settings is saved.</p>
+<div class="admonition warning">
+<p class="admonition-title">Open loop is not current-limited</p>
+<p>Open loop applies a voltage, not a current, and <code>#Ilim</code> does not apply. At standstill and low speed the coil
+current is about <code>#Openv</code> ÷ R: the default 5000 mV drives about 4.5 A through a 1.1 Ω coil, more than the
+driver's 2.8 A and the motor's rating. Set <code>#Openv</code> to the rated current × R first (2 A × 1.1 Ω = 2200 mV), and
+keep the test short.</p>
+</div>
 <h2 id="06-operation-modes-positive-rotation">Positive rotation<a class="headerlink" href="#06-operation-modes-positive-rotation" title="Permanent link">&para;</a></h2>
 <figure>
   <a class="glightbox" href="../assets/STEPFOC_ORIENTATION.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Positive rotation" src="../assets/STEPFOC_ORIENTATION.webp" width="700" /></a>
 <br />
-<figcaption>Figure 15: Positive rotation is counter-clockwise looking at the encoder magnet. A positive current turns the motor that way, a positive speed too, and the position grows.</figcaption>
+<figcaption>Figure 16: Positive rotation is counter-clockwise looking at the encoder magnet. A positive current turns the motor that way, a positive speed too, and the position grows.</figcaption>
 </figure>
 <h2 id="06-operation-modes-which-mode-am-i-in">Which mode am I in?<a class="headerlink" href="#06-operation-modes-which-mode-am-i-in" title="Permanent link">&para;</a></h2>
-<p><code>#Mode</code> prints the mode. Its text for the voltage-torque mode reads <code>Gripper mode</code> in this firmware release (a
-leftover label); <code>#Info</code> and the behaviour of the motor are the reliable check.</p></section><section class="print-page" id="06-operation-uart" heading-number="1.3.6.3"><h1 id="06-operation-uart-over-uart">Over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr><a class="headerlink" href="#06-operation-uart-over-uart" title="Permanent link">&para;</a></h1>
+<p><code>#Mode</code> prints the mode: <code>Idle mode</code>, <code>Position control</code>, <code>Speed control</code>, <code>Current control</code>, <code>PD control</code>,
+<code>Open loop</code>, <code>Gripper mode</code> or <code>Gripper calib mode</code>. In this firmware release the voltage-torque mode reads
+<code>Gripper mode</code> too (a leftover label), and HALL mode, the angle-offset search (<code>#Calangle</code>), open-loop steps
+(<code>#gosteps</code>) and gripper mode print nothing. The behaviour of the motor is the reliable check there.</p></section><section class="print-page" id="06-operation-uart" heading-number="1.3.6.3"><h1 id="06-operation-uart-over-uart">Over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr><a class="headerlink" href="#06-operation-uart-over-uart" title="Permanent link">&para;</a></h1>
 <p>The serial port is the interactive way to use the driver: you type a command, the driver answers in text. It is
 the only way to calibrate, and the quickest way to try a setting. For real-time control of several motors use <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>.</p>
 <h2 id="06-operation-uart-the-protocol">The protocol<a class="headerlink" href="#06-operation-uart-the-protocol" title="Permanent link">&para;</a></h2>
@@ -3805,7 +3890,7 @@ the only way to calibrate, and the quickest way to try a setting. For real-time 
 <li>A <strong>Set/Get</strong> command with a number sets the value and prints it; without a number it only prints it. <code>#P 16384</code>
   moves to position 16384 and prints the position; <code>#P</code> prints the position.</li>
 <li>An <strong>action</strong> command takes no number: <code>#Cal</code>, <code>#Save</code>, <code>#Idle</code>.</li>
-<li>A command the parser does not know is answered with <code>Unknown command</code> (firmware 108). A few names the parser
+<li>A command the parser does not know is answered with <code>Unknown command</code> (firmware 106 and newer). A few names the parser
   accepts have no handler and are answered with nothing; the <a href="#reference-uart"><abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> reference</a> lists them.</li>
 <li>256000 baud, 8N1, 3.3 V.</li>
 </ul>
@@ -3834,7 +3919,7 @@ speed and Iq every 100 ms as <code>$ &lt;position&gt; &lt;speed&gt; &lt;Iq&gt;</
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#06-operation-uart-__codelineno-3-4"></a>#Vbus
 </span></code></pre></div>
 <p>Every command is in the <a href="#reference-uart"><abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> reference</a>, grouped by what it does.</p></section><section class="print-page" id="06-operation-can" heading-number="1.3.6.4"><h1 id="06-operation-can-over-can">Over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr><a class="headerlink" href="#06-operation-can-over-can" title="Permanent link">&para;</a></h1>
-<p><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> is the interface for running a machine: compact frames, a fixed cost per message, up to 16 drivers on one bus,
+<p><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> is the interface for running a machine: compact frames, a fixed cost per message, up to 14 drivers on one bus,
 and a host that can be a PC, a microcontroller or a robot control box. The driver answers a motion command with
 its position, speed and current in the same frame exchange, so a control loop on the host needs one frame out and
 one frame back per motor and cycle.</p>
@@ -3844,7 +3929,7 @@ error state:</p>
 <figure>
   <a class="glightbox" href="../assets/CANID.PNG" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The CAN identifier" src="../assets/CANID.PNG" width="600" /></a>
 <br />
-<figcaption>Figure 16: Bits 10 to 7 of the identifier are the node ID, bits 6 to 1 the command ID, bit 0 the error bit.</figcaption>
+<figcaption>Figure 17: Bits 10 to 7 of the identifier are the node ID, bits 6 to 1 the command ID, bit 0 the error bit.</figcaption>
 </figure>
 <ul>
 <li><strong>Node ID</strong>, bits 10 to 7: which driver, 0 to 15. A driver acts only on frames with its own node ID and sends
@@ -3870,8 +3955,11 @@ single precision. Flags inside a byte are numbered from the most significant bit
 </ul>
 <h2 id="06-operation-can-a-control-loop">A control loop<a class="headerlink" href="#06-operation-can-a-control-loop" title="Permanent link">&para;</a></h2>
 <p>Send Send_data_pack_1 at a fixed rate, 100 Hz to 1 kHz, with the setpoint for this cycle; read Respond_data_pack_1
-for the position, speed and current of the last cycle. Every valid frame resets the watchdog, so with
-Send_Watchdog set to a few cycle times the motor stops when the host stops. The heartbeat is the other way round:
+for the position, speed and current of the last cycle. Every valid motion frame, and every status request the
+driver answers, resets the watchdog; the setting frames (gains, limits, Idle, Clear, Save) do not. So with
+Send_Watchdog set to a few cycle times the motor stops when the host stops. A watchdog kept with Send_Save_config
+runs from power-up: a host that does not start its loop within the watchdog time finds the driver in watchdog
+error, and clears it with Send_Clear_Error. The heartbeat is the other way round:
 Send_Heartbeat_Setup makes the driver send a frame on its own every N ms when it has nothing else to send, so the
 host can see it is alive.</p>
 <pre class="mermaid"><code>sequenceDiagram
@@ -3885,7 +3973,7 @@ host can see it is alive.</p>
         D--&gt;&gt;H: Respond_data_pack_1: position, speed, current, the error bit
     end
     D--&gt;&gt;H: heartbeat, whenever nothing else was sent for N ms
-    Note over D: no valid frame within the watchdog time: watchdog error, the motor stops</code></pre>
+    Note over D: no motion frame or status request within the watchdog time: watchdog error, the motor stops</code></pre>
 <h2 id="06-operation-can-from-a-pc">From a PC<a class="headerlink" href="#06-operation-can-from-a-pc" title="Permanent link">&para;</a></h2>
 <p>The <a href="https://source-robotics.com/products/canvas-usb-to-can-adapter">CANvas adapter</a> shows up as a serial port and
 speaks slcan; <code>python-can</code> opens it with <code>bustype='slcan'</code>. The Python library wraps the whole protocol, see
@@ -4055,7 +4143,7 @@ error bit in every <abbr title="Controller Area Network, the bus between the hos
 <h2 id="06-operation-errors-seeing-the-error">Seeing the error<a class="headerlink" href="#06-operation-errors-seeing-the-error" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>The <abbr title="Light-Emitting Diode">LED</abbr></strong>: on and not flashing means error mode (or not calibrated). Three short flashes and a pause is
-  normal operation; flashing every 0.5 s is calibration.</li>
+  normal operation; fast flashing is calibration.</li>
 <li><strong><code>#Error</code></strong> prints <code>In error state!</code> or <code>No errors!</code>, followed by one line per active error.</li>
 <li><strong>Send_Respond_State_of_Errors</strong> returns every flag as a bit; <strong>the error bit</strong> of any frame says whether there
   is one.</li>
@@ -4071,7 +4159,7 @@ error bit in every <abbr title="Controller Area Network, the bus between the hos
 <tbody>
 <tr>
 <td><a class="glightbox" href="../assets/Normal.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Three short flashes and a pause" src="../assets/Normal.webp" width="180" /></a></td>
-<td><a class="glightbox" href="../assets/Calib.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Flashing every 0.5 s" src="../assets/Calib.webp" width="180" /></a></td>
+<td><a class="glightbox" href="../assets/Calib.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Fast flashing during calibration" src="../assets/Calib.webp" width="180" /></a></td>
 <td><a class="glightbox" href="../assets/Error2.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="On, steady" src="../assets/Error2.webp" width="180" /></a></td>
 </tr>
 </tbody>
@@ -4091,26 +4179,26 @@ error bit in every <abbr title="Controller Area Network, the bus between the hos
 <tr>
 <td>Vbus</td>
 <td><code>Vbus error</code></td>
-<td>the supply voltage is below 9 V or above 29.5 V (<code>#Vmax</code>)</td>
+<td>the supply voltage is below 9 V or above 29 V (<code>#Vmax</code>, 29000 mV after <code>#Default</code>)</td>
 <td>check the supply and the cable; a decelerating motor can push the voltage up</td>
 </tr>
 <tr>
 <td>Encoder</td>
 <td><code>Encoder error</code></td>
-<td>the magnet is not detected or the reading is invalid</td>
+<td>the encoder reports no magnet: missing, too far away or too weak</td>
 <td>magnet distance and type, see <a href="#04-mounting-magnet">The encoder magnet</a></td>
 </tr>
 <tr>
 <td>Driver</td>
 <td><code>Driver error (undervoltage, thermal shutdown, or overcurrent)</code></td>
-<td>the MOSFET driver's own protection tripped</td>
-<td>lower the current limit, cool the driver, check for a short between the motor leads</td>
+<td>reserved: this firmware never raises it, because it does not monitor the driver stage</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Velocity</td>
 <td><code>Velocity error</code></td>
-<td>the speed exceeded the limit</td>
-<td>lower the commanded speed or raise <code>#Vlimit</code></td>
+<td>the speed passed 30,000,000 ticks/s, a fixed threshold that <code>#Vlimit</code> does not change; in practice only a runaway reaches it</td>
+<td>check the magnet and the calibration</td>
 </tr>
 <tr>
 <td>Temperature</td>
@@ -4127,7 +4215,7 @@ error bit in every <abbr title="Controller Area Network, the bus between the hos
 <tr>
 <td>Watchdog</td>
 <td><code>Watchdog error</code></td>
-<td>no valid <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> frame within the watchdog time (Send_Watchdog)</td>
+<td>no motion frame or status request within the watchdog time (Send_Watchdog)</td>
 <td>the host stopped sending; fix the host, then clear</td>
 </tr>
 <tr>
@@ -4148,14 +4236,16 @@ error bit in every <abbr title="Controller Area Network, the bus between the hos
 <p><code>#Clear</code> or Send_Clear_Error clears the flags and goes to idle. An error whose cause is still present comes
 straight back: a Vbus error at 2 V stays until the supply is right; once the supply is 24 V, one <code>#Clear</code> returns
 the driver to normal operation. The calibration error clears only by calibrating (or, for a motor you know is
-calibrated, <code>#Calibrated 1</code>).</p>
+calibrated, <code>#Calibrated 1</code>). A gripper E-stop comes back on every control cycle until its E-stop bit is 0 again:
+<code>#Gripstop 0</code>, or a Send_gripper_data_pack with the bit clear; then clear. While it is active, <code>#Error</code> prints only
+<code>In error state!</code>.</p>
 <h2 id="06-operation-errors-when-the-driver-does-not-answer">When the driver does not answer<a class="headerlink" href="#06-operation-errors-when-the-driver-does-not-answer" title="Permanent link">&para;</a></h2>
 <ul>
 <li>No <abbr title="Light-Emitting Diode">LED</abbr> at all: no power. Check DC+ and DC− and the cable orientation.</li>
 <li><abbr title="Light-Emitting Diode">LED</abbr> on, no answer on <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr>: the baud rate (256000), TX and RX crossed, the adapter's port.</li>
 <li>No answer on <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>: the node ID, the termination (about 60 Ω across the bus, unpowered), 1 Mbit/s on the adapter.</li>
-<li><code>#Info</code> shows <code>-1</code> or nonsense: the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> holds a layout the firmware does not expect; <code>#Default</code>, then
-  calibrate again.</li>
+<li><code>#Info</code> shows <code>-1</code> or nonsense: with firmware 106 and newer this should not happen, because the driver replaces a
+  damaged configuration block with the defaults at power-up. If it does, <code>#Default</code>, then calibrate again.</li>
 </ul>
 <p><a href="#08-troubleshooting">Troubleshooting</a> goes through the symptoms one by one.</p></section><section class="print-page" id="06-operation-gripper-mode" heading-number="1.3.6.8"><h1 id="06-operation-gripper-mode-gripper-mode">Gripper mode<a class="headerlink" href="#06-operation-gripper-mode-gripper-mode" title="Permanent link">&para;</a></h1>
 <p>A driver can run a gripper instead of a joint: the same board, with a state machine that moves a jaw to a
@@ -4169,9 +4259,12 @@ STEPFOC this way.</p>
 <p><code>#Default</code> clears the flag again. A driver in gripper mode still answers every other command; the gripper
 commands only work with the flag set.</p>
 <h2 id="06-operation-gripper-mode-calibrating-the-gripper">Calibrating the gripper<a class="headerlink" href="#06-operation-gripper-mode-calibrating-the-gripper" title="Permanent link">&para;</a></h2>
-<p>After every power-up the gripper has to find its end stops: <code>#Gripcal</code> or Send_gripper_calibrate. The jaws move
-to both ends; the positions become 0 (open) and 255 (closed). The motor itself must be calibrated (<code>#Cal</code>) and
-saved before that, once.</p>
+<p>After every power-up the gripper has to find its end stops: <code>#Gripcal</code> or Send_gripper_calibrate. The jaws open
+until they stop, then close until they stop, slowly and at 500 mA; the positions become 0 (open) and 255 (closed).
+The driver prints nothing when it is done. If it has not found both end stops within about 24 s it gives up, and
+the gripper stays uncalibrated. Check the result with <code>#Gripinfo</code> (<code>Gripper calibrated is: 1</code>) or the
+<code>gripper_calibrated</code> bit of Respond_Gripper_data_pack: a move is carried out only once the gripper is calibrated.
+The motor itself must be calibrated (<code>#Cal</code>) and saved before that, once.</p>
 <h2 id="06-operation-gripper-mode-moving">Moving<a class="headerlink" href="#06-operation-gripper-mode-moving" title="Permanent link">&para;</a></h2>
 <p>Over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#06-operation-gripper-mode-__codelineno-1-1"></a>#Gripvel 100       speed, 0 to 255
@@ -4208,11 +4301,14 @@ and the object detection:</p>
 </tbody>
 </table>
 <p>An empty Send_gripper_data_pack (0 bytes) only asks for the state. Send_gripper_data_pack's E-stop bit raises the
-gripper E-stop error; <code>#Gripstop 1</code> does the same over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr>.</p>
+gripper E-stop error; <code>#Gripstop 1</code> does the same over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr>. The error stays: while the E-stop bit is 1 the driver
+raises it again on every control cycle, and <code>#Error</code> prints only <code>In error state!</code>. To recover, clear the bit
+(<code>#Gripstop 0</code>, or a Send_gripper_data_pack with the bit 0), then <code>#Clear</code> or Send_Clear_Error.</p>
 <div class="admonition warning">
 <p class="admonition-title">Current</p>
 <p>The firmware does not limit the current you give a gripper move. The safe range depends on the gripper's
-mechanics and motor; the gripper's manual gives it. The driver's hard limit is 2800 mA.</p>
+mechanics and motor; the gripper's manual gives it. The driver is rated for 2.8 A, but nothing enforces that
+here: a gripper move uses the current as sent.</p>
 </div>
 <h2 id="06-operation-gripper-mode-where-the-details-are">Where the details are<a class="headerlink" href="#06-operation-gripper-mode-where-the-details-are" title="Permanent link">&para;</a></h2>
 <p>The bytes of the two gripper frames are in the <a href="#reference-can-gripper"><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> reference</a>, the <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> commands in
@@ -4221,7 +4317,7 @@ the <a href="#reference-uart-gripper"><abbr title="the serial port of the driver
                         <h1>7. Firmware<a class='headerlink' href='#section-1-3-7' title='Permanent link'></a>
                         </h1>
                     <section class="print-page" id="07-firmware" heading-number="1.3.7.1"><h1 id="07-firmware-firmware">Firmware<a class="headerlink" href="#07-firmware-firmware" title="Permanent link">&para;</a></h1>
-<p>The driver's firmware is open source and released as numbered builds. A driver shipped with firmware 104 or newer
+<p>The driver's firmware is open source and released as numbered builds. A driver shipped with firmware 105 or newer
 carries a bootloader and updates itself over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> or <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>; an older driver needs the bootloader installed once with
 a programming adapter.</p>
 <h2 id="07-firmware-in-this-chapter">In this chapter<a class="headerlink" href="#07-firmware-in-this-chapter" title="Permanent link">&para;</a></h2>
@@ -4236,7 +4332,7 @@ a programming adapter.</p>
 </ul>
 <p>The release notes of every release up to the one this site describes are in the appendix,
 <a href="#appendix-firmware-release-notes">Firmware release notes</a>.</p></section><section class="print-page" id="07-firmware-releases" heading-number="1.3.7.2"><h1 id="07-firmware-releases-releases-and-versions">Releases and versions<a class="headerlink" href="#07-firmware-releases-releases-and-versions" title="Permanent link">&para;</a></h1>
-<p>A firmware release is a number: 103, 104, 105, … Every release is a tag <code>V&lt;number&gt;</code> in the
+<p>A firmware release is a number: 103, 105, 106, … Every release is a tag <code>V&lt;number&gt;</code> in the
 <a href="https://github.com/Source-Robotics/STEPFOC-stepper-controller">firmware repository</a> and a GitHub release that
 carries the image <code>stepfoc-firmware-V&lt;number&gt;.bin</code>, a manifest <code>firmware.json</code> with the image's size, SHA-256 and
 the commit it was built from, and the release notes. The notes are the firmware's changelog; the
@@ -4246,21 +4342,24 @@ the commit it was built from, and the release notes. The notes are the firmware'
 </span></code></pre></div>
 <p>prints <code>Software version: &lt;number&gt;</code> among the rest. Over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>, Send_Respond_Device_Info returns it as the third
 byte. From firmware 105 the number is the build's own version; before that it was read from the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> and could
-be stale after an update until <code>#Default</code>.</p>
+be stale after an update until <code>#Default</code>. So a driver that reports 103 may still carry the bootloader: the builds
+of the <code>bootloader-version</code> branch before 105 read 103 from the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> too. To tell, power the driver up while
+<code>bl_flash.py list</code> or Motor GUI's <em>Scan bootloaders</em> is polling: a driver with the bootloader answers in its first
+two seconds.</p>
 <h2 id="07-firmware-releases-which-release-does-this-site-describe">Which release does this site describe?<a class="headerlink" href="#07-firmware-releases-which-release-does-this-site-describe" title="Permanent link">&para;</a></h2>
 <p>The one in the version box on the <a href="#.">landing page</a> and in the version selector in the header. When a
 newer release changes what a page says, a new version of the site is published and the previous one stays
 reachable from the selector. The <a href="#appendix-compatibility">compatibility table</a> says which releases go with
 which bootloader, Python library and PAR6 runtime.</p>
 <h2 id="07-firmware-releases-the-spectral-micro-counterpart">The Spectral Micro counterpart<a class="headerlink" href="#07-firmware-releases-the-spectral-micro-counterpart" title="Permanent link">&para;</a></h2>
-<p>Each STEPFOC release has a Spectral Micro release with the same changes; the numbers differ by one. The
-compatibility table lists the pairs.</p>
+<p>A change that applies to both drivers comes to the Spectral Micro too, but not always in a release with the same
+number: STEPFOC 108 matches Spectral Micro 107. The compatibility table lists the pairs.</p>
 <h2 id="07-firmware-releases-the-two-branches">The two branches<a class="headerlink" href="#07-firmware-releases-the-two-branches" title="Permanent link">&para;</a></h2>
-<p>Releases from 104 on are built from the <code>bootloader-version</code> branch of the repository, whose firmware is linked
+<p>Releases from 105 on are built from the <code>bootloader-version</code> branch of the repository, whose firmware is linked
 to run above the bootloader. The <code>main</code> branch holds the firmware of release 103 and earlier, linked to run
 without a bootloader, and is not updated. A board running 103 is documented by version <code>103</code> of this site; to
 move it to a current release, see <a href="#07-firmware-bootloader">Installing the bootloader on an older board</a>.</p></section><section class="print-page" id="07-firmware-the-bootloader" heading-number="1.3.7.3"><h1 id="07-firmware-the-bootloader-the-bootloader">The bootloader<a class="headerlink" href="#07-firmware-the-bootloader-the-bootloader" title="Permanent link">&para;</a></h1>
-<p>Every driver shipped with firmware 104 or newer carries a small bootloader in the first 12 KB of its flash. It
+<p>Every driver shipped with firmware 105 or newer carries a small bootloader in the first 12 KB of its flash. It
 starts the firmware on a normal boot, and it loads a new firmware over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> or <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> when a host asks, so a driver is
 updated without a programming adapter and without opening anything. The bootloader is open source:
 <a href="https://github.com/Source-Robotics/stm32f103c-bootloader">stm32f103c-bootloader</a>, shared with the Spectral Micro.</p>
@@ -4298,13 +4397,14 @@ first <code>0x3000</code> bytes belong to the bootloader and the firmware never 
 <li>On a reset, the bootloader runs first. If the magic word is in RAM and the reset was a software reset, it
    checks the firmware's stack pointer and reset vector and jumps straight into the firmware: about 10 ms, the
    normal boot.</li>
-<li>Otherwise it initialises the clocks, <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>, <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> and its watchdog, and <strong>listens for a host for 2 s</strong>.</li>
+<li>Otherwise it initialises the clocks, <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>, <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> and its watchdog, and <strong>listens for a host for 2 s</strong>. The <abbr title="Light-Emitting Diode">LED</abbr>
+   flashes three times at the start, then blinks while the bootloader listens, faster while a host talks to it.</li>
 <li>With no host, and a firmware whose stored <abbr title="Cyclic Redundancy Check">CRC</abbr> is valid, it sets the magic word and resets; the next boot takes
    the fast path.</li>
 <li>With a host talking, it stays as long as the host keeps talking: 3 s after the last command, 60 s once a flash
    is in progress. Any <code>PING</code> resets the timer.</li>
-<li>With no valid firmware (never flashed, or a flash that was interrupted), it stays in bootloader mode and waits.
-   The <abbr title="Light-Emitting Diode">LED</abbr> is off; the driver answers nothing on <code>#Info</code>.</li>
+<li>With no valid firmware (never flashed, or a flash that was interrupted), it stays in bootloader mode and waits,
+   with the <abbr title="Light-Emitting Diode">LED</abbr> blinking; the driver answers nothing on <code>#Info</code>.</li>
 </ol>
 <h2 id="07-firmware-the-bootloader-entering-the-bootloader">Entering the bootloader<a class="headerlink" href="#07-firmware-the-bootloader-entering-the-bootloader" title="Permanent link">&para;</a></h2>
 <ul>
@@ -4317,8 +4417,10 @@ first <code>0x3000</code> bytes belong to the bootloader and the firmware never 
 <p>The bootloader has a board ID of its own, 0 to 13, stored in its configuration page. 14 and 15 do not exist
 for it: its command frame, identifier <code>0x700</code>, decodes as node 14 in the firmware's identifier scheme, so those
 two node IDs are reserved. <strong>Give drivers node IDs 0 to 13.</strong> The firmware accepts <code>#CANID 14</code> and <code>15</code>, but the
-bootloader then keeps its old board ID and a firmware update over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> cannot reach the driver. The firmware keeps it in step with its <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID: setting the node ID (<code>#CANID</code>,
-Send_CAN_ID) writes the bootloader's board ID too, so a driver answers the host tools under its node ID. A
+bootloader then keeps its old board ID and a firmware update over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> cannot reach the driver. The firmware keeps
+the board ID in step with its <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID when the configuration is saved: <code>#Save</code> or Send_Save_config writes the
+node ID into the bootloader's board ID, so a driver answers the host tools under its node ID. A node ID that is set
+but not saved is not the board ID yet. A
 replacement board ships as ID 0; two boards with the same ID on one bus corrupt each other's flash stream, so
 give the new board its ID alone on the bus first (<code>set-id</code> in the host tool).</p>
 <h2 id="07-firmware-the-bootloader-transports-and-protocol">Transports and protocol<a class="headerlink" href="#07-firmware-the-bootloader-transports-and-protocol" title="Permanent link">&para;</a></h2>
@@ -4326,9 +4428,11 @@ give the new board its ID alone on the bus first (<code>set-id</code> in the hos
 (<code>board_id</code>, <code>cmd</code>, two parameters); the board replies on <code>0x701 + board_id</code> with 5 bytes (<code>board_id</code>, <code>cmd</code>,
 error code, a 16-bit parameter); the firmware image streams in bulk frames on <code>(board_id &lt;&lt; 7) | sequence</code>,
 16 frames of 8 bytes per chunk, with no reply per frame. Over <strong><abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr></strong> (256000 baud) the same commands travel in
-framed packets <code>[0xBB][CMD][LEN][BOARD_ID][DATA…][CRC16]</code> with the same 5-byte reply.</p>
-<p>Commands: <code>WBUF</code> (1), <code>WPAGE</code> (2), <code>WCRC</code> (3), <code>PING</code> (4), <code>SET_ID</code> (5), <code>ERASE_APP</code> (6), <code>STREAM_BEGIN</code> (7),
-<code>STREAM_STATUS</code> (8). Error codes: <code>0</code> OK, <code>1</code> invalid offset, <code>2</code> invalid <abbr title="Cyclic Redundancy Check">CRC</abbr>, <code>3</code> flash write failed, <code>4</code> invalid
+framed packets <code>[0xBB][CMD][LEN][BOARD_ID][DATA…][CRC16]</code> with the same 5-byte reply, but the first four have other
+numbers.</p>
+<p>Commands over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>: <code>WBUF</code> (1), <code>WPAGE</code> (2), <code>WCRC</code> (3), <code>PING</code> (4), <code>SET_ID</code> (5), <code>ERASE_APP</code> (6),
+<code>STREAM_BEGIN</code> (7), <code>STREAM_STATUS</code> (8). Over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr>: <code>PING</code> (1), <code>WBUF</code> (2), <code>WPAGE</code> (3), <code>WCRC</code> (4), and the
+others as over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>, plus <code>STREAM_DATA</code> (9), which carries the stream frames. Error codes: <code>0</code> OK, <code>1</code> invalid offset, <code>2</code> invalid <abbr title="Cyclic Redundancy Check">CRC</abbr>, <code>3</code> flash write failed, <code>4</code> invalid
 page number. A flash is: ping, reset the firmware if it answers, ping until the bootloader answers, <code>ERASE_APP</code>
 (about 3.5 s), then for each 1 KB page <code>STREAM_BEGIN</code>, 8 chunks of 16 frames, <code>STREAM_STATUS</code>, <code>WPAGE</code> with the
 page's CRC32; finally <code>WCRC</code> with the page count and the image's CRC32. The bootloader stores the <abbr title="Cyclic Redundancy Check">CRC</abbr> and
@@ -4369,7 +4473,7 @@ image linked for <code>0x08000000</code> (a firmware from the <code>main</code> 
 <h2 id="07-firmware-the-bootloader-installing-it">Installing it<a class="headerlink" href="#07-firmware-the-bootloader-installing-it" title="Permanent link">&para;</a></h2>
 <p>Boards shipped with firmware 103 or older have no bootloader. <a href="#07-firmware-bootloader">Installing the bootloader on an older board</a>
 puts it there once, with a programming adapter at <code>0x08000000</code>; from then on the board updates like any other.</p></section><section class="print-page" id="07-firmware-update" heading-number="1.3.7.4"><h1 id="07-firmware-update-updating-through-the-bootloader">Updating through the bootloader<a class="headerlink" href="#07-firmware-update-updating-through-the-bootloader" title="Permanent link">&para;</a></h1>
-<p>A driver with the bootloader (firmware 104 or newer) is updated over the <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> connector or the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> bus: the host
+<p>A driver with the bootloader (firmware 105 or newer) is updated over the <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> connector or the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> bus: the host
 tells the driver to reset, the bootloader waits two seconds for a host, and the host streams the new image into it.
 No programming adapter, and nothing to open.</p>
 <div class="admonition warning">
@@ -4405,8 +4509,8 @@ is the <code>stepfoc-firmware-V&lt;number&gt;.bin</code> from the GitHub release
 <div class="admonition note">
 <p class="admonition-title">Board ID and node ID</p>
 <p>The bootloader has its own board ID (0 to 13), kept in its configuration page, separate from the firmware's
-<abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID. The firmware keeps the two in step when the node ID is set (<code>#CANID</code>, Send_CAN_ID), so a driver's
-bootloader ID is normally its node ID.</p>
+<abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID. The firmware keeps the two in step when the configuration is saved (<code>#Save</code>, Send_Save_config),
+so a driver's bootloader ID is normally its node ID. After <code>#CANID</code>, save before you flash over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>.</p>
 </div>
 <h2 id="07-firmware-update-from-a-par6-control-box">From a PAR6 control box<a class="headerlink" href="#07-firmware-update-from-a-par6-control-box" title="Permanent link">&para;</a></h2>
 <p>A robot built on the Robot Control Box updates every joint from the box itself, over its own <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> bus, from the
@@ -4450,7 +4554,7 @@ powers the board at 3.3 V.</p>
 <figure>
   <a class="glightbox" href="../assets/STEPFOC_JTAG.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The JTAG pads and the adapter" src="../assets/STEPFOC_JTAG.webp" width="700" /></a>
 <br />
-<figcaption>Figure 18: The JTAG pads. The adapter is pressed onto them; a little pressure makes the contact.</figcaption>
+<figcaption>Figure 18: The JTAG pads, marked 3V3, GND, SWCLK, SWDIO. The adapter is pressed onto them; a little pressure makes the contact.</figcaption>
 </figure>
 <h2 id="07-firmware-bootloader-steps">Steps<a class="headerlink" href="#07-firmware-bootloader-steps" title="Permanent link">&para;</a></h2>
 <ol>
@@ -4459,7 +4563,7 @@ powers the board at 3.3 V.</p>
 <li>Erase the chip, or at least the application region: the old firmware and the bootloader must not overlap.</li>
 <li>Program the bootloader binary at address <strong><code>0x08000000</code></strong>.</li>
 <li>Disconnect the adapter, power the driver. The bootloader finds no valid application and waits in bootloader
-   mode (the <abbr title="Light-Emitting Diode">LED</abbr> stays off).</li>
+   mode, with the <abbr title="Light-Emitting Diode">LED</abbr> blinking.</li>
 <li>Flash the firmware release through the bootloader, over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> or <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>, as in
    <a href="#07-firmware-update">Updating through the bootloader</a>.</li>
 <li><code>#Info</code> shows the new release. <code>#Default</code>, enter the motor parameters, calibrate, <code>#Save</code>.</li>
@@ -4507,10 +4611,19 @@ size fails to link.</p>
 <li><strong>Through the bootloader</strong>: flash the built <code>firmware.bin</code> with <code>bl_flash.py</code> or Motor GUI as in
   <a href="#07-firmware-update">Updating through the bootloader</a>. This is how a release is installed, and works on any driver with
   the bootloader.</li>
-<li><strong>With the programming adapter</strong>: <em>Upload</em> in PlatformIO uses ST-LINK and writes the image at <code>0x08003000</code>. The
-  bootloader must already be on the board; the upload does not touch it. The serial monitor (the plug icon) opens
-  the <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> at 256000 with <code>send_on_enter</code>, so you can type commands to the driver from the same window.</li>
+<li><strong>With the programming adapter</strong>: <em>Upload</em> in PlatformIO uses ST-LINK and writes the image at <code>0x08003000</code>. It
+  leaves the bootloader alone, but it does not update the image <abbr title="Cyclic Redundancy Check">CRC</abbr> the bootloader keeps; see the warning below.
+  The serial monitor (the plug icon) opens the <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> at 256000 with <code>send_on_enter</code>, so you can type commands to
+  the driver from the same window.</li>
 </ul>
+<div class="admonition warning">
+<p class="admonition-title">After an ST-LINK upload the firmware does not start</p>
+<p>At every power-up the bootloader checks the firmware against the <abbr title="Cyclic Redundancy Check">CRC</abbr> it stored at the last flash through the
+bootloader. After an upload with the programming adapter that <abbr title="Cyclic Redundancy Check">CRC</abbr> no longer matches, so the bootloader stays in
+bootloader mode, with the <abbr title="Light-Emitting Diode">LED</abbr> blinking, instead of starting the new firmware. Flash the same <code>firmware.bin</code>
+once more through the bootloader to recover. Once the bootloader is on the board, install every firmware
+through it.</p>
+</div>
 <figure>
   <a class="glightbox" href="../assets/VSUPLOAD.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Upload in VS Code" src="../assets/VSUPLOAD.png" width="700" /></a>
 <br />
@@ -4606,8 +4719,8 @@ release 103 and is not maintained; install the bootloader instead,
 <td>the name's spelling and case: <code>#Kpiq</code>, not <code>#kpiq</code></td>
 </tr>
 <tr>
-<td>the <abbr title="Light-Emitting Diode">LED</abbr> is off and nothing works after a firmware update</td>
-<td>the bootloader has no valid firmware: flash again, see <a href="#07-firmware-update">Updating through the bootloader</a></td>
+<td>the <abbr title="Light-Emitting Diode">LED</abbr> keeps blinking and nothing answers after a firmware update</td>
+<td>the bootloader has no valid firmware, or its <abbr title="Cyclic Redundancy Check">CRC</abbr> does not match after an upload with the programming adapter: flash again through the bootloader, see <a href="#07-firmware-update">Updating through the bootloader</a></td>
 </tr>
 </tbody>
 </table>
@@ -4646,7 +4759,7 @@ release 103 and is not maintained; install the bootloader instead,
 </tr>
 <tr>
 <td>the firmware update finds no bootloader</td>
-<td>a driver with firmware 103 has no bootloader: <a href="#07-firmware-bootloader">Installing the bootloader on an older board</a></td>
+<td>power-cycle the driver while the GUI scans, to catch the bootloader's 2 s window. A driver with firmware 103 or older from the <code>main</code> branch has no bootloader: <a href="#07-firmware-bootloader">Installing the bootloader on an older board</a></td>
 </tr>
 </tbody>
 </table>
@@ -4670,8 +4783,8 @@ come back most:</p>
 <td>one coil is not connected</td>
 </tr>
 <tr>
-<td><code>Open loop: Failed</code></td>
-<td>the motor did not turn: a coil open, the open-loop voltage (<code>#Openv</code>) too low</td>
+<td>the motor does not move in the open-loop step</td>
+<td>a coil open or not soldered; calibration then fails at the next step with <code>Phase order is wrong!</code></td>
 </tr>
 <tr>
 <td><code>Phase order is wrong!</code></td>
@@ -4683,7 +4796,7 @@ come back most:</p>
 </tr>
 <tr>
 <td>calibration succeeds but the <abbr title="Light-Emitting Diode">LED</abbr> stays on and <code>#Error</code> shows nothing</td>
-<td><code>#Info</code> shows <code>-1</code>: <code>#Default</code>, parameters, calibrate again</td>
+<td>should not happen with firmware 106 and newer, which replaces a damaged configuration block with the defaults at power-up; if <code>#Info</code> shows <code>-1</code>: <code>#Default</code>, parameters, calibrate again</td>
 </tr>
 </tbody>
 </table>
@@ -4718,7 +4831,7 @@ come back most:</p>
 </tr>
 <tr>
 <td>it stops with a velocity error</td>
-<td>the speed limit <code>#Vlimit</code>, or a load that lets the motor overrun</td>
+<td>the speed passed 30,000,000 ticks/s, a fixed threshold that <code>#Vlimit</code> does not change: a runaway, so check the magnet and the calibration</td>
 </tr>
 <tr>
 <td>it loses position with a load</td>
@@ -4741,9 +4854,9 @@ poorly and run rough. The <a href="#03-technical-data-tested-motors">tested moto
 <li>The magnet must be diametrically magnetised and centred on the shaft.</li>
 </ul>
 <h2 id="08-troubleshooting-the-driver-gets-hot-or-shuts-down">The driver gets hot or shuts down<a class="headerlink" href="#08-troubleshooting-the-driver-gets-hot-or-shuts-down" title="Permanent link">&para;</a></h2>
-<p>The MOSFET driver stage shuts down on its own overtemperature or overcurrent and reports a driver error. Lower
-the current limit, give the board airflow, check the motor leads for a short. Near 2.8 A the driver needs
-cooling.</p>
+<p>The firmware does not monitor the driver stage: if the stage stops on its own, for heat or a short, the motor
+loses torque and no error is reported. Lower the current limit, give the board airflow, check the motor leads for
+a short. Near 2.8 A the driver needs cooling.</p>
 <h2 id="08-troubleshooting-after-a-firmware-update">After a firmware update<a class="headerlink" href="#08-troubleshooting-after-a-firmware-update" title="Permanent link">&para;</a></h2>
 <p><code>#Info</code> shows the new release. If the values look wrong or the <abbr title="Light-Emitting Diode">LED</abbr> stays on: <code>#Default</code>, enter the motor
 parameters, <code>#Cal</code>, <code>#Save</code>. A release note says when an update clears the calibration.</p>
@@ -4884,7 +4997,7 @@ parameters, <code>#Cal</code>, <code>#Save</code>. A release note says when an u
 <tr>
 <td>108</td>
 <td>2026-08-26</td>
-<td>required (installed on boards shipped with 104 or newer)</td>
+<td>required (installed on boards shipped with 105 or newer)</td>
 <td>107</td>
 <td>1.20 or newer</td>
 <td>0.9 or newer</td>
@@ -4895,7 +5008,7 @@ parameters, <code>#Cal</code>, <code>#Save</code>. A release note says when an u
 <td>107</td>
 <td>2026-08-24</td>
 <td>required</td>
-<td>106</td>
+<td>107, without its calibration fix (which came with STEPFOC 108)</td>
 <td>1.20 or newer</td>
 <td>0.9 or newer</td>
 <td>v1</td>
@@ -4951,12 +5064,12 @@ it. The board reports its hardware revision in <code>#Info</code> (<code>Hardwar
 <td>v1</td>
 <td>first production</td>
 <td>—</td>
-<td>103 and newer; 104 and newer ship with the bootloader</td>
+<td>101 and newer; 105 and newer ship with the bootloader</td>
 <td>this manual</td>
 </tr>
 </tbody>
 </table>
-<p>Boards shipped before firmware 104 have no bootloader; <a href="#07-firmware-bootloader">Installing the bootloader on an older board</a>
+<p>Boards shipped with firmware 103 or older have no bootloader; <a href="#07-firmware-bootloader">Installing the bootloader on an older board</a>
 brings them to the current firmware.</p></section><section class="print-page" id="appendix-theory" heading-number="1.4.4"><h1 id="appendix-theory-theory-corner">Theory corner<a class="headerlink" href="#appendix-theory-theory-corner" title="Permanent link">&para;</a></h1>
 <p>The control concepts behind the driver's modes, for readers who want to know why a setting does what it does.
 Nothing here is needed to use the driver; the chapters say what to type.</p>
@@ -4987,9 +5100,12 @@ not from a count of pulses.</p>
 <p>Calibration supplies the constants this needs. The pole pairs come from the step angle. The current loop gains
 follow from the coil's resistance <span class="arithmatex">\(R\)</span> and inductance <span class="arithmatex">\(L\)</span> and the chosen bandwidth <span class="arithmatex">\(\omega_c = 2\pi f_c\)</span> (<code>#Cbw</code>):
 <span class="arithmatex">\(K_p = L\,\omega_c\)</span> and <span class="arithmatex">\(K_i = R\,\omega_c\)</span> cancel the coil's electrical time constant and give a first-order
-response at <span class="arithmatex">\(f_c\)</span>. The angle offset is found by driving a current along the <span class="arithmatex">\(d\)</span> axis and reading where the rotor
-settles. The velocity constant <span class="arithmatex">\(K_V\)</span> comes from the back-EMF the spinning motor generates, and the torque
-constant follows from it: in SI units <span class="arithmatex">\(K_t = 1/K_V\)</span> (with <span class="arithmatex">\(K_V\)</span> in rpm/V, <span class="arithmatex">\(K_t \approx 9.55/K_V\)</span> Nm/A).</p>
+response at <span class="arithmatex">\(f_c\)</span>. The firmware computes a discrete-time form of these and divides <span class="arithmatex">\(K_p\)</span> by an empirical factor
+of 7, so its gains are softer than the formula. The angle offset is found by locking the rotor with the stator
+field and reading where it settles, then refined by a sweep for the offset at which the motor turns alike in both
+directions. In theory the torque constant follows from the velocity constant: in SI units <span class="arithmatex">\(K_t = 1/K_V\)</span> (with
+<span class="arithmatex">\(K_V\)</span> in rpm/V, <span class="arithmatex">\(K_t \approx 9.55/K_V\)</span> Nm/A). The firmware estimates <span class="arithmatex">\(K_V\)</span> from the speed the motor reaches at
+500 mA per volt of supply and uses <span class="arithmatex">\(K_t = 8.27/K_V\)</span>; treat both as estimates.</p>
 <h2 id="appendix-theory-the-cascade-of-loops">The cascade of loops<a class="headerlink" href="#appendix-theory-the-cascade-of-loops" title="Permanent link">&para;</a></h2>
 <p>Position, velocity and current are controlled by three loops nested inside one another:</p>
 <div class="arithmatex">\[
@@ -5012,7 +5128,7 @@ current feedforward to the velocity loop's output. A host that knows the traject
 leave the loops to correct what is left, which gives a faster, smoother response than letting the loops produce
 the whole demand from the error.</p>
 <p>An integrator accumulates error over time, and keeps accumulating while the output is at its limit; the overshoot
-this causes when the limit is released is <em>windup</em>. The velocity loop's integrator is clamped to the velocity
+this causes when the limit is released is <em>windup</em>. The velocity loop's integrator is clamped to the current
 limit, and <code>#Rstint</code> resets the integrators on every new setpoint, which suits a host that sends one setpoint
 after another in large steps.</p>
 <h2 id="appendix-theory-impedance-control">Impedance control<a class="headerlink" href="#appendix-theory-impedance-control" title="Permanent link">&para;</a></h2>
@@ -5102,19 +5218,20 @@ against a sensor wired to it.</dd>
 driver needs it to place the current vector relative to the rotor.</dd>
 <dt><strong>Back-EMF</strong></dt>
 <dd>The voltage a turning motor generates in its own coils, proportional to speed. It opposes the supply, limits the
-top speed at a given voltage, and is what calibration measures to find KV, Kt and the flux linkage.</dd>
+top speed at a given voltage. Calibration estimates KV from the speed the motor reaches per volt.</dd>
 <dt><strong>Board ID</strong></dt>
-<dd>The bootloader's own address, 0 to 13, stored in its configuration page. The firmware keeps it equal to the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>
-node ID.</dd>
+<dd>The bootloader's own address, 0 to 13, stored in its configuration page. Saving the configuration (<code>#Save</code>)
+writes the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID into it.</dd>
 <dt><strong>Bootloader</strong></dt>
-<dd>The program in the first 12 KB of the driver's flash on boards shipped with firmware 104 or newer. It starts the
+<dd>The program in the first 12 KB of the driver's flash on boards shipped with firmware 105 or newer. It starts the
 firmware, and loads a new firmware over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> or <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>. See <a href="#07-firmware-the-bootloader">The bootloader</a>.</dd>
 <dt><strong>Calibration</strong></dt>
 <dd>The routine (<code>#Cal</code>) that checks the magnet and the supply, takes the motor's resistance, inductance and pole
 pairs, computes the current loop gains, spins the motor in open loop to learn the wiring, finds the angle offset
 and measures Kt, KV and the flux linkage. Its result is kept with <code>#Save</code>.</dd>
 <dt><strong><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> ID</strong> (node ID)</dt>
-<dd>The address of the driver on the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> bus, 0 to 15. It occupies bits 10 to 7 of the 11-bit <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> frame identifier;
+<dd>The address of the driver on the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> bus, 0 to 13 (the bootloader reserves 14 and 15). It occupies bits 10 to 7
+of the 11-bit <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> frame identifier;
 the command ID occupies bits 6 to 1 and the error bit is bit 0.</dd>
 <dt><strong>CANvas</strong></dt>
 <dd>Source Robotics' USB-to-<abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> adapter. It appears as a serial port and speaks slcan, which <code>python-can</code> and Motor
@@ -5156,18 +5273,17 @@ the loops to correct the rest.</dd>
 rotor angle. On a stepper it replaces the fixed step currents with sinusoidal currents that follow the rotor,
 which gives smooth, quiet, efficient motion with no lost steps and a known position.</dd>
 <dt><strong>Firmware release</strong></dt>
-<dd>One build of the firmware, numbered 103, 104, 105, … and tagged <code>V103</code>, <code>V104</code>, … in the firmware repository.
+<dd>One build of the firmware, numbered 103, 105, 106, … and tagged <code>V103</code>, <code>V105</code>, … in the firmware repository.
 <code>#Info</code> prints the release a driver runs. This documentation describes one release; the version selector
 switches between them.</dd>
 <dt><strong>Flux linkage</strong></dt>
-<dd>The rotor's magnetic flux as seen by a coil, in weber; found by calibration from the back-EMF, together with
-KV and Kt.</dd>
+<dd>The rotor's magnetic flux as seen by a coil, in weber; calibration computes it from Kt.</dd>
 <dt><strong>Gripper mode</strong></dt>
 <dd>The driver running a gripper (<code>#Gripper 1</code>): jaw positions from 0 (open) to 255 (closed), a speed, a current
 limit that becomes the grip force, and object detection.</dd>
 <dt><strong>HALL mode</strong></dt>
 <dd>Homing against a sensor on ADDITIONAL2: the motor turns at a set speed until the sensor triggers, then holds
-the position reached.</dd>
+the position reached. With a level trigger it holds only while the pin stays at that level.</dd>
 <dt><strong>Heartbeat</strong></dt>
 <dd>A frame (Respond_Heartbeat) the driver sends at a set interval so the host knows it is alive. Off by default.</dd>
 <dt><strong>Iq, Id</strong></dt>
@@ -5208,8 +5324,8 @@ sets the pole pairs: 360 ÷ (4 × step angle).</dd>
 <dd>The supply voltage at the driver, measured and printed in mV. Outside the limits the driver raises a Vbus
 error.</dd>
 <dt><strong>Watchdog</strong></dt>
-<dd>A timer the driver resets with every valid <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> frame it receives. When it is set (Send_Watchdog) and runs out,
-the driver reports a watchdog error and stops.</dd>
+<dd>A timer the driver resets with every motion frame and every status request it answers. When it is set
+(Send_Watchdog) and runs out, the driver reports a watchdog error and stops.</dd>
 </dl></section><section class="print-page" id="cad-files" heading-number="1.5.2"><h1 id="cad-files-cad-and-downloads">CAD and downloads<a class="headerlink" href="#cad-files-cad-and-downloads" title="Permanent link">&para;</a></h1>
 <table>
 <thead>
@@ -5827,7 +5943,7 @@ numbered from the most significant bit (bit 7 first).</p>
 <div class="cmd-facts">
 <p><span class="fact">ID 31</span><span class="fact">host → driver</span><span class="fact">4 bytes</span><span class="fact">Python: <code>Send_data_pack_HALL()</code></span></p>
 </div>
-<p>Homing against a sensor: the driver spins at the given speed until the input on the ADDITIONAL2 pin shows the trigger condition, then latches the position it reached as its position setpoint and holds it. Sending the command again while the driver is already in HALL mode does not re-arm it; leave the mode first.</p>
+<p>Homing against a sensor: the driver spins at the given speed until the input on the ADDITIONAL2 pin shows the trigger condition, then latches the position it reached as its position setpoint and holds it. With a level trigger (0 or 1) it holds only while the pin stays at that level: when the pin changes back, the driver spins on again until the level returns. The edge trigger (2) holds after the first edge. Sending the command again while the driver is already in HALL mode does not re-arm it; leave the mode first.</p>
 <p><strong>4 bytes</strong></p>
 <table>
 <thead>
@@ -5929,7 +6045,7 @@ numbered from the most significant bit (bit 7 first).</p>
 <td>7</td>
 <td>HALL_trigger</td>
 <td>bit</td>
-<td>1 while the driver waits for the trigger, 0 once it triggered and holds</td>
+<td>1 while the driver waits for the trigger (with a level trigger, also again after the pin left the level), 0 while it holds</td>
 </tr>
 <tr>
 <td>3</td>
@@ -6116,7 +6232,7 @@ numbered from the most significant bit (bit 7 first).</p>
 <div class="cmd-facts">
 <p><span class="fact">ID 20</span><span class="fact">host → driver</span><span class="fact">8 bytes</span><span class="fact">Python: <code>Send_Limits()</code></span></p>
 </div>
-<p>Sets the speed limit and the current limit the loops may reach. The current limit is clamped by the firmware to the driver's maximum of 2800 mA.</p>
+<p>Sets the speed limit and the current limit the loops may reach. The firmware stores the current limit as sent: unlike <code>#Ilim</code> over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr>, it is not clamped to the driver's maximum of 2800 mA. Send 2800 mA or less, and no more than the motor's rated current.</p>
 <p><strong>8 bytes</strong></p>
 <table>
 <thead>
@@ -6292,7 +6408,7 @@ numbered from the most significant bit (bit 7 first).</p>
 <div class="cmd-facts">
 <p><span class="fact">ID 25</span><span class="fact">host → driver as a remote frame, driver → host as a data frame</span><span class="fact">remote frame, 0 bytes</span><span class="fact">Python: <code>Send_Respond_Device_Info()</code></span></p>
 </div>
-<p>Asks for the driver's identity: hardware version, batch date and serial number from the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>, and the firmware release (from firmware 105 on this is the build's own version; before, a value from the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>).</p>
+<p>Asks for the driver's identity: hardware version and batch date from the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>, the serial number, and the firmware release (from firmware 105 on this is the build's own version; before, a value from the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>). This firmware does not read the serial number back from the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> at power-up: it reports 1 until <code>#SERNUM</code> sets it.</p>
 <p><strong>The frame</strong> (7 bytes)</p>
 <table>
 <thead>
@@ -6331,7 +6447,7 @@ numbered from the most significant bit (bit 7 first).</p>
 <td></td>
 <td>SERIAL_NUMBER</td>
 <td>unsigned 32-bit</td>
-<td>serial number</td>
+<td>serial number as held in RAM: 1 after a power-up</td>
 </tr>
 </tbody>
 </table>
@@ -6373,7 +6489,7 @@ numbered from the most significant bit (bit 7 first).</p>
 <td>5</td>
 <td>encoder_error</td>
 <td>bit</td>
-<td>magnet not detected or misaligned</td>
+<td>the encoder reports no magnet (too weak a field)</td>
 </tr>
 <tr>
 <td>0</td>
@@ -6387,14 +6503,14 @@ numbered from the most significant bit (bit 7 first).</p>
 <td>3</td>
 <td>driver_error</td>
 <td>bit</td>
-<td>the MOSFET driver reports undervoltage, thermal shutdown or overcurrent</td>
+<td>reserved; never set by this firmware (STEPFOC does not read a fault output of its driver stage)</td>
 </tr>
 <tr>
 <td>0</td>
 <td>2</td>
 <td>velocity_error</td>
 <td>bit</td>
-<td>speed over the limit</td>
+<td>speed above 30,000,000 ticks/s, a fixed threshold (not #Vlimit)</td>
 </tr>
 <tr>
 <td>0</td>
@@ -6558,7 +6674,7 @@ numbered from the most significant bit (bit 7 first).</p>
 <div class="cmd-facts">
 <p><span class="fact">ID 11</span><span class="fact">host → driver</span><span class="fact">1 bytes</span><span class="fact">Python: <code>Send_CAN_ID()</code></span></p>
 </div>
-<p>Gives the driver a new node ID, 0 to 13 (the firmware accepts up to 15, but the bootloader reserves 14 and 15: a driver on one of those cannot be updated over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>). Setting the ID also sets the bootloader's board ID. The driver answers to the new ID at once; the ID is kept over a power cycle only after Send_Save_config.</p>
+<p>Gives the driver a new node ID, 0 to 13 (the firmware accepts up to 15, but the bootloader reserves 14 and 15: a driver on one of those cannot be updated over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>). Saving the configuration (Send_Save_config) also writes the ID into the bootloader's board ID. The driver answers to the new ID at once; the ID is kept over a power cycle only after Send_Save_config.</p>
 <p><strong>1 bytes</strong></p>
 <table>
 <thead>
@@ -6576,7 +6692,7 @@ numbered from the most significant bit (bit 7 first).</p>
 <td></td>
 <td>ID</td>
 <td>unsigned 8-bit</td>
-<td>0 to 15</td>
+<td>0 to 13; 14 and 15 are accepted but reserved by the bootloader</td>
 </tr>
 </tbody>
 </table>
@@ -6600,7 +6716,7 @@ numbered from the most significant bit (bit 7 first).</p>
 <div class="cmd-facts">
 <p><span class="fact">ID 13</span><span class="fact">host → driver</span><span class="fact">0 bytes</span><span class="fact">Python: <code>Send_Save_config()</code></span></p>
 </div>
-<p>Writes the current configuration (gains, limits, calibration, <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> ID, heartbeat, watchdog, gripper flag) to the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>.</p>
+<p>Writes the current configuration (gains, limits, calibration, <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> ID, heartbeat, watchdog, gripper flag) to the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>, and the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> ID into the bootloader's board ID. The idle behaviour of Send_Settings and the current loop bandwidth are not kept. It also writes the serial number held in RAM, which is 1 after a power-up unless <code>#SERNUM</code> set it, over the stored one.</p>
 <p>The driver does not answer this command.</p>
 <hr />
 <h3 id="reference-can-system-send_reset">Send_Reset<a class="headerlink" href="#reference-can-system-send_reset" title="Permanent link">&para;</a></h3>
@@ -6614,14 +6730,14 @@ numbered from the most significant bit (bit 7 first).</p>
 <div class="cmd-facts">
 <p><span class="fact">ID 1</span><span class="fact">host → driver</span><span class="fact">0 bytes</span><span class="fact">Python: <code>Send_Clear_Error()</code></span></p>
 </div>
-<p>Clears the error flags and goes to idle. An error whose cause is still present comes straight back. A calibration error is cleared only by calibrating.</p>
+<p>Clears the error flags and goes to idle. An error whose cause is still present comes straight back. A calibration error is cleared only by calibrating. A gripper E-stop comes back until the E-stop bit of Send_gripper_data_pack is 0 again.</p>
 <p>The driver does not answer this command.</p>
 <hr />
 <h3 id="reference-can-system-send_watchdog">Send_Watchdog<a class="headerlink" href="#reference-can-system-send_watchdog" title="Permanent link">&para;</a></h3>
 <div class="cmd-facts">
 <p><span class="fact">ID 15</span><span class="fact">host → driver</span><span class="fact">5 bytes</span><span class="fact">Python: <code>Send_Watchdog()</code></span></p>
 </div>
-<p>Sets the watchdog: every valid <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> frame the driver receives resets it; when the time runs out the driver reports a watchdog error and stops. 0 turns it off (the default). The action byte is stored but not acted on by this firmware: the driver always stops into its idle behaviour.</p>
+<p>Sets the watchdog: when the time runs out the driver reports a watchdog error and stops. Every valid motion frame (Send_data_pack_1, Send_data_pack_PD, Send_data_pack_HALL, Send_gripper_data_pack) and every status request the driver answers resets it; the setting frames (gains, limits, Idle, Clear, Save, Settings and Send_Watchdog itself) do not. 0 turns it off (the default). The action byte is stored but not acted on by this firmware: the driver always stops into its idle behaviour. Send_Save_config keeps the watchdog, and a kept watchdog runs from power-up: a host that sends no motion frame or status request within the time finds the driver in watchdog error, and clears it with Send_Clear_Error.</p>
 <p><strong>5 bytes</strong></p>
 <table>
 <thead>
@@ -6683,7 +6799,7 @@ numbered from the most significant bit (bit 7 first).</p>
 <div class="cmd-facts">
 <p><span class="fact">ID 35</span><span class="fact">host → driver</span><span class="fact">0 bytes</span></p>
 </div>
-<p>Sets boolean settings that have no command of their own: a mask byte says which settings the frame touches, a value byte gives their new values; settings outside the mask are left alone. Bit 0 is the idle behaviour: 1 brake (phases shorted), 0 coast. Added in firmware 108 (Spectral Micro 107). The Python library has no call for it yet.</p>
+<p>Sets boolean settings that have no command of their own: a mask byte says which settings the frame touches, a value byte gives their new values; settings outside the mask are left alone. Bit 0 is the idle behaviour: 1 brake (phases shorted), 0 coast. The setting is not kept by Send_Save_config: at power-up the driver brakes. Added in firmware 107. The Python library has no call for it yet.</p>
 <p><strong>2 bytes</strong></p>
 <table>
 <thead>
@@ -6757,7 +6873,7 @@ numbered from the most significant bit (bit 7 first).</p>
 <td></td>
 <td>Current</td>
 <td>signed 16-bit</td>
-<td>current limit of the move in mA; not clamped by the firmware, see the gripper manual for the safe range</td>
+<td>current limit of the move in mA; not clamped by the firmware, not even to the driver's 2800 mA; see the gripper manual for the safe range</td>
 </tr>
 <tr>
 <td>4</td>
@@ -6778,7 +6894,7 @@ numbered from the most significant bit (bit 7 first).</p>
 <td>5</td>
 <td>E-stop</td>
 <td>bit</td>
-<td>1 raises the gripper E-stop error</td>
+<td>1 raises the gripper E-stop error, again on every control cycle until a frame with this bit 0 arrives; then Send_Clear_Error</td>
 </tr>
 <tr>
 <td>4</td>
@@ -6855,21 +6971,21 @@ numbered from the most significant bit (bit 7 first).</p>
 <td>3</td>
 <td>gripper_temperature_error</td>
 <td>bit</td>
-<td></td>
+<td>a copy of the thermistor temperature error</td>
 </tr>
 <tr>
 <td>3</td>
 <td>2</td>
 <td>gripper_timeout_error</td>
 <td>bit</td>
-<td></td>
+<td>a copy of the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> watchdog error (Send_Watchdog), not a move timeout</td>
 </tr>
 <tr>
 <td>3</td>
 <td>1</td>
 <td>gripper_estop_error</td>
 <td>bit</td>
-<td></td>
+<td>the E-stop bit of Send_gripper_data_pack (or #Gripstop 1) was set</td>
 </tr>
 <tr>
 <td>3</td>
@@ -6894,7 +7010,8 @@ hand. <a href="#06-operation-uart">Over <abbr title="the serial port of the driv
 <ul>
 <li>A <strong>Set/Get</strong> command sets the value when a number follows and prints the current value either way.</li>
 <li>A <strong>Get</strong> command only prints.</li>
-<li>An <strong>Action</strong> command does something; a number after it is ignored.</li>
+<li>An <strong>Action</strong> command does something; a number after it is ignored. The exceptions are <code>#Idle</code> and <code>#PWM</code>:
+  with a number they are answered <code>Unknown command</code>.</li>
 <li>Names are case-sensitive, at most 19 characters; the number at most 19; the line ends with LF (CR before it is
   fine). 256000 baud, 8N1, 3.3 V.</li>
 <li>A name the parser does not know is answered <code>Unknown command</code>.</li>
@@ -7456,28 +7573,28 @@ hand. <a href="#06-operation-uart">Over <abbr title="the serial port of the driv
 <td><code>#Ud</code></td>
 <td>Set/Get</td>
 <td>int: voltage in mV</td>
-<td>The d-axis voltage used in voltage-torque mode; does not change the mode. Enters <strong>voltage torque</strong> mode.</td>
+<td>The d-axis voltage used in voltage-torque mode; does not change the mode.</td>
 <td>the Ud setpoint in mV</td>
 </tr>
 <tr>
 <td><code>#Brake</code></td>
 <td>Action</td>
 <td></td>
-<td>Goes to idle with the motor braking (phases shorted); also the idle behaviour from then on. Enters <strong>idle</strong> mode.</td>
+<td>Goes to idle with the motor braking (phases shorted); also the idle behaviour from then on. Not kept by Save: the driver brakes at every power-up. Enters <strong>idle</strong> mode.</td>
 <td><code>Brake 1</code></td>
 </tr>
 <tr>
 <td><code>#HALL</code></td>
 <td>Action</td>
 <td></td>
-<td>Homing against the sensor on ADDITIONAL2 at 3000 ticks/s (see Send_data_pack_HALL for the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> form with a chosen speed and trigger). Enters <strong>HALL</strong> mode.</td>
+<td>Homing against the sensor on ADDITIONAL2 at 3000 ticks/s, triggered when the pin is low. It holds while the pin stays low and spins on when the pin goes high again (see Send_data_pack_HALL for the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> form with a chosen speed and trigger). Enters <strong>HALL</strong> mode.</td>
 <td><code>HALL</code></td>
 </tr>
 <tr>
 <td><code>#Coast</code></td>
 <td>Action</td>
 <td></td>
-<td>Goes to idle with the motor coasting (phases open); also the idle behaviour from then on. Enters <strong>idle</strong> mode.</td>
+<td>Goes to idle with the motor coasting (phases open); also the idle behaviour until the next power-up, which brakes again. Not kept by Save. Enters <strong>idle</strong> mode.</td>
 <td><code>Coast 0</code></td>
 </tr>
 <tr>
@@ -7525,29 +7642,29 @@ hand. <a href="#06-operation-uart">Over <abbr title="the serial port of the driv
 <tr>
 <td><code>#microstep</code></td>
 <td>Set/Get</td>
-<td>int: microsteps per full step</td>
-<td>The microstepping used by gosteps.</td>
+<td>int: microsteps per electrical cycle</td>
+<td>The microsteps gosteps makes per electrical cycle (four full steps), 16 by default.</td>
 <td>the microstep setting</td>
 </tr>
 <tr>
 <td><code>#stepinterval</code></td>
 <td>Set/Get</td>
-<td>int: step time</td>
-<td>The time between steps for gosteps.</td>
+<td>int: step time in µs</td>
+<td>The time between two microsteps of gosteps, 1000 µs by default. It is rounded down to whole control cycles of 160 µs, and is 160 µs at the least.</td>
 <td>the step interval</td>
 </tr>
 <tr>
 <td><code>#gosteps</code></td>
 <td>Set/Get</td>
-<td>int: number of steps (sign = direction)</td>
-<td>Moves the given number of steps open loop, with the timing of stepinterval and microstep. Enters <strong>open-loop steps</strong> mode.</td>
+<td>int: number of microsteps (sign = direction)</td>
+<td>Moves the given number of microsteps open loop, one every stepinterval, at the voltage set by Openv, then goes to idle. With microstep 16, 16 steps are one electrical cycle: four full steps, 7.2° on a 1.8° motor. Enters <strong>open-loop steps</strong> mode.</td>
 <td><code>Moving for N steps</code></td>
 </tr>
 <tr>
 <td><code>#Openloop</code></td>
 <td>Set/Get</td>
-<td>float: electrical speed</td>
-<td>Spins the motor open loop, as a plain stepper, with the voltage set by Openv. Enters <strong>open loop</strong> mode.</td>
+<td>float: electrical speed in rad/s</td>
+<td>Spins the motor open loop, as a plain stepper, with the voltage set by Openv. The voltage is not current-controlled and Ilim does not apply: see Open-loop stepping on Control modes. Enters <strong>open loop</strong> mode.</td>
 <td>the open-loop speed</td>
 </tr>
 </tbody>
@@ -7567,14 +7684,14 @@ hand. <a href="#06-operation-uart">Over <abbr title="the serial port of the driv
 <td><code>#Vlimit</code></td>
 <td>Set/Get</td>
 <td>int: speed in encoder ticks/s</td>
-<td>The speed limit; the velocity integrator is clamped to it.</td>
+<td>The speed limit: it clamps the speed setpoint of the velocity loop, and in position mode the speed the position loop asks for. The velocity integrator is clamped to the current limit (Ilim), not to this.</td>
 <td>the current limit</td>
 </tr>
 <tr>
 <td><code>#Vlim</code></td>
 <td>Set/Get</td>
 <td>int: voltage in mV</td>
-<td>The voltage limit of the current loops (Ud and Uq); 0 means use the supply voltage.</td>
+<td>The voltage limit of the current loops (Ud and Uq), 6000 mV by default. It keeps the loops of low-resistance steppers stable, and it also caps the top speed. 0, or a value above the supply voltage, means the supply voltage.</td>
 <td>the current limit in mV</td>
 </tr>
 <tr>
@@ -7644,14 +7761,14 @@ hand. <a href="#06-operation-uart">Over <abbr title="the serial port of the driv
 <td><code>#Ilim</code></td>
 <td>Set/Get</td>
 <td>int: current in mA</td>
-<td>The Iq current limit. Set it to the rated phase current of your motor; the firmware clamps it to 2800 mA.</td>
+<td>The Iq current limit, 1700 mA after #Default. Set it to the rated phase current of your motor; this command clamps it to 2800 mA (Send_Limits over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> does not). Calibration sets it to 1600 mA: set it again after Cal.</td>
 <td>the current limit</td>
 </tr>
 <tr>
 <td><code>#Cbw</code></td>
 <td>Set/Get</td>
 <td>float: bandwidth in Hz</td>
-<td>The current loop bandwidth calibration uses to compute Kpiq and Kiiq.</td>
+<td>The current loop bandwidth calibration uses to compute Kpiq and Kiiq. Not kept by Save: 500 Hz at every power-up, so set it just before Cal.</td>
 <td>the bandwidth</td>
 </tr>
 <tr>
@@ -7713,15 +7830,15 @@ hand. <a href="#06-operation-uart">Over <abbr title="the serial port of the driv
 <td><code>#Cal</code></td>
 <td>Action</td>
 <td></td>
-<td>Runs the calibration routine (see Motor parameters and calibration). Enter R, L and PP first.</td>
+<td>Runs the calibration routine (see Motor parameters and calibration), over the serial port only. Enter R, L and PP first. It leaves the current limit at 1600 mA.</td>
 <td>the calibration log</td>
 </tr>
 <tr>
 <td><code>#Calangle</code></td>
 <td>Action</td>
 <td></td>
-<td>Runs only the angle-offset step of the calibration. Enters <strong>angle-offset calibration</strong> mode.</td>
-<td><code>Idle</code> when done</td>
+<td>Runs only an angle-offset search. It uses an older routine than the one in Cal, which gives up after about two minutes and keeps the offset it reached. Prints <code>Idle</code> at once, before the search starts. Enters <strong>angle-offset calibration</strong> mode.</td>
+<td><code>Idle</code>, at once</td>
 </tr>
 <tr>
 <td><code>#Offset</code></td>
@@ -7748,7 +7865,7 @@ hand. <a href="#06-operation-uart">Over <abbr title="the serial port of the driv
 <td><code>#Dir</code></td>
 <td>Set/Get</td>
 <td>int: 0 or 1</td>
-<td>The counting direction of the encoder (1 is the default).</td>
+<td>A stored flag that Info prints as <code>Phase direction</code>. The control code does not use it in this release; #Default writes 0.</td>
 <td>the current value</td>
 </tr>
 <tr>
@@ -7776,21 +7893,21 @@ hand. <a href="#06-operation-uart">Over <abbr title="the serial port of the driv
 <td><code>#Openv</code></td>
 <td>Set/Get</td>
 <td>int: voltage in mV</td>
-<td>The voltage of the open-loop spin, in calibration and with Openloop.</td>
+<td>The voltage of the open-loop modes (Openloop, gosteps), 5000 mV at power-up. Calibration does not use it: its open-loop spin has a fixed 5000 mV. Not kept by Save.</td>
 <td>the current value</td>
 </tr>
 <tr>
 <td><code>#Opens</code></td>
 <td>Set/Get</td>
 <td>float: electrical speed in rad/s</td>
-<td>The speed of the open-loop spin in calibration.</td>
+<td>The electrical speed of Openloop, the same value Openloop sets. Calibration does not use it.</td>
 <td>the current value</td>
 </tr>
 <tr>
 <td><code>#Vp</code></td>
 <td>Set/Get</td>
 <td>int: voltage in mV</td>
-<td>The voltage of the phase-order search in calibration.</td>
+<td>Stored, but not used by this firmware: the phase-order check of calibration uses a fixed 3000 mV.</td>
 <td>the current value</td>
 </tr>
 <tr>
@@ -7824,14 +7941,14 @@ hand. <a href="#06-operation-uart">Over <abbr title="the serial port of the driv
 <td><code>#Vmax</code></td>
 <td>Set/Get</td>
 <td>int: voltage in mV</td>
-<td>The supply voltage above which a Vbus error is raised.</td>
+<td>The supply voltage above which a Vbus error is raised, 29000 mV after #Default.</td>
 <td><code>Vmax in mV: N</code></td>
 </tr>
 <tr>
 <td><code>#Save</code></td>
 <td>Action</td>
 <td></td>
-<td>Writes the configuration to the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>. Do it after calibration and after tuning.</td>
+<td>Writes the configuration to the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>, and the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> ID into the bootloader's board ID. Do it after calibration and after tuning. It also writes the serial number held in RAM (1 after a power-up, unless SERNUM set it) over the stored one.</td>
 <td><code>Save</code></td>
 </tr>
 <tr>
@@ -7852,7 +7969,7 @@ hand. <a href="#06-operation-uart">Over <abbr title="the serial port of the driv
 <td><code>#Default</code></td>
 <td>Action</td>
 <td></td>
-<td>Writes the factory defaults to the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>, including the serial number, hardware version and batch date, and clears the gripper flag, heartbeat and watchdog. Back those up first.</td>
+<td>Writes the factory defaults to the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> and loads them: the serial number, hardware version and batch date; the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> ID (0); the gripper flag, heartbeat, watchdog and thermistor (off); the motor parameters and the calibration (cleared); every gain and limit. See Defaults.</td>
 <td><code>Loaded default config!</code></td>
 </tr>
 <tr>
@@ -7873,8 +7990,8 @@ hand. <a href="#06-operation-uart">Over <abbr title="the serial port of the driv
 <td><code>#Mode</code></td>
 <td>Get</td>
 <td></td>
-<td>Prints the control mode.</td>
-<td><code>Idle mode</code>, <code>Position control</code>, <code>Speed control</code>, <code>Current control</code>, <code>PD control</code>, <code>Open loop</code>, <code>Gripper mode</code></td>
+<td>Prints the control mode. The voltage-torque mode prints <code>Gripper mode</code>; HALL, the angle-offset search, open-loop steps (gosteps) and gripper mode print nothing.</td>
+<td><code>Idle mode</code>, <code>Position control</code>, <code>Speed control</code>, <code>Current control</code>, <code>PD control</code>, <code>Open loop</code>, <code>Gripper mode</code>, <code>Gripper calib mode</code></td>
 </tr>
 <tr>
 <td><code>#Vbus</code></td>
@@ -7915,14 +8032,14 @@ hand. <a href="#06-operation-uart">Over <abbr title="the serial port of the driv
 <td><code>#Help</code></td>
 <td>Action</td>
 <td></td>
-<td>Prints a short command reference. Added in firmware 108.</td>
+<td>Prints a short command reference. Added in firmware 106.</td>
 <td>the reference</td>
 </tr>
 <tr>
 <td><code>#Info</code></td>
 <td>Get</td>
 <td></td>
-<td>Prints the driver's identity and state: hardware and firmware version, serial number, motor parameters, calibration, errors.</td>
+<td>Prints the hardware version, batch date and firmware version, the control loop's execution time, the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> ID, the calibration state, the thermistor and the supply voltage, the phase direction, phase order and commutation direction, and the motor parameters (pole pairs, angle offset, R, L, Kt, KV). Not the serial number (SERNUM), the gains (Param) or the errors (Error).</td>
 <td>the report</td>
 </tr>
 <tr>
@@ -7950,14 +8067,14 @@ hand. <a href="#06-operation-uart">Over <abbr title="the serial port of the driv
 <td><code>#CANID</code></td>
 <td>Set/Get</td>
 <td>int: 0 to 13</td>
-<td>The <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID. Use 0 to 13: the firmware accepts 14 and 15, but the bootloader reserves them and a driver on one of those cannot be updated over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>. Setting the ID also sets the bootloader's board ID. Kept over a power cycle after Save.</td>
+<td>The <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID. Use 0 to 13: the firmware accepts 14 and 15, but the bootloader reserves them and a driver on one of those cannot be updated over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>. Kept over a power cycle after Save, which also writes it into the bootloader's board ID.</td>
 <td>the ID, or <code>Invalid CAN ID</code></td>
 </tr>
 <tr>
 <td><code>#SERNUM</code></td>
 <td>Set/Get</td>
 <td>int: number</td>
-<td>The serial number stored in the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>.</td>
+<td>The serial number. This firmware does not read it back from the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> at power-up: it reports 1 until set, and Save writes the value in RAM over the stored one.</td>
 <td><code>Serial number is: N</code></td>
 </tr>
 <tr>
@@ -8005,7 +8122,7 @@ hand. <a href="#06-operation-uart">Over <abbr title="the serial port of the driv
 <td><code>#Gripcal</code></td>
 <td>Action</td>
 <td></td>
-<td>Starts the gripper calibration (the jaws find their end stops). Enters <strong>gripper calibration</strong> mode.</td>
+<td>Starts the gripper calibration: the jaws find their end stops at 500 mA. It prints nothing when it ends; after about 24 s without both end stops it gives up, uncalibrated. Gripinfo shows the result. Enters <strong>gripper calibration</strong> mode.</td>
 <td><code>Gripper calibration!</code></td>
 </tr>
 <tr>
@@ -8019,7 +8136,7 @@ hand. <a href="#06-operation-uart">Over <abbr title="the serial port of the driv
 <td><code>#Gripstop</code></td>
 <td>Set/Get</td>
 <td>int: 0 or 1</td>
-<td>The gripper E-stop bit.</td>
+<td>The gripper E-stop bit. While it is 1 the driver raises the gripper E-stop error on every control cycle: set it to 0, then Clear.</td>
 <td>the bit</td>
 </tr>
 <tr>
@@ -8033,14 +8150,14 @@ hand. <a href="#06-operation-uart">Over <abbr title="the serial port of the driv
 <td><code>#Gripcur</code></td>
 <td>Set/Get</td>
 <td>int: current in mA</td>
-<td>The current limit of gripper moves. The firmware does not clamp it; see the gripper manual for the safe range.</td>
+<td>The current limit of gripper moves, 400 mA at power-up. The firmware does not clamp it, not even to the driver's 2800 mA; see the gripper manual for the safe range.</td>
 <td>the setpoint</td>
 </tr>
 <tr>
 <td><code>#Gripvel</code></td>
 <td>Set/Get</td>
 <td>int: 0 to 255</td>
-<td>The speed setpoint of gripper moves.</td>
+<td>The speed setpoint of gripper moves, 50 at power-up.</td>
 <td>the setpoint</td>
 </tr>
 <tr>
@@ -8052,12 +8169,23 @@ hand. <a href="#06-operation-uart">Over <abbr title="the serial port of the driv
 </tr>
 </tbody>
 </table></section></section><section class="print-page" id="reference-defaults" heading-number="2.5"><h1 id="reference-defaults-defaults">Defaults<a class="headerlink" href="#reference-defaults-defaults" title="Permanent link">&para;</a></h1>
-<p>The values the firmware starts with, from its source (<code>common.h</code>) at the release this site describes. <code>#Default</code> writes the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> defaults, which are the same unless the firmware comment says otherwise.</p>
+<p>The settings of the firmware at the release this site describes: their start values in <code>common.h</code>, and what
+<code>EEPROM.cpp</code> does with each.</p>
+<ul>
+<li><strong>Start value</strong>: the value in <code>common.h</code>. A setting the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> does not keep starts from it at every power-up. A
+  kept setting is replaced at power-up by the value in the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>, so its start value is only seen before that.</li>
+<li><strong>After <code>#Default</code></strong>: what <code>#Default</code> writes to the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> and loads; — means <code>#Default</code> does not change it.</li>
+<li><strong>Kept by <code>#Save</code></strong>: whether <code>#Save</code> (Send_Save_config) stores it, so that it survives a power cycle.</li>
+</ul>
+<p>Internal state (error flags, counters, calibration steps, scratch variables) is left out; the error flags are in
+<a href="#reference-errors">Errors and <abbr title="Light-Emitting Diode">LED</abbr> states</a>.</p>
 <table>
 <thead>
 <tr>
 <th>Variable</th>
-<th>Default</th>
+<th>Start value</th>
+<th>After <code>#Default</code></th>
+<th>Kept by <code>#Save</code></th>
 <th>Firmware comment</th>
 </tr>
 </thead>
@@ -8065,746 +8193,484 @@ hand. <a href="#06-operation-uart">Over <abbr title="the serial port of the driv
 <tr>
 <td><code>SERIAL_NUMBER</code></td>
 <td>1</td>
+<td>111 in the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>, not read back</td>
+<td>written, not read back</td>
 <td></td>
 </tr>
 <tr>
 <td><code>HARDWARE_VERSION</code></td>
 <td>1</td>
+<td>1</td>
+<td>yes</td>
 <td>Version of the Spectral BLDC driver <abbr title="Printed Circuit Board">PCB</abbr></td>
 </tr>
 <tr>
 <td><code>BATCH_DATE</code></td>
 <td>1</td>
+<td>125</td>
+<td>yes</td>
 <td>Date the batch was produced</td>
 </tr>
 <tr>
 <td><code>SOFTWARE_VERSION</code></td>
 <td>1</td>
+<td>108</td>
+<td>no: set by the firmware</td>
 <td>Software release</td>
 </tr>
 <tr>
 <td><code>I_AM_GRIPPER</code></td>
 <td>1</td>
+<td>0</td>
+<td>yes</td>
 <td>Is motor controller gripper (1) or not (0)</td>
 </tr>
 <tr>
 <td><code>LED_ON_OFF</code></td>
 <td>1</td>
+<td>1</td>
+<td>yes</td>
 <td>Use <abbr title="Light-Emitting Diode">LED</abbr> for status indication</td>
-</tr>
-<tr>
-<td><code>interrupt_tick</code></td>
-<td>0</td>
-<td>Ticks of our interrupt routine</td>
-</tr>
-<tr>
-<td><code>TEMP_DEG</code></td>
-<td>23</td>
-<td>Temperature in degrees celsius</td>
 </tr>
 <tr>
 <td><code>theta_offset</code></td>
 <td>0.0f</td>
+<td>0</td>
+<td>yes</td>
 <td>will be determined at calibration</td>
 </tr>
 <tr>
 <td><code>pole_pairs</code></td>
 <td>50</td>
+<td>0</td>
+<td>yes</td>
 <td>Number of pole pairs of your Stepper motor</td>
 </tr>
 <tr>
 <td><code>current_control_bandwidth</code></td>
 <td>500</td>
+<td>—</td>
+<td>no</td>
 <td>default 200 HZ; Will set <abbr title="Proportional-Integral controller">PI</abbr> gains for Q and D current loops based on phase resistance</td>
-</tr>
-<tr>
-<td><code>sleep_pin_state</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>reset_pin_state</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>Crossover_frequency</code></td>
-<td>0.0</td>
-<td>Crossover frequency, in Radians per sample</td>
 </tr>
 <tr>
 <td><code>DIR_</code></td>
 <td>1</td>
+<td>0</td>
+<td>yes</td>
 <td>When looking at the magnetic encoder counter-clockwise is POSITIVE rotation.</td>
 </tr>
 <tr>
 <td><code>Phase_order</code></td>
 <td>2</td>
+<td>0</td>
+<td>yes</td>
 <td></td>
 </tr>
 <tr>
 <td><code>commutation_dir</code></td>
 <td>1</td>
+<td>1</td>
+<td>yes</td>
 <td>+1 or -1, auto-detected at calibration so +Iq/+velocity/+rotation map to +encoder rotation</td>
 </tr>
 <tr>
 <td><code>Thermistor_on_off</code></td>
 <td>0</td>
-<td>Are we taking termistor mesurements? 0 is off, 1 is on</td>
-</tr>
-<tr>
-<td><code>Controller_mode</code></td>
 <td>0</td>
-<td>0 -&gt; idle, 1 -&gt; Positon, 2 -&gt; Speed, 3 -&gt; Current, 4 -&gt; <abbr title="Proportional-Derivative controller, the impedance control mode">PD</abbr>, 5 -&gt; Open-loop speed, 6 -&gt; Voltage Torque mode</td>
+<td>yes</td>
+<td>Are we taking termistor mesurements? 0 is off, 1 is on</td>
 </tr>
 <tr>
 <td><code>Resistance</code></td>
 <td>0</td>
+<td>0</td>
+<td>yes</td>
 <td>Resistance of SINGLE PHASE of your BLDC motor</td>
 </tr>
 <tr>
 <td><code>Total_Resistance</code></td>
 <td>0</td>
+<td>0</td>
+<td>yes</td>
 <td>= 2 * Resistance + 2 * R_sense + 2 *Rdson</td>
 </tr>
 <tr>
 <td><code>Inductance</code></td>
 <td>0</td>
+<td>0</td>
+<td>yes</td>
 <td>Inductance of SINGLE PHASE of your BLDC motor</td>
 </tr>
 <tr>
 <td><code>Kt</code></td>
 <td>0</td>
+<td>0</td>
+<td>yes</td>
 <td>Torque constant of your BLDC motor</td>
 </tr>
 <tr>
 <td><code>flux_linkage</code></td>
 <td>0</td>
+<td>0</td>
+<td>yes</td>
 <td>Flux linkage of your BLDC motor</td>
 </tr>
 <tr>
 <td><code>KV</code></td>
 <td>0</td>
+<td>0</td>
+<td>yes</td>
 <td></td>
 </tr>
 <tr>
 <td><code>Max_temperature</code></td>
 <td>75</td>
+<td>75</td>
+<td>yes</td>
 <td>Max temperature in degrees</td>
 </tr>
 <tr>
 <td><code>Min_temperature</code></td>
 <td>-20</td>
+<td>—</td>
+<td>no</td>
 <td>Min temperature in degrees</td>
 </tr>
 <tr>
 <td><code>Max_Vbus</code></td>
 <td>29500</td>
+<td>29000</td>
+<td>yes</td>
 <td>Max vbus voltage in mV</td>
 </tr>
 <tr>
 <td><code>Min_Vbus</code></td>
 <td>9000</td>
+<td>—</td>
+<td>no</td>
 <td>Min vbus voltage in mV</td>
-</tr>
-<tr>
-<td><code>execution_time</code></td>
-<td>0</td>
-<td>Execution time of our interrupt loops</td>
 </tr>
 <tr>
 <td><code>watchdog_time_ms</code></td>
 <td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>watchdog_reset</code></td>
-<td>1</td>
+<td>0</td>
+<td>yes</td>
 <td></td>
 </tr>
 <tr>
 <td><code>watchdog_action</code></td>
 <td>0</td>
+<td>0</td>
+<td>yes</td>
 <td>Hold position, Idle, brake</td>
 </tr>
 <tr>
 <td><code>Heartbeat_rate_ms</code></td>
 <td>0</td>
+<td>0</td>
+<td>yes</td>
 <td>Motor controller will send data every Heartbeat_rate_ms</td>
-</tr>
-<tr>
-<td><code>Send_heartbeat</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>Activated</code></td>
-<td>0</td>
-<td>If controller is activated or not</td>
-</tr>
-<tr>
-<td><code>Error</code></td>
-<td>0</td>
-<td>General error</td>
-</tr>
-<tr>
-<td><code>temperature_error</code></td>
-<td>0</td>
-<td>Termistor reported error</td>
-</tr>
-<tr>
-<td><code>encoder_error</code></td>
-<td>0</td>
-<td>Encoder magnet is not alligned error</td>
-</tr>
-<tr>
-<td><code>Vbus_error</code></td>
-<td>0</td>
-<td>Vbus voltage is too small or too large</td>
-</tr>
-<tr>
-<td><code>Driver_error</code></td>
-<td>0</td>
-<td>Driver reported error. 3 possible conditions: Undervoltage, thermal shutdown, overcurrent</td>
-</tr>
-<tr>
-<td><code>Velocity_error</code></td>
-<td>0</td>
-<td>We are moving too fast</td>
-</tr>
-<tr>
-<td><code>Current_error</code></td>
-<td>0</td>
-<td>We go past max current</td>
-</tr>
-<tr>
-<td><code>ESTOP_error</code></td>
-<td>0</td>
-<td>If we received estop command</td>
-</tr>
-<tr>
-<td><code>Watchdog_error</code></td>
-<td>0</td>
-<td>If we pass watchdog timeout time</td>
-</tr>
-<tr>
-<td><code>commutation</code></td>
-<td>0</td>
-<td>0 is space vector, 1 is sine</td>
-</tr>
-<tr>
-<td><code>Calibration</code></td>
-<td>0</td>
-<td>0 - outside of calibration, 1 inside of calibration, 2 failed calibration, 3 success calibration</td>
 </tr>
 <tr>
 <td><code>Calibrated</code></td>
 <td>1</td>
+<td>0</td>
+<td>yes</td>
 <td>0 if motor is not calibrated, 1 if it is calibrated</td>
 </tr>
 <tr>
 <td><code>Resistance_calc_voltage</code></td>
 <td>1000</td>
+<td>—</td>
+<td>no</td>
 <td>Voltage used to calculate resistance //1000</td>
 </tr>
 <tr>
 <td><code>Calibration_power</code></td>
 <td>12</td>
+<td>—</td>
+<td>no</td>
 <td>Max power that can dissipate during inductance test.</td>
-</tr>
-<tr>
-<td><code>Calibration_Inductance_voltage</code></td>
-<td>0</td>
-<td>Calculated from Calibration power and resistance</td>
 </tr>
 <tr>
 <td><code>Open_loop_voltage</code></td>
 <td>5000</td>
+<td>—</td>
+<td>no</td>
 <td>Voltage to use when spinning the motor open loop. In mV</td>
 </tr>
 <tr>
 <td><code>Open_loop_speed</code></td>
 <td>20.0</td>
+<td>—</td>
+<td>no</td>
 <td>Speed to be used when spinning the motor open loop. In RAD/s</td>
-</tr>
-<tr>
-<td><code>Number_of_rotations</code></td>
-<td>8</td>
-<td>Number of open loop electrical rotations during calibration</td>
 </tr>
 <tr>
 <td><code>Phase_voltage</code></td>
 <td>5000</td>
+<td>—</td>
+<td>no</td>
 <td>Max voltage to be used during Kv calculation</td>
-</tr>
-<tr>
-<td><code>Calib_error</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>PP_status</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>Magnet_cal_status</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>Vbus_cal_status</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>Resistance_cal_status</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>Inductance_cal_status</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>Open_loop_cal_status</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>Kt_cal_status</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>Phase_order_status</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>KV_status</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>Spin_confirm_delta</code></td>
-<td>0</td>
-<td>diagnostic: last "confirm commutation" spin delta (ticks), on failure</td>
-</tr>
-<tr>
-<td><code>Spin_confirm_vbus_mV</code></td>
-<td>0</td>
-<td>diagnostic: VBUS_mV sampled at that same failure</td>
-</tr>
-<tr>
-<td><code>cyclic</code></td>
-<td>0</td>
-<td>If 1 we Periodically send messages without request from host.</td>
-</tr>
-<tr>
-<td><code>cyclic_a</code></td>
-<td>0</td>
-<td>If 1 we Periodically send messages without request from host.</td>
 </tr>
 <tr>
 <td><code>cyclic_period</code></td>
 <td>0</td>
+<td>—</td>
+<td>no</td>
 <td>We send messages every cyclic_period</td>
 </tr>
 <tr>
 <td><code>CAN_ID</code></td>
 <td>0</td>
+<td>0</td>
+<td>yes</td>
 <td><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> id of THIS motor driver! No 2 motor drivers can share the same ID.</td>
-</tr>
-<tr>
-<td><code>Wrong_DL</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>CAN_init_error</code></td>
-<td>0</td>
-<td>Set if <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> peripheral failed to initialize; <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> bus is skipped, <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> stays usable</td>
-</tr>
-<tr>
-<td><code>temp</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>temp1</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>temp2</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>handle_can</code></td>
-<td>0</td>
-<td></td>
 </tr>
 <tr>
 <td><code>brake_coast</code></td>
 <td>1</td>
+<td>—</td>
+<td>no</td>
 <td>1 is brake 0 is coast</td>
-</tr>
-<tr>
-<td><code>additional1_var</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>additional2_var</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>hall_trigger</code></td>
-<td>1</td>
-<td>used to record if hall sensor was triggered or not, normal state of hall is high (1)</td>
 </tr>
 <tr>
 <td><code>trigger_value</code></td>
 <td>0</td>
+<td>—</td>
+<td>no</td>
 <td>0=low level, 1=high level, 2=any edge</td>
-</tr>
-<tr>
-<td><code>hall_index</code></td>
-<td>0</td>
-<td>output: set to 1 when edge is detected</td>
-</tr>
-<tr>
-<td><code>additional2_var_prev</code></td>
-<td>0</td>
-<td>previous Hall reading, for edge detection</td>
-</tr>
-<tr>
-<td><code>hall_edge_needs_init</code></td>
-<td>1</td>
-<td>flag to snapshot prev on first call after (re-)arming edge mode</td>
 </tr>
 <tr>
 <td><code>calibration_offset_current</code></td>
 <td>500</td>
-<td></td>
-</tr>
-<tr>
-<td><code>temp_var_offset_calib</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>align_state</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>align_counter</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>aligned_angle</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>align_done</code></td>
-<td>false</td>
-<td></td>
-</tr>
-<tr>
-<td><code>calib_done</code></td>
-<td>false</td>
-<td></td>
-</tr>
-<tr>
-<td><code>calib_reset</code></td>
-<td>false</td>
-<td></td>
-</tr>
-<tr>
-<td><code>Velocity_fwd</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>Velocity_bwd</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>Align_stage</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>Align_point</code></td>
-<td>0</td>
+<td>—</td>
+<td>no</td>
 <td></td>
 </tr>
 <tr>
 <td><code>microstep</code></td>
 <td>16</td>
+<td>—</td>
+<td>no</td>
 <td></td>
 </tr>
 <tr>
 <td><code>gosteps</code></td>
 <td>0</td>
+<td>—</td>
+<td>no</td>
 <td></td>
 </tr>
 <tr>
 <td><code>step_interval</code></td>
 <td>1000</td>
+<td>—</td>
+<td>no</td>
 <td>step interval in microseconds</td>
-</tr>
-<tr>
-<td><code>open_loop_move_done</code></td>
-<td>0</td>
-<td>1 = finished, cleared by user</td>
 </tr>
 <tr>
 <td><code>Voltage_limit</code></td>
 <td>6000</td>
+<td>6000</td>
+<td>yes</td>
 <td>Voltage limit for Ud and Uq voltages. If 0 value of controller.VBUS_mV will be used</td>
 </tr>
 <tr>
 <td><code>Reset_integral_accumulator</code></td>
 <td>0</td>
+<td>0</td>
+<td>yes</td>
 <td></td>
 </tr>
 <tr>
 <td><code>Kp_p</code></td>
 <td>5</td>
+<td>5</td>
+<td>yes</td>
 <td></td>
 </tr>
 <tr>
 <td><code>Position_setpoint</code></td>
 <td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>P_errSum</code></td>
-<td>0</td>
+<td>—</td>
+<td>no</td>
 <td></td>
 </tr>
 <tr>
 <td><code>Kp_v</code></td>
 <td>0.007</td>
+<td>0.007</td>
+<td>yes</td>
 <td>basic values that work for most motors but not optimal</td>
 </tr>
 <tr>
 <td><code>Ki_v</code></td>
 <td>0.0005</td>
+<td>0.0005</td>
+<td>yes</td>
 <td>basic values that work for most motors but not optimal</td>
-</tr>
-<tr>
-<td><code>V_errSum</code></td>
-<td>0</td>
-<td></td>
 </tr>
 <tr>
 <td><code>Feedforward_speed</code></td>
 <td>0</td>
+<td>—</td>
+<td>no</td>
 <td></td>
 </tr>
 <tr>
 <td><code>Velocity_setpoint</code></td>
 <td>0</td>
+<td>—</td>
+<td>no</td>
 <td>-1.5</td>
 </tr>
 <tr>
 <td><code>Velocity_limit</code></td>
 <td>800000</td>
+<td>800000</td>
+<td>yes</td>
 <td>Clamp integrals to this  [TICKS/s]</td>
 </tr>
 <tr>
 <td><code>Velocity_limit_error</code></td>
 <td>30000000</td>
+<td>—</td>
+<td>no</td>
 <td>[TICKS/s] ; Velocity when we will report error / For stepper speed runout is around 250 nfo000</td>
-</tr>
-<tr>
-<td><code>Ki</code></td>
-<td>0</td>
-<td>zero location</td>
 </tr>
 <tr>
 <td><code>Kp_id</code></td>
 <td>7</td>
+<td>7</td>
+<td>yes</td>
 <td>motor1</td>
 </tr>
 <tr>
 <td><code>Ki_id</code></td>
 <td>3</td>
+<td>3</td>
+<td>yes</td>
 <td>motor1</td>
 </tr>
 <tr>
 <td><code>Id_setpoint</code></td>
 <td>0</td>
+<td>—</td>
+<td>no</td>
 <td></td>
 </tr>
 <tr>
 <td><code>Kp_iq</code></td>
 <td>3</td>
+<td>3</td>
+<td>yes</td>
 <td>motor1</td>
 </tr>
 <tr>
 <td><code>Ki_iq</code></td>
 <td>0.3</td>
+<td>0.3</td>
+<td>yes</td>
 <td>motor1</td>
 </tr>
 <tr>
 <td><code>Iq_current_limit</code></td>
 <td>1700</td>
+<td>1700</td>
+<td>yes</td>
 <td></td>
 </tr>
 <tr>
 <td><code>Id_current_limit</code></td>
 <td>0</td>
+<td>0</td>
+<td>yes</td>
 <td></td>
 </tr>
 <tr>
 <td><code>Feedforward_current</code></td>
 <td>0</td>
+<td>—</td>
+<td>no</td>
 <td></td>
 </tr>
 <tr>
 <td><code>KD</code></td>
 <td>0.0028</td>
+<td>0.0028</td>
+<td>yes</td>
 <td>[Nm*s/rad]</td>
 </tr>
 <tr>
 <td><code>KP</code></td>
 <td>0.1400</td>
+<td>0.1400</td>
+<td>yes</td>
 <td>[Nm/rad]</td>
 </tr>
 <tr>
 <td><code>Uq_setpoint</code></td>
 <td>0</td>
+<td>—</td>
+<td>no</td>
 <td></td>
 </tr>
 <tr>
 <td><code>Ud_setpoint</code></td>
 <td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>Same_command</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>At_position</code></td>
-<td>0</td>
+<td>—</td>
+<td>no</td>
 <td></td>
 </tr>
 <tr>
 <td><code>position_setpoint</code></td>
 <td>0</td>
+<td>—</td>
+<td>no</td>
 <td></td>
 </tr>
 <tr>
 <td><code>speed_setpoint</code></td>
 <td>50</td>
+<td>—</td>
+<td>no</td>
 <td></td>
 </tr>
 <tr>
 <td><code>current_setpoint</code></td>
 <td>400</td>
-<td></td>
-</tr>
-<tr>
-<td><code>position</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>speed</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>current</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>calibrated</code></td>
-<td>0</td>
+<td>—</td>
+<td>no</td>
 <td></td>
 </tr>
 <tr>
 <td><code>action_status</code></td>
 <td>0</td>
+<td>—</td>
+<td>no</td>
 <td>-0 Stopped(or performing activation /automatic release).</td>
 </tr>
 <tr>
 <td><code>activated</code></td>
 <td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>object_detection_status</code></td>
-<td>3</td>
-<td></td>
-</tr>
-<tr>
-<td><code>temperature_error</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>timeout_error</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>estop_error</code></td>
-<td>0</td>
+<td>—</td>
+<td>no</td>
 <td></td>
 </tr>
 <tr>
 <td><code>release_direction</code></td>
 <td>0</td>
+<td>—</td>
+<td>no</td>
 <td></td>
 </tr>
 <tr>
 <td><code>estop_status</code></td>
 <td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>max_open_position</code></td>
-<td>10329</td>
-<td></td>
-</tr>
-<tr>
-<td><code>max_closed_position</code></td>
-<td>-229</td>
-<td></td>
-</tr>
-<tr>
-<td><code>position_ticks</code></td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td><code>max_speed</code></td>
-<td>60000</td>
-<td></td>
-</tr>
-<tr>
-<td><code>min_speed</code></td>
-<td>500</td>
-<td></td>
-</tr>
-<tr>
-<td><code>In_calibration</code></td>
-<td>0</td>
+<td>—</td>
+<td>no</td>
 <td></td>
 </tr>
 </tbody>
@@ -8823,8 +8689,12 @@ hand. <a href="#06-operation-uart">Over <abbr title="the serial port of the driv
 <td>normal operation: calibrated, no error</td>
 </tr>
 <tr>
-<td>flashing every 0.5 s</td>
+<td>fast flashing, about ten times a second</td>
 <td>calibration running</td>
+</tr>
+<tr>
+<td>a few flashes, then blinking for about 2 s after power-up</td>
+<td>the bootloader waits for a host before it starts the firmware; it keeps blinking when there is no valid firmware</td>
 </tr>
 <tr>
 <td>on, steady</td>
@@ -8847,7 +8717,7 @@ hand. <a href="#06-operation-uart">Over <abbr title="the serial port of the driv
 <tbody>
 <tr>
 <td><a class="glightbox" href="../assets/Normal.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Three short flashes and a pause" src="../assets/Normal.webp" width="180" /></a></td>
-<td><a class="glightbox" href="../assets/Calib.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Flashing every 0.5 s" src="../assets/Calib.webp" width="180" /></a></td>
+<td><a class="glightbox" href="../assets/Calib.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Fast flashing during calibration" src="../assets/Calib.webp" width="180" /></a></td>
 <td><a class="glightbox" href="../assets/Error2.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="On, steady" src="../assets/Error2.webp" width="180" /></a></td>
 </tr>
 </tbody>
@@ -8881,25 +8751,25 @@ Send_Respond_State_of_Errors (bits numbered from the most significant).</p>
 <td><code>encoder_error</code></td>
 <td><code>Encoder error</code></td>
 <td>0, 5</td>
-<td>the magnet is not detected or the reading fails its check</td>
+<td>the encoder reports no magnet (too weak a field)</td>
 </tr>
 <tr>
 <td><code>Vbus_error</code></td>
 <td><code>Vbus error</code></td>
 <td>0, 4</td>
-<td>the supply is below 9 V or above <code>#Vmax</code> (29.5 V by default)</td>
+<td>the supply is below 9 V or above <code>#Vmax</code> (29000 mV after <code>#Default</code>)</td>
 </tr>
 <tr>
 <td><code>Driver_error</code></td>
 <td><code>Driver error (undervoltage, thermal shutdown, or overcurrent)</code></td>
 <td>0, 3</td>
-<td>the MOSFET driver's fault output is active</td>
+<td>never in this firmware; reserved (STEPFOC reads no fault output of its driver stage)</td>
 </tr>
 <tr>
 <td><code>Velocity_error</code></td>
 <td><code>Velocity error</code></td>
 <td>0, 2</td>
-<td>the speed exceeds the limit</td>
+<td>the speed exceeds 30,000,000 ticks/s, a fixed threshold (<code>Velocity_limit_error</code>), not <code>#Vlimit</code></td>
 </tr>
 <tr>
 <td><code>Current_error</code></td>
@@ -8929,16 +8799,18 @@ Send_Respond_State_of_Errors (bits numbered from the most significant).</p>
 <td><code>Watchdog_error</code></td>
 <td><code>Watchdog error</code></td>
 <td>1, 5</td>
-<td>the watchdog time passed without a valid <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> frame</td>
+<td>the watchdog time passed without a motion frame or a status request</td>
 </tr>
 </tbody>
 </table>
-<p>Gripper mode has its own flags in Respond_Gripper_data_pack: a temperature error, a timeout error (the jaw did
-not reach its target in time) and an E-stop error; see the <a href="#reference-can-gripper">Gripper</a> reference.</p>
+<p>Gripper mode has its own flags in Respond_Gripper_data_pack: a temperature error (a copy of the thermistor error),
+a timeout error (a copy of the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> watchdog error, not a move timeout) and an E-stop error, which stays while the
+E-stop bit is 1; see the <a href="#reference-can-gripper">Gripper</a> reference.</p>
 <h2 id="reference-errors-clearing">Clearing<a class="headerlink" href="#reference-errors-clearing" title="Permanent link">&para;</a></h2>
 <p><code>#Clear</code> and Send_Clear_Error clear every flag except <code>Calibrated</code> and go to idle; a flag whose cause persists is
-set again at once. The watchdog, E-stop and velocity errors clear and stay clear; the Vbus, encoder, driver and
-temperature errors come back until the cause is gone. Calibration clears the calibration error.</p></section><section class="print-page" id="reference-python" heading-number="2.7"><h1 id="reference-python-python-library">Python library<a class="headerlink" href="#reference-python-python-library" title="Permanent link">&para;</a></h1>
+set again at once. The watchdog, E-stop and velocity errors clear and stay clear; the Vbus, encoder and
+temperature errors come back until the cause is gone, and so does a gripper E-stop while its E-stop bit is 1.
+Calibration clears the calibration error.</p></section><section class="print-page" id="reference-python" heading-number="2.7"><h1 id="reference-python-python-library">Python library<a class="headerlink" href="#reference-python-python-library" title="Permanent link">&para;</a></h1>
 <p>The <code>Spectral-BLDC</code> package (<a href="https://github.com/Source-Robotics/Spectral-BLDC-Python">Spectral-BLDC-Python</a>,
 <code>pip install Spectral-BLDC</code>) has one method per <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> message in <code>Spectral_BLDC.SpectralCAN</code>, and
 <code>Spectral_BLDC.CanCommunication</code> for the bus. <a href="#06-operation-python">With Python</a> shows how they are used.</p>
@@ -9172,6 +9044,14 @@ temperature errors come back until the cause is gone. Calibration clears the cal
 <td><code>Kt</code></td>
 </tr>
 <tr>
+<td>Send_Respond_Ping</td>
+<td><code>ping</code> (1)</td>
+</tr>
+<tr>
+<td>Respond_Heartbeat</td>
+<td><code>heartbeat</code> (1)</td>
+</tr>
+<tr>
 <td>Respond_Gripper_data_pack</td>
 <td><code>gripper_position</code>, <code>gripper_current</code>, <code>gripper_activated</code>, <code>gripper_action_status</code>, <code>gripper_object_detection</code>, <code>gripper_temperature_error</code>, <code>gripper_timeout_error</code>, <code>gripper_estop_error</code>, <code>gripper_calibrated</code></td>
 </tr>
@@ -9254,7 +9134,7 @@ the <a href="https://docs.source-robotics.com/Spectral-BLDC-docs/">Spectral Micr
 <p class="admonition-title">Python API and toolbox</p>
 <p>This guide leverages <a href="https://github.com/Source-Robotics/Spectral-BLDC-Python/tree/main">Spectral BLDC python API</a> and <a href="https://github.com/Source-Robotics/Source-Robotics-Toolbox">Source robotics toolbox</a></p>
 </div>
-<p><a class="glightbox" href="../assets/LEG_wiring.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="drawing" src="../assets/LEG_wiring.webp" /></a></p>
+<p><a class="glightbox" href="../assets/LEG_wiring.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The two-motor leg on a test stand, with the laptop, the CAN adapter and a bench supply" src="../assets/LEG_wiring.webp" /></a></p>
 <div class="admonition note">
 <p class="admonition-title">Building the LEG</p>
 <p>In this guide we only recommend you the hardware you can use to build the robot you designed. We do not offer already made designs you can build!</p>
@@ -9273,7 +9153,7 @@ the <a href="https://docs.source-robotics.com/Spectral-BLDC-docs/">Spectral Micr
 <li>1 x 24V power supply</li>
 <li>A Laptop or raspberry pi</li>
 </ul>
-<p><a class="glightbox" href="../assets/leg_setup.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="drawing" src="../assets/leg_setup.webp" /></a></p>
+<p><a class="glightbox" href="../assets/leg_setup.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Wiring: the supply to the first driver, the CAN bus from the adapter through both drivers, a motor on each driver" src="../assets/leg_setup.webp" /></a></p>
 <p>The setup will be the same for any kind of quadruped leg. You will need to follow the diagram above to wire everything up.</p>
 <ul>
 <li>First you need to calibrate your Spectral BLDC drivers with the motors you are using. </li>
@@ -9282,14 +9162,14 @@ the <a href="https://docs.source-robotics.com/Spectral-BLDC-docs/">Spectral Micr
 <li>Connect the power to both drivers. (Use daisy chain)</li>
 </ul>
 <h2 id="guides-quadruped-leg-kinematics">Leg kinematics<a class="headerlink" href="#guides-quadruped-leg-kinematics" title="Permanent link">&para;</a></h2>
-<p><a class="glightbox" href="../assets/robot_leg_dh_table.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="drawing" src="../assets/robot_leg_dh_table.webp" /></a></p>
+<p><a class="glightbox" href="../assets/robot_leg_dh_table.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The coordinate frames of the leg and its DH table" src="../assets/robot_leg_dh_table.webp" /></a></p>
 <p>First you will need to assign coordinate frames to your leg model.
 We already did it but if you want to learn more on how and why check this <a href="https://automaticaddison.com/how-to-assign-denavit-hartenberg-frames-to-robotic-arms/">Link</a><br /></p>
 <p>Now we will need to find DH (Denavit-Hartenberg) table values. You can learn more on how and why we did it <a href="https://automaticaddison.com/how-to-find-denavit-hartenberg-parameter-tables/">Here!</a></p>
 <p>value l1 is 0.112 meters and value l2 is 0.1 meters. The frame 2 is the end / foot of our leg.</p>
 <h2 id="guides-quadruped-testing-calibrating-the-leg">Testing / Calibrating the leg<a class="headerlink" href="#guides-quadruped-testing-calibrating-the-leg" title="Permanent link">&para;</a></h2>
 <p>Before running the main code lets check if the comms are working and get initial position values of our robot leg. This code will try to get data from the 2 motors of our robot leg. We are most interested in position data of those 2 motors. Position the leg like shown in this image. Run the leg_calib code and write down position values of each motor. </p>
-<p><a class="glightbox" href="../assets/leg_terminal.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="drawing" src="../assets/leg_terminal.webp" /></a></p>
+<p><a class="glightbox" href="../assets/leg_terminal.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The terminal output of leg_calib.py with the positions of both motors" src="../assets/leg_terminal.webp" /></a></p>
 <div class="language-py highlight"><span class="filename">leg_calib.py</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#guides-quadruped-__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">Spectral_BLDC</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">Spectral</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#guides-quadruped-__codelineno-0-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#guides-quadruped-__codelineno-0-3"></a>
@@ -9345,7 +9225,7 @@ We defined that trajectory with our function generate_circle_coords and with par
 <li>speed - Speed of the end-effector in meters per second</li>
 <li>time_var - Elapsed time in seconds</li>
 </ul>
-<p><a class="glightbox" href="../assets/circ_2.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="drawing" src="../assets/circ_2.webp" /></a></p>
+<p><a class="glightbox" href="../assets/circ_2.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The circle the foot traced at speed 1 and at speed 3" src="../assets/circ_2.webp" /></a></p>
 <p>How precise you follow the trajectory depends on the speed you set. With low speeds you can track the circle perfectly. With larger speeds the system can't keep up and overshoots. This is due multiple reaseons like:</p>
 <ul>
 <li>Inertia and Momentum: At higher speeds, the inertia and momentum of the robot leg increase, making it harder to change directions quickly and accurately.</li>
@@ -9585,10 +9465,10 @@ We defined that trajectory with our function generate_circle_coords and with par
 <h2 id="guides-gravity-compensation-why-is-it-so-important">Why is it so important?<a class="headerlink" href="#guides-gravity-compensation-why-is-it-so-important" title="Permanent link">&para;</a></h2>
 <p>In robotics, a significant portion of motor power is consumed just fighting against gravity. Gravity compensation algorithms are standard in all industrial robots and collaborative robot arms because they provide: improved position accuracy and control, smoother motion planning, and more precise force control applications. The gravity compensation algorithm works as a feedforward component to the motor <abbr title="Proportional-Integral-Derivative controller">PID</abbr> control loops, reducing their computational load and improving overall performance.</p>
 <h2 id="guides-gravity-compensation-the-approach">The Approach<a class="headerlink" href="#guides-gravity-compensation-the-approach" title="Permanent link">&para;</a></h2>
-<p>In this example, we use the Robotics Toolbox for Python to model a "robotic arm" with a single revolute joint. We compute the required torque using the Recursive Newton-Euler Algorithm (RNEA) and convert this torque into a motor current/torque that the motor controller will command the motor. In this blog post we will explain in short pseudo code snippets how the algorithm works on a single DOF arm.</p>
-<p>For more info check the full guide here: https://source-robotics.com/blogs/blog/gravity-compensation-in-robotics</p>
-<p>Github repos with examples are here: https://github.com/Source-Robotics/Spectral-BLDC-Python/blob/main/examples/Advanced/Gravity%20compensation/BOM.md</p>
-<p>https://github.com/Source-Robotics/Spectral-BLDC-Python/tree/main/examples/Advanced/Gravity%20compensation</p></section><section class="print-page" id="guides-bilateral-teleoperation" heading-number="3.5"><h1 id="guides-bilateral-teleoperation-bilateral-teleoperation-guide">Bilateral teleoperation guide<a class="headerlink" href="#guides-bilateral-teleoperation-bilateral-teleoperation-guide" title="Permanent link">&para;</a></h1>
+<p>In this example, we use the Robotics Toolbox for Python to model a "robotic arm" with a single revolute joint. We compute the required torque using the Recursive Newton-Euler Algorithm (RNEA) and convert this torque into a motor current/torque that the motor controller will command the motor.</p>
+<p>The full write-up is the blog post <a href="https://source-robotics.com/blogs/blog/gravity-compensation-in-robotics">Gravity compensation in robotics</a>.
+The example code is in <a href="https://github.com/Source-Robotics/Spectral-BLDC-Python/tree/main/examples/Advanced/Gravity%20compensation">Gravity compensation</a>
+in the Python library's examples, with its <a href="https://github.com/Source-Robotics/Spectral-BLDC-Python/blob/main/examples/Advanced/Gravity%20compensation/BOM.md">bill of materials</a>.</p></section><section class="print-page" id="guides-bilateral-teleoperation" heading-number="3.5"><h1 id="guides-bilateral-teleoperation-bilateral-teleoperation-guide">Bilateral teleoperation guide<a class="headerlink" href="#guides-bilateral-teleoperation-bilateral-teleoperation-guide" title="Permanent link">&para;</a></h1>
 <div class="admonition note">
 <p class="admonition-title">Written with the Spectral Micro</p>
 <p>This guide was written with the Spectral Micro BLDC driver. STEPFOC uses the same <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> commands and the same Python library, so the same code runs on STEPFOC: where the guide says "Spectral Micro BLDC", read "STEPFOC".</p>
@@ -9596,7 +9476,7 @@ We defined that trajectory with our function generate_circle_coords and with par
 <h2 id="guides-bilateral-teleoperation-what-is-bilateral-teleoperation">What is bilateral teleoperation?<a class="headerlink" href="#guides-bilateral-teleoperation-what-is-bilateral-teleoperation" title="Permanent link">&para;</a></h2>
 <p>Bilateral teleoperation is a concept that Involves two-way communication where both the operator and the remote device send and receive feedback. The operator controls the device remotely and receives sensory feedback (such as force) from the device to adjust their actions.</p>
 <p>The two grippers are virtually coupled to each other, allowing either to act as the master (the haptic interface) or the slave (the manipulator) in the system. We are not using a force sensor at the grippers but are relying on proprioception.</p>
-<p><a class="glightbox" href="../assets/bil_tel.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="drawing" src="../assets/bil_tel.webp" /></a></p>
+<p><a class="glightbox" href="../assets/bil_tel.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Bilateral teleoperation of two coupled grippers" src="../assets/bil_tel.webp" /></a></p>
 <p>Watch these example videos to get a "feel" of the concept:</p>
 <ul>
 <li><a href="https://www.youtube.com/watch?v=8jfgFuEFNdI">Gripper bilateral</a> </li>
@@ -9628,7 +9508,7 @@ We defined that trajectory with our function generate_circle_coords and with par
 </ul>
 <h2 id="guides-bilateral-teleoperation-setup">Setup<a class="headerlink" href="#guides-bilateral-teleoperation-setup" title="Permanent link">&para;</a></h2>
 <p>Here we are showing you the setup for any 2 motors, for example we are using 2 x <a href="https://source-robotics.com/products/compliant-gripper">ssg48 grippers</a> that are connected in exactly the same setup.</p>
-<p><a class="glightbox" href="../assets/leg_setup.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="drawing" src="../assets/leg_setup.webp" /></a></p>
+<p><a class="glightbox" href="../assets/leg_setup.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Wiring: the supply to the first driver, the CAN bus from the adapter through both drivers, a motor on each driver" src="../assets/leg_setup.webp" /></a></p>
 <p>You will need to follow the diagram above to wire everything up.</p>
 <ul>
 <li>First you need to calibrate your Spectral BLDC drivers with the motors you are using. </li>
@@ -9732,8 +9612,8 @@ most of what anyone will ask you for.</p></section><section class="print-page" i
 for the driver and its firmware, or in <a href="https://github.com/Source-Robotics/Spectral-BLDC-Python/issues">Spectral-BLDC-Python</a>
 for the Python library. Include:</p>
 <ol>
-<li><strong>The output of <code>#Info</code></strong>, copied from the terminal. It carries the hardware and firmware version, the motor
-   parameters, the calibration state and the errors.</li>
+<li><strong>The output of <code>#Info</code>, <code>#Param</code> and <code>#Error</code></strong>, copied from the terminal. They carry the hardware and
+   firmware version, the motor parameters, the calibration state, the gains and limits, and the errors.</li>
 <li><strong>The motor</strong>: type, and the <code>#R</code>, <code>#L</code>, <code>#PP</code> you entered.</li>
 <li><strong>The supply</strong>: voltage, and whether it has a current limit.</li>
 <li><strong>What you did and what happened</strong>: the commands, in order, and the driver's answers; the calibration log if it

@@ -52,7 +52,8 @@ Read in more detail: [Wiring the stepper](https://docs.source-robotics.com/STEPF
 
 1. The supply to a power connector: **DC+ to positive, DC− to negative**. Check twice.
 2. The serial adapter to the UART connector with the UART cable (TX to RX, RX to TX; 3.3 V only).
-3. Power on. The LED turns on steadily: the driver is not calibrated yet, which it reports as an error state.
+3. Power on. The LED blinks for about two seconds while the bootloader waits for a host, then the firmware
+   starts and the LED stays on steadily: the driver is not calibrated yet, which it reports as an error state.
    (The serial adapter alone powers the driver's logic: it answers over UART without the supply, but reports a
    Vbus error and will not calibrate or move.)
 
@@ -66,7 +67,8 @@ Read in more detail: [Wiring the stepper](https://docs.source-robotics.com/STEPF
 
 === "Terminal"
     Open a terminal on the adapter's port, 256000 baud, line ending CR+LF, and type `#Info`. The driver prints its
-    hardware and firmware version and the state of everything.
+    hardware and firmware version, its calibration state and the motor parameters; `#Error` prints the active
+    errors.
 
     Read in more detail: [The serial terminal](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/terminal/).
 
@@ -79,8 +81,8 @@ is covered in [Motor GUI](https://docs.source-robotics.com/STEPFOC-docs/108/05-s
 ## 6. Restore the defaults and enter the motor parameters
 
 First the factory defaults, so that calibration does not start from another motor's values or from junk in the
-EEPROM: *Default* in the Motor GUI settings, or `#Default` in the terminal. (It also resets the serial number the
-driver reports.) Then the parameters:
+EEPROM: *Default* in the Motor GUI settings, or `#Default` in the terminal. (It also sets the CAN node ID to 0,
+and resets the serial number, hardware version and batch date stored in the EEPROM.) Then the parameters:
 
 From the motor's datasheet, for **one coil**: the pole pairs (50 for a 1.8° motor, 100 for 0.9°), the phase
 resistance in ohms, the phase inductance in henries (2.6 mH = 0.0026). STEPFOC does not measure these; calibration
@@ -119,9 +121,9 @@ Save config with #Save
 Going to idle!
 ```
 
-A failed step names itself. `Magnet test: Failed` is the magnet; `Open loop: Failed` or `Phase order is wrong!`
-means the motor did not turn or did not respond: check the four wires, the supply, and that the magnet does not
-slip.
+A failed step names itself, and the log ends with `Calibration failed!`. `Magnet test: Failed` is the magnet;
+`Phase order is wrong!` means the motor did not turn or did not respond: check the four wires, the supply, and
+that the magnet does not slip.
 
 Read in more detail: [Motor parameters and calibration](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/calibration/), with the whole log and every
 message.
@@ -131,8 +133,8 @@ message.
 
 ## 8. Set the current limit and save
 
-The current limit is the motor's rated phase current in mA; the firmware's default is higher than a small motor's
-rating.
+The current limit is the motor's rated phase current in mA. It is 1700 mA after `#Default`, and calibration leaves
+it at 1600 mA: both are more than a small motor's rating, so set it now, after calibrating.
 
 === "Motor GUI"
     Set the current limit in the limits, then **Save** (the GUI warns about unsaved changes until you do).

@@ -73,7 +73,7 @@ The driver does not answer this command.
 
 <div class="cmd-facts" markdown><span class="fact">ID 20</span><span class="fact">host → driver</span><span class="fact">8 bytes</span><span class="fact">Python: `Send_Limits()`</span></div>
 
-Sets the speed limit and the current limit the loops may reach. The current limit is clamped by the firmware to the driver's maximum of 2800 mA.
+Sets the speed limit and the current limit the loops may reach. The firmware stores the current limit as sent: unlike `#Ilim` over UART, it is not clamped to the driver's maximum of 2800 mA. Send 2800 mA or less, and no more than the motor's rated current.
 
 **8 bytes**
 

@@ -1,6 +1,6 @@
 # Firmware
 
-The driver's firmware is open source and released as numbered builds. A driver shipped with firmware 104 or newer
+The driver's firmware is open source and released as numbered builds. A driver shipped with firmware 105 or newer
 carries a bootloader and updates itself over UART or CAN; an older driver needs the bootloader installed once with
 a programming adapter.
 

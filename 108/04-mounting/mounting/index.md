@@ -13,8 +13,8 @@ rear screws, with a spacer between the motor and the board that sets the magnet 
    NEMA 17). Tighten them evenly; the board must be parallel to the magnet.
 4. Check the gap: about 1 mm, the magnet not touching the chip.
 
-A NEMA 14 or NEMA 23 motor needs an adapter plate between the motor and the board; the NEMA 23 spacer is in the
-same folder.
+A NEMA 23 motor takes the NEMA 23 spacer from the same folder. A smaller frame, such as NEMA 14, needs an adapter
+plate you make yourself: the repository has none.
 
 !!! warning "The board is bare"
     Nothing on the back of the board may touch the motor's housing. Make sure the spacer keeps the board clear of

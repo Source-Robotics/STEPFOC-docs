@@ -24,7 +24,7 @@ current (torque) or impedance.
 | UART connector (3.3 V) | the serial terminal: every setting, calibration, tuning |
 | Thermistor connector | an NTC on the motor for temperature protection |
 | ADDITIONAL2 pin | an input or output you can use: HALL mode homes against a sensor wired here |
-| JTAG connector (1.27 mm) | the programming adapter, for installing the bootloader or for development |
+| JTAG pads (1.27 mm) | the programming adapter, for installing the bootloader or for development |
 | Status LED | normal operation, calibration or error, see below |
 
 The connectors and their pinout are in [Connectors and pinout](https://docs.source-robotics.com/STEPFOC-docs/108/03-technical-data/connectors/).
@@ -37,16 +37,16 @@ A command picks the loop: a current setpoint, a speed, a position or a PD setpoi
 voltage-torque mode and a homing mode against a sensor exist beside them; [Control modes](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/modes/)
 describes each.
 
-The driver protects itself and the motor: it stops on a supply voltage outside the limits, on an encoder fault, on
-an over-speed, on a motor over-temperature (with the thermistor), on a hardware fault of the driver stage, on an
-E-stop command and on a watchdog that runs out. The status LED and `#Error` tell which; see
-[Errors and recovery](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/errors/).
+The driver protects itself and the motor: it stops on a supply voltage outside the limits, on an encoder fault (no
+magnet), on a motor over-temperature (with the thermistor), on an E-stop command and on a watchdog that runs out.
+The status LED and `#Error` tell which; see [Errors and recovery](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/errors/). It does not monitor
+its driver stage: a fault there is not reported.
 
 ## How it is controlled
 
 - **UART**, a 3.3 V serial port at 256000 baud: human-readable commands such as `#P 16384`, and the only way to
   run the calibration. See [Over UART](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/uart/).
-- **CAN**, 1 Mbit/s, up to 16 drivers on one bus: compact frames for real-time control from a PC with the CANvas
+- **CAN**, 1 Mbit/s, up to 14 drivers on one bus (node IDs 0 to 13): compact frames for real-time control from a PC with the CANvas
   adapter, a microcontroller or a robot control box. See [Over CAN](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/can/).
 - **Python**, the `Spectral-BLDC` library on top of CAN. See [With Python](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/python/).
 - **Motor GUI**, in the browser, over serial or CAN: the usual tool for setup, testing and tuning. See [Motor GUI](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/motor-gui/).
@@ -56,11 +56,11 @@ E-stop command and on a watchdog that runs out. The status LED and `#Error` tell
 | Pattern | Meaning |
 |---|---|
 | three short flashes and a pause | normal operation: no error, calibrated |
-| flashing every 0.5 s | the calibration routine is running |
+| fast flashing, about ten times a second | the calibration routine is running |
 | on, not flashing | error mode: at least one error is active, or the motor is not calibrated |
 
 The LED can be turned off with `#LED 0`.
 
 | Normal operation | Calibration | Error mode |
 |---|---|---|
-| ![Three short flashes and a pause](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Normal.webp){ width="180" } | ![Flashing every 0.5 s](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Calib.webp){ width="180" } | ![On, steady](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Error2.webp){ width="180" } |
+| ![Three short flashes and a pause](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Normal.webp){ width="180" } | ![Fast flashing during calibration](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Calib.webp){ width="180" } | ![On, steady](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Error2.webp){ width="180" } |

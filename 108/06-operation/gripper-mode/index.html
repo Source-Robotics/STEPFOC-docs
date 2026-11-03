@@ -2240,9 +2240,12 @@ STEPFOC this way.</p>
 <p><code>#Default</code> clears the flag again. A driver in gripper mode still answers every other command; the gripper
 commands only work with the flag set.</p>
 <h2 id="calibrating-the-gripper">Calibrating the gripper<a class="headerlink" href="#calibrating-the-gripper" title="Permanent link">&para;</a></h2>
-<p>After every power-up the gripper has to find its end stops: <code>#Gripcal</code> or Send_gripper_calibrate. The jaws move
-to both ends; the positions become 0 (open) and 255 (closed). The motor itself must be calibrated (<code>#Cal</code>) and
-saved before that, once.</p>
+<p>After every power-up the gripper has to find its end stops: <code>#Gripcal</code> or Send_gripper_calibrate. The jaws open
+until they stop, then close until they stop, slowly and at 500 mA; the positions become 0 (open) and 255 (closed).
+The driver prints nothing when it is done. If it has not found both end stops within about 24 s it gives up, and
+the gripper stays uncalibrated. Check the result with <code>#Gripinfo</code> (<code>Gripper calibrated is: 1</code>) or the
+<code>gripper_calibrated</code> bit of Respond_Gripper_data_pack: a move is carried out only once the gripper is calibrated.
+The motor itself must be calibrated (<code>#Cal</code>) and saved before that, once.</p>
 <h2 id="moving">Moving<a class="headerlink" href="#moving" title="Permanent link">&para;</a></h2>
 <p>Over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>#Gripvel 100       speed, 0 to 255
@@ -2279,11 +2282,14 @@ and the object detection:</p>
 </tbody>
 </table>
 <p>An empty Send_gripper_data_pack (0 bytes) only asks for the state. Send_gripper_data_pack's E-stop bit raises the
-gripper E-stop error; <code>#Gripstop 1</code> does the same over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr>.</p>
+gripper E-stop error; <code>#Gripstop 1</code> does the same over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr>. The error stays: while the E-stop bit is 1 the driver
+raises it again on every control cycle, and <code>#Error</code> prints only <code>In error state!</code>. To recover, clear the bit
+(<code>#Gripstop 0</code>, or a Send_gripper_data_pack with the bit 0), then <code>#Clear</code> or Send_Clear_Error.</p>
 <div class="admonition warning">
 <p class="admonition-title">Current</p>
 <p>The firmware does not limit the current you give a gripper move. The safe range depends on the gripper's
-mechanics and motor; the gripper's manual gives it. The driver's hard limit is 2800 mA.</p>
+mechanics and motor; the gripper's manual gives it. The driver is rated for 2.8 A, but nothing enforces that
+here: a gripper move uses the current as sent.</p>
 </div>
 <h2 id="where-the-details-are">Where the details are<a class="headerlink" href="#where-the-details-are" title="Permanent link">&para;</a></h2>
 <p>The bytes of the two gripper frames are in the <a href="../../reference/can/gripper/"><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> reference</a>, the <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> commands in
@@ -2308,7 +2314,7 @@ the <a href="../../reference/uart/gripper/"><abbr title="the serial port of the 
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 29, 2026 10:22:06 UTC">October 29, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 3, 2026 14:48:56 UTC">November 3, 2026</span>
   </span>
 
     

@@ -6,13 +6,13 @@ Identity, saving, resetting, errors, the watchdog, the heartbeat and the setting
 
 <div class="cmd-facts" markdown><span class="fact">ID 11</span><span class="fact">host → driver</span><span class="fact">1 bytes</span><span class="fact">Python: `Send_CAN_ID()`</span></div>
 
-Gives the driver a new node ID, 0 to 13 (the firmware accepts up to 15, but the bootloader reserves 14 and 15: a driver on one of those cannot be updated over CAN). Setting the ID also sets the bootloader's board ID. The driver answers to the new ID at once; the ID is kept over a power cycle only after Send_Save_config.
+Gives the driver a new node ID, 0 to 13 (the firmware accepts up to 15, but the bootloader reserves 14 and 15: a driver on one of those cannot be updated over CAN). Saving the configuration (Send_Save_config) also writes the ID into the bootloader's board ID. The driver answers to the new ID at once; the ID is kept over a power cycle only after Send_Save_config.
 
 **1 bytes**
 
 | Byte | Bit | Field | Type | Meaning |
 |---|---|---|---|---|
-| 0 |  | ID | unsigned 8-bit | 0 to 15 |
+| 0 |  | ID | unsigned 8-bit | 0 to 13; 14 and 15 are accepted but reserved by the bootloader |
 
 The driver does not answer this command.
 
@@ -42,7 +42,7 @@ The driver does not answer this command.
 
 <div class="cmd-facts" markdown><span class="fact">ID 13</span><span class="fact">host → driver</span><span class="fact">0 bytes</span><span class="fact">Python: `Send_Save_config()`</span></div>
 
-Writes the current configuration (gains, limits, calibration, CAN ID, heartbeat, watchdog, gripper flag) to the EEPROM.
+Writes the current configuration (gains, limits, calibration, CAN ID, heartbeat, watchdog, gripper flag) to the EEPROM, and the CAN ID into the bootloader's board ID. The idle behaviour of Send_Settings and the current loop bandwidth are not kept. It also writes the serial number held in RAM, which is 1 after a power-up unless `#SERNUM` set it, over the stored one.
 
 The driver does not answer this command.
 
@@ -62,7 +62,7 @@ The driver does not answer this command.
 
 <div class="cmd-facts" markdown><span class="fact">ID 1</span><span class="fact">host → driver</span><span class="fact">0 bytes</span><span class="fact">Python: `Send_Clear_Error()`</span></div>
 
-Clears the error flags and goes to idle. An error whose cause is still present comes straight back. A calibration error is cleared only by calibrating.
+Clears the error flags and goes to idle. An error whose cause is still present comes straight back. A calibration error is cleared only by calibrating. A gripper E-stop comes back until the E-stop bit of Send_gripper_data_pack is 0 again.
 
 The driver does not answer this command.
 
@@ -72,7 +72,7 @@ The driver does not answer this command.
 
 <div class="cmd-facts" markdown><span class="fact">ID 15</span><span class="fact">host → driver</span><span class="fact">5 bytes</span><span class="fact">Python: `Send_Watchdog()`</span></div>
 
-Sets the watchdog: every valid CAN frame the driver receives resets it; when the time runs out the driver reports a watchdog error and stops. 0 turns it off (the default). The action byte is stored but not acted on by this firmware: the driver always stops into its idle behaviour.
+Sets the watchdog: when the time runs out the driver reports a watchdog error and stops. Every valid motion frame (Send_data_pack_1, Send_data_pack_PD, Send_data_pack_HALL, Send_gripper_data_pack) and every status request the driver answers resets it; the setting frames (gains, limits, Idle, Clear, Save, Settings and Send_Watchdog itself) do not. 0 turns it off (the default). The action byte is stored but not acted on by this firmware: the driver always stops into its idle behaviour. Send_Save_config keeps the watchdog, and a kept watchdog runs from power-up: a host that sends no motion frame or status request within the time finds the driver in watchdog error, and clears it with Send_Clear_Error.
 
 **5 bytes**
 
@@ -103,7 +103,7 @@ Sets the heartbeat interval in ms; 0 turns the heartbeat off (the default). Kept
 
 <div class="cmd-facts" markdown><span class="fact">ID 35</span><span class="fact">host → driver</span><span class="fact">0 bytes</span></div>
 
-Sets boolean settings that have no command of their own: a mask byte says which settings the frame touches, a value byte gives their new values; settings outside the mask are left alone. Bit 0 is the idle behaviour: 1 brake (phases shorted), 0 coast. Added in firmware 108 (Spectral Micro 107). The Python library has no call for it yet.
+Sets boolean settings that have no command of their own: a mask byte says which settings the frame touches, a value byte gives their new values; settings outside the mask are left alone. Bit 0 is the idle behaviour: 1 brake (phases shorted), 0 coast. The setting is not kept by Send_Save_config: at power-up the driver brakes. Added in firmware 107. The Python library has no call for it yet.
 
 **2 bytes**
 

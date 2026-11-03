@@ -36,9 +36,12 @@ not from a count of pulses.
 Calibration supplies the constants this needs. The pole pairs come from the step angle. The current loop gains
 follow from the coil's resistance $R$ and inductance $L$ and the chosen bandwidth $\omega_c = 2\pi f_c$ (`#Cbw`):
 $K_p = L\,\omega_c$ and $K_i = R\,\omega_c$ cancel the coil's electrical time constant and give a first-order
-response at $f_c$. The angle offset is found by driving a current along the $d$ axis and reading where the rotor
-settles. The velocity constant $K_V$ comes from the back-EMF the spinning motor generates, and the torque
-constant follows from it: in SI units $K_t = 1/K_V$ (with $K_V$ in rpm/V, $K_t \approx 9.55/K_V$ Nm/A).
+response at $f_c$. The firmware computes a discrete-time form of these and divides $K_p$ by an empirical factor
+of 7, so its gains are softer than the formula. The angle offset is found by locking the rotor with the stator
+field and reading where it settles, then refined by a sweep for the offset at which the motor turns alike in both
+directions. In theory the torque constant follows from the velocity constant: in SI units $K_t = 1/K_V$ (with
+$K_V$ in rpm/V, $K_t \approx 9.55/K_V$ Nm/A). The firmware estimates $K_V$ from the speed the motor reaches at
+500 mA per volt of supply and uses $K_t = 8.27/K_V$; treat both as estimates.
 
 ## The cascade of loops
 
@@ -67,7 +70,7 @@ leave the loops to correct what is left, which gives a faster, smoother response
 the whole demand from the error.
 
 An integrator accumulates error over time, and keeps accumulating while the output is at its limit; the overshoot
-this causes when the limit is released is *windup*. The velocity loop's integrator is clamped to the velocity
+this causes when the limit is released is *windup*. The velocity loop's integrator is clamped to the current
 limit, and `#Rstint` resets the integrators on every new setpoint, which suits a host that sends one setpoint
 after another in large steps.
 

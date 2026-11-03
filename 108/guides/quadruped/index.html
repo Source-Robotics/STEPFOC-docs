@@ -1112,7 +1112,7 @@
 <p class="admonition-title">Python API and toolbox</p>
 <p>This guide leverages <a href="https://github.com/Source-Robotics/Spectral-BLDC-Python/tree/main">Spectral BLDC python API</a> and <a href="https://github.com/Source-Robotics/Source-Robotics-Toolbox">Source robotics toolbox</a></p>
 </div>
-<p><a class="glightbox" href="../../assets/LEG_wiring.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="drawing" src="../../assets/LEG_wiring.webp" /></a></p>
+<p><a class="glightbox" href="../../assets/LEG_wiring.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The two-motor leg on a test stand, with the laptop, the CAN adapter and a bench supply" src="../../assets/LEG_wiring.webp" /></a></p>
 <div class="admonition note">
 <p class="admonition-title">Building the LEG</p>
 <p>In this guide we only recommend you the hardware you can use to build the robot you designed. We do not offer already made designs you can build!</p>
@@ -1131,7 +1131,7 @@
 <li>1 x 24V power supply</li>
 <li>A Laptop or raspberry pi</li>
 </ul>
-<p><a class="glightbox" href="../../assets/leg_setup.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="drawing" src="../../assets/leg_setup.webp" /></a></p>
+<p><a class="glightbox" href="../../assets/leg_setup.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Wiring: the supply to the first driver, the CAN bus from the adapter through both drivers, a motor on each driver" src="../../assets/leg_setup.webp" /></a></p>
 <p>The setup will be the same for any kind of quadruped leg. You will need to follow the diagram above to wire everything up.</p>
 <ul>
 <li>First you need to calibrate your Spectral BLDC drivers with the motors you are using. </li>
@@ -1140,14 +1140,14 @@
 <li>Connect the power to both drivers. (Use daisy chain)</li>
 </ul>
 <h2 id="leg-kinematics">Leg kinematics<a class="headerlink" href="#leg-kinematics" title="Permanent link">&para;</a></h2>
-<p><a class="glightbox" href="../../assets/robot_leg_dh_table.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="drawing" src="../../assets/robot_leg_dh_table.webp" /></a></p>
+<p><a class="glightbox" href="../../assets/robot_leg_dh_table.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The coordinate frames of the leg and its DH table" src="../../assets/robot_leg_dh_table.webp" /></a></p>
 <p>First you will need to assign coordinate frames to your leg model.
 We already did it but if you want to learn more on how and why check this <a href="https://automaticaddison.com/how-to-assign-denavit-hartenberg-frames-to-robotic-arms/">Link</a><br /></p>
 <p>Now we will need to find DH (Denavit-Hartenberg) table values. You can learn more on how and why we did it <a href="https://automaticaddison.com/how-to-find-denavit-hartenberg-parameter-tables/">Here!</a></p>
 <p>value l1 is 0.112 meters and value l2 is 0.1 meters. The frame 2 is the end / foot of our leg.</p>
 <h2 id="testing-calibrating-the-leg">Testing / Calibrating the leg<a class="headerlink" href="#testing-calibrating-the-leg" title="Permanent link">&para;</a></h2>
 <p>Before running the main code lets check if the comms are working and get initial position values of our robot leg. This code will try to get data from the 2 motors of our robot leg. We are most interested in position data of those 2 motors. Position the leg like shown in this image. Run the leg_calib code and write down position values of each motor. </p>
-<p><a class="glightbox" href="../../assets/leg_terminal.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="drawing" src="../../assets/leg_terminal.webp" /></a></p>
+<p><a class="glightbox" href="../../assets/leg_terminal.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The terminal output of leg_calib.py with the positions of both motors" src="../../assets/leg_terminal.webp" /></a></p>
 <div class="language-py highlight"><span class="filename">leg_calib.py</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">Spectral_BLDC</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">Spectral</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
@@ -1203,7 +1203,7 @@ We defined that trajectory with our function generate_circle_coords and with par
 <li>speed - Speed of the end-effector in meters per second</li>
 <li>time_var - Elapsed time in seconds</li>
 </ul>
-<p><a class="glightbox" href="../../assets/circ_2.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="drawing" src="../../assets/circ_2.webp" /></a></p>
+<p><a class="glightbox" href="../../assets/circ_2.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The circle the foot traced at speed 1 and at speed 3" src="../../assets/circ_2.webp" /></a></p>
 <p>How precise you follow the trajectory depends on the speed you set. With low speeds you can track the circle perfectly. With larger speeds the system can't keep up and overshoots. This is due multiple reaseons like:</p>
 <ul>
 <li>Inertia and Momentum: At higher speeds, the inertia and momentum of the robot leg increase, making it harder to change directions quickly and accurately.</li>
@@ -1452,7 +1452,7 @@ We defined that trajectory with our function generate_circle_coords and with par
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 30, 2026 17:46:39 UTC">October 30, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 3, 2026 14:48:56 UTC">November 3, 2026</span>
   </span>
 
     

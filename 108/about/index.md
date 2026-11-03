@@ -36,7 +36,7 @@ step it belongs to.
     Points out something that is easy to miss or that changes what follows: a default, a limit, a side effect.
 
 !!! warning "Notice"
-    The robot, the tool, or data on the control box can be damaged or lost if this is ignored. Nobody is at risk.
+    The driver, the motor, the machine or data can be damaged or lost if this is ignored. Nobody is at risk.
 
 !!! danger "Danger"
     Someone can be injured if this is ignored. Stop and read the whole box before acting on the step it belongs to.
@@ -62,4 +62,4 @@ The text and the images of this documentation are licensed under [CC BY-SA 4.0](
 
 | Revision | Date | Changes |
 |---|---|---|
-| 2026.A (draft) | — | First version in this form: the manual chapters, the generated CAN and UART reference, firmware 108 |
+| 2026.A | 2026-11-03 | First version in this form: the manual chapters, the generated CAN and UART reference, firmware 108 |

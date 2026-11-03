@@ -1451,7 +1451,7 @@
 <td><code>#Gripcal</code></td>
 <td>Action</td>
 <td></td>
-<td>Starts the gripper calibration (the jaws find their end stops). Enters <strong>gripper calibration</strong> mode.</td>
+<td>Starts the gripper calibration: the jaws find their end stops at 500 mA. It prints nothing when it ends; after about 24 s without both end stops it gives up, uncalibrated. Gripinfo shows the result. Enters <strong>gripper calibration</strong> mode.</td>
 <td><code>Gripper calibration!</code></td>
 </tr>
 <tr>
@@ -1465,7 +1465,7 @@
 <td><code>#Gripstop</code></td>
 <td>Set/Get</td>
 <td>int: 0 or 1</td>
-<td>The gripper E-stop bit.</td>
+<td>The gripper E-stop bit. While it is 1 the driver raises the gripper E-stop error on every control cycle: set it to 0, then Clear.</td>
 <td>the bit</td>
 </tr>
 <tr>
@@ -1479,14 +1479,14 @@
 <td><code>#Gripcur</code></td>
 <td>Set/Get</td>
 <td>int: current in mA</td>
-<td>The current limit of gripper moves. The firmware does not clamp it; see the gripper manual for the safe range.</td>
+<td>The current limit of gripper moves, 400 mA at power-up. The firmware does not clamp it, not even to the driver's 2800 mA; see the gripper manual for the safe range.</td>
 <td>the setpoint</td>
 </tr>
 <tr>
 <td><code>#Gripvel</code></td>
 <td>Set/Get</td>
 <td>int: 0 to 255</td>
-<td>The speed setpoint of gripper moves.</td>
+<td>The speed setpoint of gripper moves, 50 at power-up.</td>
 <td>the setpoint</td>
 </tr>
 <tr>

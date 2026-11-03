@@ -1444,14 +1444,14 @@
 <td><code>#Vmax</code></td>
 <td>Set/Get</td>
 <td>int: voltage in mV</td>
-<td>The supply voltage above which a Vbus error is raised.</td>
+<td>The supply voltage above which a Vbus error is raised, 29000 mV after #Default.</td>
 <td><code>Vmax in mV: N</code></td>
 </tr>
 <tr>
 <td><code>#Save</code></td>
 <td>Action</td>
 <td></td>
-<td>Writes the configuration to the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>. Do it after calibration and after tuning.</td>
+<td>Writes the configuration to the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>, and the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> ID into the bootloader's board ID. Do it after calibration and after tuning. It also writes the serial number held in RAM (1 after a power-up, unless SERNUM set it) over the stored one.</td>
 <td><code>Save</code></td>
 </tr>
 <tr>
@@ -1472,7 +1472,7 @@
 <td><code>#Default</code></td>
 <td>Action</td>
 <td></td>
-<td>Writes the factory defaults to the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>, including the serial number, hardware version and batch date, and clears the gripper flag, heartbeat and watchdog. Back those up first.</td>
+<td>Writes the factory defaults to the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> and loads them: the serial number, hardware version and batch date; the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> ID (0); the gripper flag, heartbeat, watchdog and thermistor (off); the motor parameters and the calibration (cleared); every gain and limit. See Defaults.</td>
 <td><code>Loaded default config!</code></td>
 </tr>
 <tr>
@@ -1493,8 +1493,8 @@
 <td><code>#Mode</code></td>
 <td>Get</td>
 <td></td>
-<td>Prints the control mode.</td>
-<td><code>Idle mode</code>, <code>Position control</code>, <code>Speed control</code>, <code>Current control</code>, <code>PD control</code>, <code>Open loop</code>, <code>Gripper mode</code></td>
+<td>Prints the control mode. The voltage-torque mode prints <code>Gripper mode</code>; HALL, the angle-offset search, open-loop steps (gosteps) and gripper mode print nothing.</td>
+<td><code>Idle mode</code>, <code>Position control</code>, <code>Speed control</code>, <code>Current control</code>, <code>PD control</code>, <code>Open loop</code>, <code>Gripper mode</code>, <code>Gripper calib mode</code></td>
 </tr>
 <tr>
 <td><code>#Vbus</code></td>
@@ -1535,14 +1535,14 @@
 <td><code>#Help</code></td>
 <td>Action</td>
 <td></td>
-<td>Prints a short command reference. Added in firmware 108.</td>
+<td>Prints a short command reference. Added in firmware 106.</td>
 <td>the reference</td>
 </tr>
 <tr>
 <td><code>#Info</code></td>
 <td>Get</td>
 <td></td>
-<td>Prints the driver's identity and state: hardware and firmware version, serial number, motor parameters, calibration, errors.</td>
+<td>Prints the hardware version, batch date and firmware version, the control loop's execution time, the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> ID, the calibration state, the thermistor and the supply voltage, the phase direction, phase order and commutation direction, and the motor parameters (pole pairs, angle offset, R, L, Kt, KV). Not the serial number (SERNUM), the gains (Param) or the errors (Error).</td>
 <td>the report</td>
 </tr>
 <tr>
@@ -1570,14 +1570,14 @@
 <td><code>#CANID</code></td>
 <td>Set/Get</td>
 <td>int: 0 to 13</td>
-<td>The <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID. Use 0 to 13: the firmware accepts 14 and 15, but the bootloader reserves them and a driver on one of those cannot be updated over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>. Setting the ID also sets the bootloader's board ID. Kept over a power cycle after Save.</td>
+<td>The <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID. Use 0 to 13: the firmware accepts 14 and 15, but the bootloader reserves them and a driver on one of those cannot be updated over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>. Kept over a power cycle after Save, which also writes it into the bootloader's board ID.</td>
 <td>the ID, or <code>Invalid CAN ID</code></td>
 </tr>
 <tr>
 <td><code>#SERNUM</code></td>
 <td>Set/Get</td>
 <td>int: number</td>
-<td>The serial number stored in the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>.</td>
+<td>The serial number. This firmware does not read it back from the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> at power-up: it reports 1 until set, and Save writes the value in RAM over the stored one.</td>
 <td><code>Serial number is: N</code></td>
 </tr>
 <tr>

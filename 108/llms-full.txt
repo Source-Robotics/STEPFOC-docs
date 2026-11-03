@@ -21,9 +21,9 @@ Full text of every page, in the order of the site's navigation. Source: https://
 
 **Firmware version:** 108
 
-**Revision:** 2026.A (draft)
+**Revision:** 2026.A
 
-**Published:** —
+**Published:** 2026-11-03
 
 **Applies to:** STEPFOC driver PCB v1, firmware 108
 
@@ -147,7 +147,8 @@ Read in more detail: [Wiring the stepper](https://docs.source-robotics.com/STEPF
 
 1. The supply to a power connector: **DC+ to positive, DC− to negative**. Check twice.
 2. The serial adapter to the UART connector with the UART cable (TX to RX, RX to TX; 3.3 V only).
-3. Power on. The LED turns on steadily: the driver is not calibrated yet, which it reports as an error state.
+3. Power on. The LED blinks for about two seconds while the bootloader waits for a host, then the firmware
+   starts and the LED stays on steadily: the driver is not calibrated yet, which it reports as an error state.
    (The serial adapter alone powers the driver's logic: it answers over UART without the supply, but reports a
    Vbus error and will not calibrate or move.)
 
@@ -161,7 +162,8 @@ Read in more detail: [Wiring the stepper](https://docs.source-robotics.com/STEPF
 
 === "Terminal"
     Open a terminal on the adapter's port, 256000 baud, line ending CR+LF, and type `#Info`. The driver prints its
-    hardware and firmware version and the state of everything.
+    hardware and firmware version, its calibration state and the motor parameters; `#Error` prints the active
+    errors.
 
     Read in more detail: [The serial terminal](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/terminal/).
 
@@ -174,8 +176,8 @@ is covered in [Motor GUI](https://docs.source-robotics.com/STEPFOC-docs/108/05-s
 ## 6. Restore the defaults and enter the motor parameters
 
 First the factory defaults, so that calibration does not start from another motor's values or from junk in the
-EEPROM: *Default* in the Motor GUI settings, or `#Default` in the terminal. (It also resets the serial number the
-driver reports.) Then the parameters:
+EEPROM: *Default* in the Motor GUI settings, or `#Default` in the terminal. (It also sets the CAN node ID to 0,
+and resets the serial number, hardware version and batch date stored in the EEPROM.) Then the parameters:
 
 From the motor's datasheet, for **one coil**: the pole pairs (50 for a 1.8° motor, 100 for 0.9°), the phase
 resistance in ohms, the phase inductance in henries (2.6 mH = 0.0026). STEPFOC does not measure these; calibration
@@ -214,9 +216,9 @@ Save config with #Save
 Going to idle!
 ```
 
-A failed step names itself. `Magnet test: Failed` is the magnet; `Open loop: Failed` or `Phase order is wrong!`
-means the motor did not turn or did not respond: check the four wires, the supply, and that the magnet does not
-slip.
+A failed step names itself, and the log ends with `Calibration failed!`. `Magnet test: Failed` is the magnet;
+`Phase order is wrong!` means the motor did not turn or did not respond: check the four wires, the supply, and
+that the magnet does not slip.
 
 Read in more detail: [Motor parameters and calibration](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/calibration/), with the whole log and every
 message.
@@ -226,8 +228,8 @@ message.
 
 ## 8. Set the current limit and save
 
-The current limit is the motor's rated phase current in mA; the firmware's default is higher than a small motor's
-rating.
+The current limit is the motor's rated phase current in mA. It is 1700 mA after `#Default`, and calibration leaves
+it at 1600 mA: both are more than a small motor's rating, so set it now, after calibrating.
 
 === "Motor GUI"
     Set the current limit in the limits, then **Save** (the GUI warns about unsaved changes until you do).
@@ -326,7 +328,7 @@ step it belongs to.
     Points out something that is easy to miss or that changes what follows: a default, a limit, a side effect.
 
 !!! warning "Notice"
-    The robot, the tool, or data on the control box can be damaged or lost if this is ignored. Nobody is at risk.
+    The driver, the motor, the machine or data can be damaged or lost if this is ignored. Nobody is at risk.
 
 !!! danger "Danger"
     Someone can be injured if this is ignored. Stop and read the whole box before acting on the step it belongs to.
@@ -352,7 +354,7 @@ The text and the images of this documentation are licensed under [CC BY-SA 4.0](
 
 | Revision | Date | Changes |
 |---|---|---|
-| 2026.A (draft) | — | First version in this form: the manual chapters, the generated CAN and UART reference, firmware 108 |
+| 2026.A | 2026-11-03 | First version in this form: the manual chapters, the generated CAN and UART reference, firmware 108 |
 
 
 ---
@@ -401,7 +403,7 @@ current (torque) or impedance.
 | UART connector (3.3 V) | the serial terminal: every setting, calibration, tuning |
 | Thermistor connector | an NTC on the motor for temperature protection |
 | ADDITIONAL2 pin | an input or output you can use: HALL mode homes against a sensor wired here |
-| JTAG connector (1.27 mm) | the programming adapter, for installing the bootloader or for development |
+| JTAG pads (1.27 mm) | the programming adapter, for installing the bootloader or for development |
 | Status LED | normal operation, calibration or error, see below |
 
 The connectors and their pinout are in [Connectors and pinout](https://docs.source-robotics.com/STEPFOC-docs/108/03-technical-data/connectors/).
@@ -414,16 +416,16 @@ A command picks the loop: a current setpoint, a speed, a position or a PD setpoi
 voltage-torque mode and a homing mode against a sensor exist beside them; [Control modes](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/modes/)
 describes each.
 
-The driver protects itself and the motor: it stops on a supply voltage outside the limits, on an encoder fault, on
-an over-speed, on a motor over-temperature (with the thermistor), on a hardware fault of the driver stage, on an
-E-stop command and on a watchdog that runs out. The status LED and `#Error` tell which; see
-[Errors and recovery](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/errors/).
+The driver protects itself and the motor: it stops on a supply voltage outside the limits, on an encoder fault (no
+magnet), on a motor over-temperature (with the thermistor), on an E-stop command and on a watchdog that runs out.
+The status LED and `#Error` tell which; see [Errors and recovery](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/errors/). It does not monitor
+its driver stage: a fault there is not reported.
 
 ## How it is controlled
 
 - **UART**, a 3.3 V serial port at 256000 baud: human-readable commands such as `#P 16384`, and the only way to
   run the calibration. See [Over UART](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/uart/).
-- **CAN**, 1 Mbit/s, up to 16 drivers on one bus: compact frames for real-time control from a PC with the CANvas
+- **CAN**, 1 Mbit/s, up to 14 drivers on one bus (node IDs 0 to 13): compact frames for real-time control from a PC with the CANvas
   adapter, a microcontroller or a robot control box. See [Over CAN](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/can/).
 - **Python**, the `Spectral-BLDC` library on top of CAN. See [With Python](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/python/).
 - **Motor GUI**, in the browser, over serial or CAN: the usual tool for setup, testing and tuning. See [Motor GUI](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/motor-gui/).
@@ -433,14 +435,14 @@ E-stop command and on a watchdog that runs out. The status LED and `#Error` tell
 | Pattern | Meaning |
 |---|---|
 | three short flashes and a pause | normal operation: no error, calibrated |
-| flashing every 0.5 s | the calibration routine is running |
+| fast flashing, about ten times a second | the calibration routine is running |
 | on, not flashing | error mode: at least one error is active, or the motor is not calibrated |
 
 The LED can be turned off with `#LED 0`.
 
 | Normal operation | Calibration | Error mode |
 |---|---|---|
-| ![Three short flashes and a pause](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Normal.webp){ width="180" } | ![Flashing every 0.5 s](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Calib.webp){ width="180" } | ![On, steady](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Error2.webp){ width="180" } |
+| ![Three short flashes and a pause](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Normal.webp){ width="180" } | ![Fast flashing during calibration](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Calib.webp){ width="180" } | ![On, steady](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Error2.webp){ width="180" } |
 
 
 ---
@@ -460,9 +462,9 @@ What this means in practice:
 - **The commands are practically the same.** The CAN messages and UART commands of the Reference have the same
   IDs, names and layouts on both drivers; STEPFOC adds a few that only make sense on a stepper (homing against a
   sensor, open-loop stepping). A program written for one runs on the other.
-- **The firmware releases go in step.** A STEPFOC release has a Spectral Micro counterpart with the same changes;
-  the [compatibility table](https://docs.source-robotics.com/STEPFOC-docs/108/appendix/compatibility/) lists the pairs. The numbers differ by one (STEPFOC 108
-  is Spectral Micro 107).
+- **The firmware releases go in step.** A change that applies to both drivers comes to both, but not always in
+  releases with the same number: the [compatibility table](https://docs.source-robotics.com/STEPFOC-docs/108/appendix/compatibility/) lists the pairs. STEPFOC
+  108 matches Spectral Micro 107.
 - **Calibration differs.** A BLDC driver measures the motor's resistance and inductance and finds its pole pairs;
   STEPFOC cannot, so you enter the three values from the motor's datasheet before calibrating. See
   [Motor parameters and calibration](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/calibration/).
@@ -496,7 +498,7 @@ can be updated later without a programming adapter; see [Firmware](https://docs.
 ## A stepper motor
 
 STEPFOC drives bipolar (4-wire) stepper motors. It is made for the NEMA 17 frame, whose mounting holes match the
-board, and it also works with NEMA 14 and NEMA 23 motors on an adapter. Look for a motor with a phase resistance
+board; it also works with NEMA 23 motors on the NEMA 23 spacer, and with other frames on an adapter you make. Look for a motor with a phase resistance
 of 1 to 5 Ω and a rated current of 3 A or less; the [tested motors](https://docs.source-robotics.com/STEPFOC-docs/108/03-technical-data/tested-motors/) are
 known to work.
 
@@ -565,9 +567,9 @@ connect anything; the few rules here are the ones that destroy a driver, a motor
     from the shop.
 
 !!! warning "Supply voltage"
-    12 to 29 V DC. The driver raises a Vbus error outside 9 to 29.5 V, but the hardware limit is 29 V: do not
-    connect a supply that can rise above it, and allow for the voltage a decelerating motor pushes back into the
-    supply. A bench supply with a current limit is the safest way to start.
+    12 to 29 V DC. The driver raises a Vbus error below 9 V and above 29 V (`#Vmax`, 29000 mV after `#Default`),
+    and 29 V is also the hardware limit: do not connect a supply that can rise above it, and allow for the voltage a
+    decelerating motor pushes back into the supply. A bench supply with a current limit is the safest way to start.
 
 !!! warning "Do not disconnect a running motor"
     Never unplug a motor, or a power cable in the daisy chain, while the driver is powered. The inductive kick of
@@ -588,7 +590,8 @@ connect anything; the few rules here are the ones that destroy a driver, a motor
 !!! warning "Hot motor and driver"
     A stepper running at its rated current gets hot enough to burn. Set the current limit for your motor
     ([Current limit and loop tuning](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/tuning/)), use the thermistor, and give the driver airflow when it
-    runs near 2.8 A.
+    runs near 2.8 A. `#Ilim` is clamped to 2800 mA, but the current limit of Send_Limits over CAN and the current
+    of a gripper move are used as sent: a host must keep them within the motor's rating and 2800 mA.
 
 ## Stopping the motor
 
@@ -639,9 +642,10 @@ tested with the driver.
 | | Value |
 |---|---|
 | Supply voltage | 12 to 29 V DC, 24 V typical |
-| Vbus error limits (firmware) | below 9 V or above 29.5 V |
+| Vbus error limits (firmware) | below 9 V or above 29 V (`#Vmax`, 29000 mV after `#Default`) |
 | Phase current, continuous | 1.5 A typical |
-| Phase current, maximum | 2.8 A, the firmware's limit (`#Ilim` is clamped to 2800 mA); needs good cooling and short bursts |
+| Phase current, maximum | 2.8 A; needs good cooling and short bursts. `#Ilim` is clamped to 2800 mA; Send_Limits over CAN is not clamped |
+| Current limit, default | 1700 mA after `#Default`; calibration leaves it at 1600 mA |
 | Power, maximum | 80 W |
 | Power, idle | 0.3 W |
 | PWM frequency | 25 kHz |
@@ -650,12 +654,13 @@ tested with the driver.
 | Current sensing | inline, both phases |
 | Encoder | 14-bit magnetic, 16384 ticks per revolution, diametrical magnet 1 mm above the chip |
 | UART | 3.3 V, 256000 baud by default (1 000 000 tested) |
-| CAN | CAN 2.0, 1 Mbit/s, 11-bit identifiers, node IDs 0 to 15, 120 Ω termination by switch |
+| CAN | CAN 2.0, 1 Mbit/s, 11-bit identifiers, node IDs 0 to 13 (the bootloader reserves 14 and 15), 120 Ω termination by switch |
 | Thermistor input | 100 kΩ NTC, 54.9 kΩ pull-down |
 | ADDITIONAL2 | analog input or general-purpose input/output, 3.3 V |
-| Driver stage protection | hardware overcurrent, undervoltage and overtemperature shutdown; shown as a driver error |
+| Driver stage protection | not monitored: the firmware reads no fault output of the driver stage, and its driver error flag stays 0 |
 
-!!! warning "Reversing the polarity on DC+ and DC− destroys the board."
+!!! warning "Polarity"
+    Reversing the polarity on DC+ and DC− destroys the board.
 
 ## Thermal and environmental
 
@@ -670,7 +675,7 @@ tested with the driver.
 |---|---|
 | Dimensions | 39 × 39 mm |
 | Mass | 8 g |
-| Mounting | the NEMA 17 pattern, 31 mm hole spacing; NEMA 14 and 23 motors with an adapter |
+| Mounting | the NEMA 17 pattern, 31 mm hole spacing; NEMA 23 motors with the NEMA 23 spacer, other frames with an adapter you make |
 
 ## Firmware limits
 
@@ -700,10 +705,10 @@ The defaults of every setting are listed in the [Defaults](https://docs.source-r
 |---|---|---|---|
 | Motor | A+, A−, B+, B− | solder pads | the motor's own leads, see [Wiring the stepper](https://docs.source-robotics.com/STEPFOC-docs/108/04-mounting/wiring/) |
 | Power, two of them | DC+, DC− | JST XH, 2 pins | [Power cable](https://source-robotics.com/products/spectral-micro-power-cable); the second connector feeds the next driver |
-| CAN, two of them | CAN H, CAN L | JST ZH, 2 pins | [CAN cable](https://source-robotics.com/products/spectral-micro-can-cable); the second connector feeds the next driver |
+| CAN, two of them | CAN L, CAN H | JST ZH, 2 pins | [CAN cable](https://source-robotics.com/products/spectral-micro-can-cable); the second connector feeds the next driver |
 | UART | 3.3 V, TX, RX, GND | JST SH, 4 pins | [UART cable](https://source-robotics.com/products/uart-cable) |
 | Thermistor | NTC, NTC | JST SH, 2 pins | the 100 kΩ NTC from the shop or any 100 kΩ NTC |
-| JTAG | 3.3 V, GND, SWDIO, SWCLK | 1.27 mm header | [Programming adapter](https://source-robotics.com/products/jtag-programming-adapter-1-27-pitch) |
+| JTAG | 3.3 V, GND, SWCLK, SWDIO | pads, 1.27 mm pitch | [Programming adapter](https://source-robotics.com/products/jtag-programming-adapter-1-27-pitch), pressed onto the pads; the order is marked in [Installing the bootloader](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/bootloader/) |
 | ADDITIONAL2 | signal, GND | pads | your sensor; the HALL homing mode reads this pin |
 | STEP / DIR | STEP, DIR, GND, 24 V | header | hardware only: the firmware does not support a step/dir interface |
 
@@ -774,12 +779,14 @@ coil, which is what you enter with `#R` and `#L` before calibration.
 | ![17HS24-2104S](https://docs.source-robotics.com/STEPFOC-docs/108/assets/17HS24-2104S.webp){ width="90" } | 17HS24-2104S | NEMA 17, 60 mm | 50 | 1.6 Ω | 3.0 mH | 2.1 A | 500 g | [Stepperonline](https://www.omc-stepperonline.com/nema-17-bipolar-1-8deg-65ncm-92oz-in-2-1a-3-36v-42x42x60mm-4-wires-17hs24-2104s) |
 | ![23HM22-2804S](https://docs.source-robotics.com/STEPFOC-docs/108/assets/23HM22-2804S.webp){ width="90" } | 23HM22-2804S | NEMA 23, 56 mm, 0.9° | 100 | 1.16 Ω | 4.2 mH | 2.8 A | 700 g | [Stepperonline](https://www.omc-stepperonline.com/nema-23-bipolar-0-9deg-1-26nm-178-4oz-in-2-8a-2-5v-57x57x56mm-4-wires-23hm22-2804s) |
 
-Before the first test, set the current limit to the motor's rated current with `#Ilim`; the firmware's default is
-higher than the 17HS08's rating. See [Current limit and loop tuning](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/tuning/).
+After calibration, and before the first test, set the current limit to the motor's rated current with `#Ilim`:
+calibration leaves it at 1600 mA (1700 mA after `#Default`), more than the 17HS08's rating. See
+[Current limit and loop tuning](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/tuning/).
 
 !!! tip "Choosing a motor"
     A lower phase resistance and inductance give a higher speed at a given supply voltage; the velocity constant
-    `KV` that calibration finds tells how fast the motor can turn: roughly 0.8 × Vbus × KV revolutions per minute.
+    `KV` that calibration finds tells how fast the motor can turn: roughly 0.8 × V × KV revolutions per minute,
+    where V is the voltage limit `#Vlim` (6 V by default) or the supply voltage, whichever is lower.
     Motors with visibly uneven windings or a resistance that differs between the two coils calibrate badly.
 
 
@@ -880,8 +887,8 @@ rear screws, with a spacer between the motor and the board that sets the magnet 
    NEMA 17). Tighten them evenly; the board must be parallel to the magnet.
 4. Check the gap: about 1 mm, the magnet not touching the chip.
 
-A NEMA 14 or NEMA 23 motor needs an adapter plate between the motor and the board; the NEMA 23 spacer is in the
-same folder.
+A NEMA 23 motor takes the NEMA 23 spacer from the same folder. A smaller frame, such as NEMA 14, needs an adapter
+plate you make yourself: the repository has none.
 
 !!! warning "The board is bare"
     Nothing on the back of the board may touch the motor's housing. Make sure the spacer keeps the board clear of
@@ -937,8 +944,10 @@ physical swap would do), so the motor calibrates identically with any wiring, an
 counter-clockwise seen from the magnet side. With firmware 103, a reversed coil fails the open-loop step with
 `Open loop: Failed / Switch motor phases and try again!`; swap A+ and A− and calibrate again.
 
-If you want the other direction to be positive, swap the two wires of one coil and calibrate again, or keep the
-wiring and use negative setpoints.
+Because calibration compensates the wiring, the positive direction is tied to the encoder: with firmware 105 and
+newer, swapping the wires of a coil and calibrating again does not change it. The firmware has no setting that
+reverses it (`#Dir` is stored but not used). If you want the other direction to be positive, negate the setpoints
+and the position, speed and current you read back in your host program.
 
 
 ---
@@ -963,7 +972,8 @@ feeds the next driver, so a chain of drivers hangs on one supply cable and one C
   most two or three drivers per chain that draw their full current at the same time, and feed a longer chain from
   both ends or from several supplies.
 - A motor that decelerates pushes energy back into the supply. A lab supply or a battery absorbs it; a supply that
-  cannot (some switch-mode supplies) sees its voltage rise, and the driver raises a Vbus error above 29.5 V.
+  cannot (some switch-mode supplies) sees its voltage rise, and the driver raises a Vbus error above 29 V
+  (`#Vmax`).
 
 ## The cable orientation
 
@@ -1104,7 +1114,7 @@ browsers have: Chrome, Edge, Brave, Opera. Firefox and Safari cannot open serial
 2. Open [motorgui.com](https://motorgui.com/), choose the connection kind, and **Connect**. The browser asks
    which port; pick the adapter's.
 3. The driver's identity appears: hardware version, firmware version, serial number, batch date, whether it is
-   calibrated and activated, and the active errors — what `#Info` prints in a terminal.
+   calibrated and activated, and the active errors: what `#Info`, `#SERNUM` and `#Error` print in a terminal.
 
 If the port is not offered, the browser is not Chromium-based, or another program holds the port (a terminal left
 open, PlatformIO's monitor). If the port opens and nothing appears: the driver is unpowered, or TX and RX are
@@ -1233,8 +1243,9 @@ CR+LF works.
 #Info
 ```
 
-prints the driver's identity: the hardware and firmware version, the serial number, the motor parameters and the
-calibration state. `#Help` (firmware 108) prints a short command reference, `#Error` the active errors.
+prints the driver's identity and state: the hardware and firmware version, the CAN ID, the calibration state and
+the motor parameters. `#Help` (firmware 106 and newer) prints a short command reference, `#Error` the active
+errors, `#Param` the gains and limits.
 
 Every command starts with `#`, and a Set/Get command takes one number after a space: `#P 16384` moves to position
 16384; `#P` alone prints the position. Names are case-sensitive. The whole set is in the
@@ -1262,9 +1273,10 @@ the motor constants Kt, KV and the flux linkage. It runs once per motor; the res
 
 ## 1. Restore the defaults
 
-The EEPROM of a new driver, or of one that ran another motor, can hold values that do not fit: another motor's
-parameters, or junk that shows as `-1` in `#Info`. Calibration starts from what is there, so start from the factory
-values.
+The EEPROM of a new driver, or of one that ran another motor, can hold values that do not fit, such as another
+motor's parameters. Calibration starts from what is there, so start from the factory values. (A damaged
+configuration should not show up with firmware 106 and newer, which checks the stored blocks at power-up and
+replaces a damaged one with the defaults; if `#Info` still shows `-1` somewhere, restoring the defaults fixes it.)
 
 === "Motor GUI"
     *Default* in the settings.
@@ -1274,8 +1286,9 @@ values.
     #Default
     ```
 
-This also resets the serial number, hardware version and batch date the driver reports; note what `#Info` printed
-if you need them. [Saving the configuration](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/saving/) says what else it does.
+This also sets the CAN node ID to 0 and resets the serial number, hardware version and batch date stored in the
+EEPROM; note the hardware version and batch date `#Info` prints if you need them.
+[Saving the configuration](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/saving/) says what else it does.
 
 ## 2. Enter the motor parameters
 
@@ -1296,11 +1309,12 @@ value left at 0, and accepts only 50, 75, 100 or 125 pole pairs.
 
 <figure markdown="span">
   ![An example datasheet](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Motor_specs.webp){ width="900" }
-  <figcaption>Figure 17: The three values on a typical datasheet, here for the 17HS16-2004S1: 1.8°, 1.1 Ω, 2.6 mH.</figcaption>
+  <figcaption>Figure 13: The three values on a typical datasheet, here for the 17HS16-2004S1: 1.8°, 1.1 Ω, 2.6 mH.</figcaption>
 </figure>
 
 The current loop bandwidth (`#Cbw`, 500 Hz by default) decides the gains calibration computes from R and L;
-leave it for now, [Current limit and loop tuning](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/tuning/) comes back to it.
+leave it for now, [Current limit and loop tuning](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/tuning/) comes back to it. It is not saved: after a power
+cycle it is 500 Hz again.
 
 ## 3. Run it
 
@@ -1313,7 +1327,7 @@ leave it for now, [Current limit and loop tuning](https://docs.source-robotics.c
     #Cal
     ```
 
-The LED flashes every 0.5 s while the routine runs, and the driver prints each step as it goes:
+The LED flashes fast while the routine runs, and the driver prints each step as it goes:
 
 ```
 ----------------
@@ -1327,6 +1341,8 @@ Inductance = 0.002600H
 Kp_iq = ...
 Ki_iq = ...
 Open loop direction: good
+Calibrating angle offset... stage 1/13, sweep point 0
+...
 Angle offset is: ...
 Phase order is good!
 KV is: ...
@@ -1347,15 +1363,25 @@ What the steps are:
 | Magnet test | the encoder sees enough field: a magnet is there and close enough. The test says nothing about centring, the gap or the glue | `Magnet test: Failed`: magnet missing, too far, or axially magnetised |
 | Vbus test | the supply is within limits | `Vbus test: Failed` |
 | Resistance, inductance | the entered values are not 0; they are printed back and Kp_iq, Ki_iq computed from them and the bandwidth | `Resistance test: Failed` / `Inductance test: Failed`, with `Please enter your stepper resistance by using #R command` |
-| Open loop | the motor is stepped open loop; the encoder must see it turn. The direction it turned is remembered, so a reversed coil is compensated from here on | `Open loop: Failed` / `Switch motor phases and try again!`: the encoder saw no rotation |
-| Angle offset | the motor is driven to find the offset between encoder zero and electrical zero. It spins quickly one way, then the other, for up to two minutes | `Phase order is wrong!` / `Switch motor phases and try again!`: the commutation check got no response from the motor on two tries. A line `Spin-confirm delta: … ticks (need > 8192), Vbus: … mV` says how far the motor turned and at what voltage |
-| Kt, KV, flux linkage | the motor spins fast for a moment and the constants are computed from the back-EMF | — |
+| Open loop | the motor is stepped open loop at a fixed 5000 mV. The direction the encoder saw is remembered, so a reversed coil is compensated from here on | nothing in this firmware: the step always reports `good`, and a motor that did not turn fails the next step |
+| Angle offset | a short spin checks that the motor turns (two tries, 90 electrical degrees apart); then the field locks the rotor and a sweep finds the offset at which both directions turn alike. It prints `Calibrating angle offset...` with its progress every half second | `Phase order is wrong!` / `Switch motor phases and try again!`: the motor did not turn on either try. A line `Spin-confirm delta: … ticks (need > 8192), Vbus: … mV` says how far it turned and at what voltage |
+| Kt, KV, flux linkage | the motor spins at 500 mA for about a second; KV is the speed it reaches per volt of supply, Kt follows as 8.27 ÷ KV and the flux linkage from Kt | — |
 
-!!! note "The two 'Switch motor phases' messages"
-    They are left over from firmware 103, which needed the coils wired a particular way. Since firmware 105 the
-    wiring is detected and compensated, so these messages mean the motor did not turn or did not respond: a coil
-    not connected or shorted, a current limit at 0, a supply too weak, or a magnet that slips. Swapping wires does
-    not fix them.
+A whole run takes up to about a minute, most of it in the angle-offset search. When a step fails, the log ends
+with `Calibration failed!`, the driver goes to idle, the motor counts as not calibrated and the LED stays on
+steadily. Nothing is saved; fix the cause and run `#Cal` again.
+
+!!! note "The 'Switch motor phases' message"
+    It is left over from firmware 103, which needed the coils wired a particular way. Since firmware 105 the
+    wiring is detected and compensated, so `Phase order is wrong!` / `Switch motor phases and try again!` means the
+    motor did not turn or did not respond: a coil not connected or shorted, a supply too weak, or a magnet that
+    slips. Swapping wires does not fix it. (`Open loop: Failed` with the same advice cannot appear in this
+    release.)
+
+!!! note "The measured values are estimates"
+    KV, Kt and the flux linkage come from one short spin and differ a little from one run to the next, more on
+    motors with uneven windings. For the loops this does not matter; for a torque estimate in newton-metres,
+    measure Kt yourself.
 
 ## 4. Save
 
@@ -1369,6 +1395,11 @@ What the steps are:
 
 Without it the calibration is gone at the next power cycle. The driver goes to idle and the LED shows normal
 operation; the state shows *Calibrated* and the constants.
+
+!!! warning "Set the current limit next"
+    Calibration leaves the current limit at 1600 mA, whatever it was before: more than a small motor's rating.
+    Set it for your motor with `#Ilim` before the motor runs, and save again
+    ([Current limit and loop tuning](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/tuning/)).
 
 ## When to calibrate again
 
@@ -1386,12 +1417,15 @@ shaft between calibration and use: fix the magnet and calibrate again.
 | `Magnet test: Failed` | no magnet, magnet too far (more than about 1.5 mm), or an axially magnetised magnet |
 | `Vbus test: Failed` | supply off, too low, or the cable the wrong way round (if the driver survived it) |
 | `Resistance test: Failed`, `Inductance test: Failed` | the resistance or the inductance still 0 |
-| `Open loop: Failed` | the motor did not turn: a coil open, the open-loop voltage (`#Openv`) too low for the motor, no supply current |
-| `Phase order is wrong!` | see the note above: the motor did not respond to the commutation check; check the wiring, the current limit and the magnet |
-| the routine stops in a step and prints nothing more | reset the driver (`#Reset`) and try again |
-| success, but the LED stays on and no error is reported | the state shows `-1` somewhere: the EEPROM is not in the firmware's layout; restore the defaults, enter the parameters, calibrate again |
+| `Phase order is wrong!` | see the note above: the motor did not turn on the spin check; check the four wires and their solder joints, the supply and its current limit, and the magnet |
+| the routine stops in a step and prints nothing more | reset the driver (`#Reset`) and try again; the angle-offset search prints a progress line every half second, so wait for a minute before you decide |
+| success, but the LED stays on and no error is reported | should not happen with firmware 106 and newer, which replaces a damaged configuration block with the defaults at power-up. If `#Info` shows `-1` somewhere, restore the defaults, enter the parameters and calibrate again |
 
-The angle-offset step alone can be repeated with `#Calangle`.
+`#Calangle` runs an angle-offset search on its own, with an older routine than the one `#Cal` uses: it gives up
+after about two minutes and keeps the offset it reached. After a change of motor, magnet or wiring, run the whole
+`#Cal` instead.
+
+Calibration runs over the serial connection only: a terminal, or Motor GUI over the serial adapter, not over CAN.
 
 
 ---
@@ -1408,9 +1442,14 @@ which is what makes tuning quick.
 ## The current limit
 
 Set the current limit to the rated phase current of your motor in mA (the datasheet value; the tested motors'
-ratings are in [Tested motors](https://docs.source-robotics.com/STEPFOC-docs/108/03-technical-data/tested-motors/)). The firmware clamps the limit to the
-driver's 2800 mA and does not trip on phase current by itself; the MOSFET driver's hardware protection only
-catches a hard fault. A limit above the motor's rating overheats the motor.
+ratings are in [Tested motors](https://docs.source-robotics.com/STEPFOC-docs/108/03-technical-data/tested-motors/)). It is 1700 mA after `#Default`, and
+calibration leaves it at 1600 mA, whatever it was before. `#Ilim` clamps the limit to the driver's 2800 mA. The
+firmware does not trip on phase current by itself and does not monitor the driver stage. A limit above the motor's
+rating overheats the motor.
+
+!!! warning "Over CAN the limit is not clamped"
+    Send_Limits stores the current limit as sent, without the 2800 mA clamp of `#Ilim`. A host program must keep
+    it within the motor's rating and 2800 mA.
 
 === "Motor GUI"
     In the limits set the current limit, then **Save**.
@@ -1427,7 +1466,7 @@ Crunching and whining sounds at speed usually mean the current limit, or the cur
 
 <figure markdown="span">
   ![The cascaded loops](https://docs.source-robotics.com/STEPFOC-docs/108/assets/cascadeloop.webp){ width="800" }
-  <figcaption>Figure 13: The position loop commands the velocity loop, which commands the current loop.</figcaption>
+  <figcaption>Figure 14: The position loop commands the velocity loop, which commands the current loop.</figcaption>
 </figure>
 
 Tune from the inside out: the current loop first, then velocity, then position. Before you start:
@@ -1481,7 +1520,7 @@ Run the motor over the whole range of speeds and loads it will see, with a load 
 
 <figure markdown="span">
   ![The PD loop](https://docs.source-robotics.com/STEPFOC-docs/108/assets/PDloop.webp){ width="800" }
-  <figcaption>Figure 14: The impedance loop: a spring (KP) and a damper (KD) around the position setpoint, plus a current feedforward.</figcaption>
+  <figcaption>Figure 15: The impedance loop: a spring (KP) and a damper (KD) around the position setpoint, plus a current feedforward.</figcaption>
 </figure>
 
 In PD mode the motor behaves like a spring and a damper: the torque is `KP × (setpoint − position) + KD × (speed
@@ -1492,9 +1531,13 @@ explains the loop.
 
 ## Limits
 
-- The velocity limit (`#Vlimit`) clamps the speed the loops may command, in encoder ticks per second. A rough
-  maximum for your motor is 0.8 × Vbus × KV × 16384 / 60 ticks per second, with KV from calibration.
-- The voltage limit (`#Vlim`) clamps the voltage of the current loops in mV; 0 uses the supply voltage.
+- The velocity limit (`#Vlimit`, 800000 by default) clamps the speed the loops may command, in encoder ticks per
+  second. A rough maximum for your motor is 0.8 × V × KV × 16384 / 60 ticks per second, with KV from calibration
+  and V the lower of the voltage limit and the supply voltage.
+- The voltage limit (`#Vlim`) clamps the voltage of the current loops in mV. It is 6000 mV by default: a stepper's
+  low resistance makes the current loop unstable with the full supply voltage, and the firmware's own guidance is
+  6000 mV for a phase resistance below 2 Ω. The limit also caps the top speed. 0, or a value above the supply
+  voltage, uses the supply voltage.
 - `#Rstint 1` resets the integrators on every new setpoint, which avoids windup when a program sends one setpoint
   after another with large steps.
 
@@ -1515,9 +1558,24 @@ Nothing you set survives a power cycle until you save it.
     #Save
     ```
 
-Saving writes the whole configuration to the EEPROM: the motor parameters and the calibration, every gain and
-limit, the CAN node ID, the heartbeat and watchdog settings, the thermistor and LED settings and the gripper flag.
-Over CAN, Send_Save_config does the same. Save after calibration, after tuning, and after changing the node ID.
+Saving writes the configuration to the EEPROM: the motor parameters and the calibration, every gain and limit,
+the CAN node ID (and the bootloader's board ID with it), the heartbeat and watchdog settings, the thermistor and LED
+settings and the gripper flag. Over CAN, Send_Save_config does the same. Save after calibration, after tuning, and
+after changing the node ID.
+
+Some settings are not kept and start from their defaults at every power-up: the current loop bandwidth (`#Cbw`,
+500 Hz), the idle behaviour (`#Brake` / `#Coast` or Send_Settings: brake), and the open-loop and calibration
+settings (`#Openv`, `#Opens`, `#Vp`, `#Iqoffset`, `#microstep`, `#stepinterval`). The
+[Defaults](https://docs.source-robotics.com/STEPFOC-docs/108/reference/defaults/) reference marks each setting.
+
+!!! warning "A saved watchdog runs from power-up"
+    With a watchdog saved (Send_Watchdog), the driver starts its count at power-up. A host that sends no motion
+    frame or status request within the watchdog time finds the driver in watchdog error, and clears it with
+    Send_Clear_Error. See [Over CAN](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/can/#a-control-loop).
+
+!!! note "The serial number"
+    This firmware does not read the serial number back from the EEPROM at power-up: `#SERNUM` reports 1 until it
+    is set, and every save writes the value held in RAM over the stored one.
 
 ## The defaults
 
@@ -1529,21 +1587,24 @@ Over CAN, Send_Save_config does the same. Save after calibration, after tuning, 
     #Default
     ```
 
-Restoring the defaults writes the factory values to the EEPROM and reloads them. It also resets the serial
-number, the hardware version and the batch date the driver reports, and clears the gripper flag, the heartbeat
-rate and the watchdog; note what the driver reports before you use it. The defaults are listed in the
+Restoring the defaults writes the factory values to the EEPROM and reloads them. It also sets the CAN node ID to
+0 and the thermistor to off, resets the serial number, the hardware version and the batch date stored in the
+EEPROM, and clears the gripper flag, the heartbeat rate and the watchdog. Note the hardware version and batch date
+`#Info` prints before you use it, and give the driver its node ID again afterwards. The defaults are listed in the
 [Defaults](https://docs.source-robotics.com/STEPFOC-docs/108/reference/defaults/) reference.
 
 Use it before the first calibration of a motor, after a firmware update when the driver behaves oddly, and when
-the state shows nonsense values (a `-1`
-where a number should be): the EEPROM then holds a layout the firmware does not expect.
+the state shows nonsense values (a `-1` where a number should be). With firmware 106 and newer that should not
+happen: the driver checks the stored configuration at power-up and replaces a damaged block with the defaults by
+itself.
 
 ## What the driver reports
 
-The state Motor GUI shows, and `#Info` prints, is what is in the EEPROM and what the driver measures: hardware
-and firmware version, serial number, calibration state, resistance, inductance, pole pairs, Kt and KV, the gains
-and limits, the CAN ID, and the active errors. It is the first thing to look at when something is off, and the
-thing to copy into a bug report.
+The state Motor GUI shows is what is in the EEPROM and what the driver measures. In a terminal it takes three
+commands: `#Info` prints the hardware and firmware version, the CAN ID, the calibration state and the motor
+parameters (pole pairs, resistance, inductance, Kt and KV); `#Param` prints the gains and limits; `#Error` the
+active errors. They are the first thing to look at when something is off, and the thing to copy into a bug
+report.
 
 
 ---
@@ -1575,8 +1636,8 @@ The exact layout of every message and command is in the [API reference](https://
 # Control modes
 
 The driver is always in one control mode. A command that carries a setpoint switches to the mode that uses it;
-`#Idle` or Send_Idle switches back to idle. The driver refuses the closed-loop modes while it is not calibrated or
-while an error is active.
+`#Idle` or Send_Idle switches back to idle. The driver refuses every mode except idle, open loop included, while it
+is not calibrated or while an error is active.
 
 ```mermaid
 stateDiagram-v2
@@ -1602,9 +1663,9 @@ passing through idle; a fault is any of the errors on [Errors and recovery](http
 | Velocity | turns at a speed with the velocity and current loops | `#V`, Send_data_pack_1 (5 bytes) | encoder ticks/s |
 | Current (torque) | applies a current, so a torque, with the current loop alone | `#Iq`, Send_data_pack_1 (2 bytes) | mA |
 | PD (impedance) | behaves like a spring and a damper around a position, with `KP` and `KD` | `#PD`, Send_data_pack_PD | encoder ticks |
-| Voltage torque | applies a voltage on the q axis directly, without the current loop | `#Uq` | mV |
-| Open loop | steps the motor like a plain stepper driver, without the encoder | `#Openloop` (continuous), `#gosteps` (a number of steps) | electrical speed; steps |
-| HALL | spins until a sensor on ADDITIONAL2 triggers, then holds the position reached | `#HALL`, Send_data_pack_HALL | encoder ticks/s |
+| Voltage torque | applies a voltage on the q axis directly, without the current loop: clamped to `#Vlim`, not current-limited | `#Uq` | mV |
+| Open loop | steps the motor like a plain stepper driver, without the encoder and without a current limit; see [Open-loop stepping](#open-loop-stepping) | `#Openloop` (continuous), `#gosteps` (a number of microsteps) | electrical rad/s; microsteps |
+| HALL | spins until a sensor on ADDITIONAL2 triggers, then holds the position reached; with a level trigger only while the pin stays at that level | `#HALL`, Send_data_pack_HALL | encoder ticks/s |
 | Gripper | runs the gripper state machine: move to a jaw position with a speed and a current limit | `#Grippos`, Send_gripper_data_pack (with `#Gripper 1`) | 0 to 255 |
 | Calibration | the calibration routine, and the angle-offset step alone | `#Cal`, `#Calangle`, `#Gripcal` | — |
 
@@ -1646,17 +1707,40 @@ The units of this page, with your numbers: 16384 encoder ticks per turn, the pra
 electrical frequency the control loop can follow ([Ratings and limits](https://docs.source-robotics.com/STEPFOC-docs/108/03-technical-data/ratings/)), and
 the torque as Kt times the current.
 
+## Open-loop stepping
+
+`#Openloop` and `#gosteps` drive the coils like a plain stepper driver, without the encoder in the loop. Like every
+other mode, they need a calibrated driver without errors.
+
+- `#Openloop 50` turns the field at 50 electrical rad/s and keeps turning until another command. On a motor with
+  50 pole pairs that is 50 ÷ (2π × 50), about 0.16 revolutions per second.
+- `#gosteps 64` makes 64 microsteps, then goes to idle; a negative number goes the other way. `#microstep` (16 by
+  default) is the number of microsteps per electrical cycle, which is four full steps: with 16, `#gosteps 16` turns
+  a 1.8° motor by 7.2°. `#stepinterval` (1000 µs by default) is the time between two microsteps, rounded down to
+  whole control cycles of 160 µs.
+- `#Openv` (5000 mV by default) is the voltage both put on the coils.
+
+None of these settings is saved.
+
+!!! warning "Open loop is not current-limited"
+    Open loop applies a voltage, not a current, and `#Ilim` does not apply. At standstill and low speed the coil
+    current is about `#Openv` ÷ R: the default 5000 mV drives about 4.5 A through a 1.1 Ω coil, more than the
+    driver's 2.8 A and the motor's rating. Set `#Openv` to the rated current × R first (2 A × 1.1 Ω = 2200 mV), and
+    keep the test short.
+
 ## Positive rotation
 
 <figure markdown="span">
   ![Positive rotation](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_ORIENTATION.webp){ width="700" }
-  <figcaption>Figure 15: Positive rotation is counter-clockwise looking at the encoder magnet. A positive current turns the motor that way, a positive speed too, and the position grows.</figcaption>
+  <figcaption>Figure 16: Positive rotation is counter-clockwise looking at the encoder magnet. A positive current turns the motor that way, a positive speed too, and the position grows.</figcaption>
 </figure>
 
 ## Which mode am I in?
 
-`#Mode` prints the mode. Its text for the voltage-torque mode reads `Gripper mode` in this firmware release (a
-leftover label); `#Info` and the behaviour of the motor are the reliable check.
+`#Mode` prints the mode: `Idle mode`, `Position control`, `Speed control`, `Current control`, `PD control`,
+`Open loop`, `Gripper mode` or `Gripper calib mode`. In this firmware release the voltage-torque mode reads
+`Gripper mode` too (a leftover label), and HALL mode, the angle-offset search (`#Calangle`), open-loop steps
+(`#gosteps`) and gripper mode print nothing. The behaviour of the motor is the reliable check there.
 
 
 ---
@@ -1685,7 +1769,7 @@ A command is `#`, a name, optionally a space and one number, and a line ending:
 - A **Set/Get** command with a number sets the value and prints it; without a number it only prints it. `#P 16384`
   moves to position 16384 and prints the position; `#P` prints the position.
 - An **action** command takes no number: `#Cal`, `#Save`, `#Idle`.
-- A command the parser does not know is answered with `Unknown command` (firmware 108). A few names the parser
+- A command the parser does not know is answered with `Unknown command` (firmware 106 and newer). A few names the parser
   accepts have no handler and are answered with nothing; the [UART reference](https://docs.source-robotics.com/STEPFOC-docs/108/reference/uart/) lists them.
 - 256000 baud, 8N1, 3.3 V.
 
@@ -1734,7 +1818,7 @@ Every command is in the [UART reference](https://docs.source-robotics.com/STEPFO
 
 # Over CAN
 
-CAN is the interface for running a machine: compact frames, a fixed cost per message, up to 16 drivers on one bus,
+CAN is the interface for running a machine: compact frames, a fixed cost per message, up to 14 drivers on one bus,
 and a host that can be a PC, a microcontroller or a robot control box. The driver answers a motion command with
 its position, speed and current in the same frame exchange, so a control loop on the host needs one frame out and
 one frame back per motor and cycle.
@@ -1746,7 +1830,7 @@ error state:
 
 <figure markdown="span">
   ![The CAN identifier](https://docs.source-robotics.com/STEPFOC-docs/108/assets/CANID.PNG){ width="600" }
-  <figcaption>Figure 16: Bits 10 to 7 of the identifier are the node ID, bits 6 to 1 the command ID, bit 0 the error bit.</figcaption>
+  <figcaption>Figure 17: Bits 10 to 7 of the identifier are the node ID, bits 6 to 1 the command ID, bit 0 the error bit.</figcaption>
 </figure>
 
 - **Node ID**, bits 10 to 7: which driver, 0 to 15. A driver acts only on frames with its own node ID and sends
@@ -1775,8 +1859,11 @@ single precision. Flags inside a byte are numbered from the most significant bit
 ## A control loop
 
 Send Send_data_pack_1 at a fixed rate, 100 Hz to 1 kHz, with the setpoint for this cycle; read Respond_data_pack_1
-for the position, speed and current of the last cycle. Every valid frame resets the watchdog, so with
-Send_Watchdog set to a few cycle times the motor stops when the host stops. The heartbeat is the other way round:
+for the position, speed and current of the last cycle. Every valid motion frame, and every status request the
+driver answers, resets the watchdog; the setting frames (gains, limits, Idle, Clear, Save) do not. So with
+Send_Watchdog set to a few cycle times the motor stops when the host stops. A watchdog kept with Send_Save_config
+runs from power-up: a host that does not start its loop within the watchdog time finds the driver in watchdog
+error, and clears it with Send_Clear_Error. The heartbeat is the other way round:
 Send_Heartbeat_Setup makes the driver send a frame on its own every N ms when it has nothing else to send, so the
 host can see it is alive.
 
@@ -1792,7 +1879,7 @@ sequenceDiagram
         D-->>H: Respond_data_pack_1: position, speed, current, the error bit
     end
     D-->>H: heartbeat, whenever nothing else was sent for N ms
-    Note over D: no valid frame within the watchdog time: watchdog error, the motor stops
+    Note over D: no motion frame or status request within the watchdog time: watchdog error, the motor stops
 ```
 
 ## From a PC
@@ -1995,14 +2082,14 @@ error bit in every CAN frame it sends. It stays there until the error is cleared
 ## Seeing the error
 
 - **The LED**: on and not flashing means error mode (or not calibrated). Three short flashes and a pause is
-  normal operation; flashing every 0.5 s is calibration.
+  normal operation; fast flashing is calibration.
 - **`#Error`** prints `In error state!` or `No errors!`, followed by one line per active error.
 - **Send_Respond_State_of_Errors** returns every flag as a bit; **the error bit** of any frame says whether there
   is one.
 
 | Normal operation | Calibration | Error mode |
 |---|---|---|
-| ![Three short flashes and a pause](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Normal.webp){ width="180" } | ![Flashing every 0.5 s](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Calib.webp){ width="180" } | ![On, steady](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Error2.webp){ width="180" } |
+| ![Three short flashes and a pause](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Normal.webp){ width="180" } | ![Fast flashing during calibration](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Calib.webp){ width="180" } | ![On, steady](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Error2.webp){ width="180" } |
 
 In error mode the LED does not flash: it stays on, as in the photo on the right.
 
@@ -2010,13 +2097,13 @@ In error mode the LED does not flash: it stays on, as in the photo on the right.
 
 | Error | `#Error` line | Cause | What to do |
 |---|---|---|---|
-| Vbus | `Vbus error` | the supply voltage is below 9 V or above 29.5 V (`#Vmax`) | check the supply and the cable; a decelerating motor can push the voltage up |
-| Encoder | `Encoder error` | the magnet is not detected or the reading is invalid | magnet distance and type, see [The encoder magnet](https://docs.source-robotics.com/STEPFOC-docs/108/04-mounting/magnet/) |
-| Driver | `Driver error (undervoltage, thermal shutdown, or overcurrent)` | the MOSFET driver's own protection tripped | lower the current limit, cool the driver, check for a short between the motor leads |
-| Velocity | `Velocity error` | the speed exceeded the limit | lower the commanded speed or raise `#Vlimit` |
+| Vbus | `Vbus error` | the supply voltage is below 9 V or above 29 V (`#Vmax`, 29000 mV after `#Default`) | check the supply and the cable; a decelerating motor can push the voltage up |
+| Encoder | `Encoder error` | the encoder reports no magnet: missing, too far away or too weak | magnet distance and type, see [The encoder magnet](https://docs.source-robotics.com/STEPFOC-docs/108/04-mounting/magnet/) |
+| Driver | `Driver error (undervoltage, thermal shutdown, or overcurrent)` | reserved: this firmware never raises it, because it does not monitor the driver stage | — |
+| Velocity | `Velocity error` | the speed passed 30,000,000 ticks/s, a fixed threshold that `#Vlimit` does not change; in practice only a runaway reaches it | check the magnet and the calibration |
 | Temperature | `Temp error` | the thermistor reads more than `#Tlim` (75 °C by default), with `#Term 1` | let the motor cool; lower the current limit |
 | E-stop | `Received ESTOP command` | Send_ESTOP was received | clear it when it is safe |
-| Watchdog | `Watchdog error` | no valid CAN frame within the watchdog time (Send_Watchdog) | the host stopped sending; fix the host, then clear |
+| Watchdog | `Watchdog error` | no motion frame or status request within the watchdog time (Send_Watchdog) | the host stopped sending; fix the host, then clear |
 | Not calibrated | `Not calibrated` | the motor has not been calibrated since `#Default`, or the EEPROM is invalid | run `#Cal` and `#Save` |
 | Current | `Current error` | reserved; this firmware never raises it | — |
 
@@ -2025,15 +2112,17 @@ In error mode the LED does not flash: it stays on, as in the photo on the right.
 `#Clear` or Send_Clear_Error clears the flags and goes to idle. An error whose cause is still present comes
 straight back: a Vbus error at 2 V stays until the supply is right; once the supply is 24 V, one `#Clear` returns
 the driver to normal operation. The calibration error clears only by calibrating (or, for a motor you know is
-calibrated, `#Calibrated 1`).
+calibrated, `#Calibrated 1`). A gripper E-stop comes back on every control cycle until its E-stop bit is 0 again:
+`#Gripstop 0`, or a Send_gripper_data_pack with the bit clear; then clear. While it is active, `#Error` prints only
+`In error state!`.
 
 ## When the driver does not answer
 
 - No LED at all: no power. Check DC+ and DC− and the cable orientation.
 - LED on, no answer on UART: the baud rate (256000), TX and RX crossed, the adapter's port.
 - No answer on CAN: the node ID, the termination (about 60 Ω across the bus, unpowered), 1 Mbit/s on the adapter.
-- `#Info` shows `-1` or nonsense: the EEPROM holds a layout the firmware does not expect; `#Default`, then
-  calibrate again.
+- `#Info` shows `-1` or nonsense: with firmware 106 and newer this should not happen, because the driver replaces a
+  damaged configuration block with the defaults at power-up. If it does, `#Default`, then calibrate again.
 
 [Troubleshooting](https://docs.source-robotics.com/STEPFOC-docs/108/08-troubleshooting/) goes through the symptoms one by one.
 
@@ -2061,9 +2150,12 @@ commands only work with the flag set.
 
 ## Calibrating the gripper
 
-After every power-up the gripper has to find its end stops: `#Gripcal` or Send_gripper_calibrate. The jaws move
-to both ends; the positions become 0 (open) and 255 (closed). The motor itself must be calibrated (`#Cal`) and
-saved before that, once.
+After every power-up the gripper has to find its end stops: `#Gripcal` or Send_gripper_calibrate. The jaws open
+until they stop, then close until they stop, slowly and at 500 mA; the positions become 0 (open) and 255 (closed).
+The driver prints nothing when it is done. If it has not found both end stops within about 24 s it gives up, and
+the gripper stays uncalibrated. Check the result with `#Gripinfo` (`Gripper calibrated is: 1`) or the
+`gripper_calibrated` bit of Respond_Gripper_data_pack: a move is carried out only once the gripper is calibrated.
+The motor itself must be calibrated (`#Cal`) and saved before that, once.
 
 ## Moving
 
@@ -2087,11 +2179,14 @@ and the object detection:
 | 3 | the position was reached |
 
 An empty Send_gripper_data_pack (0 bytes) only asks for the state. Send_gripper_data_pack's E-stop bit raises the
-gripper E-stop error; `#Gripstop 1` does the same over UART.
+gripper E-stop error; `#Gripstop 1` does the same over UART. The error stays: while the E-stop bit is 1 the driver
+raises it again on every control cycle, and `#Error` prints only `In error state!`. To recover, clear the bit
+(`#Gripstop 0`, or a Send_gripper_data_pack with the bit 0), then `#Clear` or Send_Clear_Error.
 
 !!! warning "Current"
     The firmware does not limit the current you give a gripper move. The safe range depends on the gripper's
-    mechanics and motor; the gripper's manual gives it. The driver's hard limit is 2800 mA.
+    mechanics and motor; the gripper's manual gives it. The driver is rated for 2.8 A, but nothing enforces that
+    here: a gripper move uses the current as sent.
 
 ## Where the details are
 
@@ -2105,7 +2200,7 @@ the [UART reference](https://docs.source-robotics.com/STEPFOC-docs/108/reference
 
 # Firmware
 
-The driver's firmware is open source and released as numbered builds. A driver shipped with firmware 104 or newer
+The driver's firmware is open source and released as numbered builds. A driver shipped with firmware 105 or newer
 carries a bootloader and updates itself over UART or CAN; an older driver needs the bootloader installed once with
 a programming adapter.
 
@@ -2129,7 +2224,7 @@ The release notes of every release up to the one this site describes are in the 
 
 # Releases and versions
 
-A firmware release is a number: 103, 104, 105, … Every release is a tag `V<number>` in the
+A firmware release is a number: 103, 105, 106, … Every release is a tag `V<number>` in the
 [firmware repository](https://github.com/Source-Robotics/STEPFOC-stepper-controller) and a GitHub release that
 carries the image `stepfoc-firmware-V<number>.bin`, a manifest `firmware.json` with the image's size, SHA-256 and
 the commit it was built from, and the release notes. The notes are the firmware's changelog; the
@@ -2143,7 +2238,10 @@ the commit it was built from, and the release notes. The notes are the firmware'
 
 prints `Software version: <number>` among the rest. Over CAN, Send_Respond_Device_Info returns it as the third
 byte. From firmware 105 the number is the build's own version; before that it was read from the EEPROM and could
-be stale after an update until `#Default`.
+be stale after an update until `#Default`. So a driver that reports 103 may still carry the bootloader: the builds
+of the `bootloader-version` branch before 105 read 103 from the EEPROM too. To tell, power the driver up while
+`bl_flash.py list` or Motor GUI's *Scan bootloaders* is polling: a driver with the bootloader answers in its first
+two seconds.
 
 ## Which release does this site describe?
 
@@ -2154,12 +2252,12 @@ which bootloader, Python library and PAR6 runtime.
 
 ## The Spectral Micro counterpart
 
-Each STEPFOC release has a Spectral Micro release with the same changes; the numbers differ by one. The
-compatibility table lists the pairs.
+A change that applies to both drivers comes to the Spectral Micro too, but not always in a release with the same
+number: STEPFOC 108 matches Spectral Micro 107. The compatibility table lists the pairs.
 
 ## The two branches
 
-Releases from 104 on are built from the `bootloader-version` branch of the repository, whose firmware is linked
+Releases from 105 on are built from the `bootloader-version` branch of the repository, whose firmware is linked
 to run above the bootloader. The `main` branch holds the firmware of release 103 and earlier, linked to run
 without a bootloader, and is not updated. A board running 103 is documented by version `103` of this site; to
 move it to a current release, see [Installing the bootloader on an older board](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/bootloader/).
@@ -2171,7 +2269,7 @@ move it to a current release, see [Installing the bootloader on an older board](
 
 # The bootloader
 
-Every driver shipped with firmware 104 or newer carries a small bootloader in the first 12 KB of its flash. It
+Every driver shipped with firmware 105 or newer carries a small bootloader in the first 12 KB of its flash. It
 starts the firmware on a normal boot, and it loads a new firmware over UART or CAN when a host asks, so a driver is
 updated without a programming adapter and without opening anything. The bootloader is open source:
 [stm32f103c-bootloader](https://github.com/Source-Robotics/stm32f103c-bootloader), shared with the Spectral Micro.
@@ -2193,13 +2291,14 @@ first `0x3000` bytes belong to the bootloader and the firmware never touches the
 1. On a reset, the bootloader runs first. If the magic word is in RAM and the reset was a software reset, it
    checks the firmware's stack pointer and reset vector and jumps straight into the firmware: about 10 ms, the
    normal boot.
-2. Otherwise it initialises the clocks, CAN, UART and its watchdog, and **listens for a host for 2 s**.
+2. Otherwise it initialises the clocks, CAN, UART and its watchdog, and **listens for a host for 2 s**. The LED
+   flashes three times at the start, then blinks while the bootloader listens, faster while a host talks to it.
 3. With no host, and a firmware whose stored CRC is valid, it sets the magic word and resets; the next boot takes
    the fast path.
 4. With a host talking, it stays as long as the host keeps talking: 3 s after the last command, 60 s once a flash
    is in progress. Any `PING` resets the timer.
-5. With no valid firmware (never flashed, or a flash that was interrupted), it stays in bootloader mode and waits.
-   The LED is off; the driver answers nothing on `#Info`.
+5. With no valid firmware (never flashed, or a flash that was interrupted), it stays in bootloader mode and waits,
+   with the LED blinking; the driver answers nothing on `#Info`.
 
 ## Entering the bootloader
 
@@ -2213,8 +2312,10 @@ first `0x3000` bytes belong to the bootloader and the firmware never touches the
 The bootloader has a board ID of its own, 0 to 13, stored in its configuration page. 14 and 15 do not exist
 for it: its command frame, identifier `0x700`, decodes as node 14 in the firmware's identifier scheme, so those
 two node IDs are reserved. **Give drivers node IDs 0 to 13.** The firmware accepts `#CANID 14` and `15`, but the
-bootloader then keeps its old board ID and a firmware update over CAN cannot reach the driver. The firmware keeps it in step with its CAN node ID: setting the node ID (`#CANID`,
-Send_CAN_ID) writes the bootloader's board ID too, so a driver answers the host tools under its node ID. A
+bootloader then keeps its old board ID and a firmware update over CAN cannot reach the driver. The firmware keeps
+the board ID in step with its CAN node ID when the configuration is saved: `#Save` or Send_Save_config writes the
+node ID into the bootloader's board ID, so a driver answers the host tools under its node ID. A node ID that is set
+but not saved is not the board ID yet. A
 replacement board ships as ID 0; two boards with the same ID on one bus corrupt each other's flash stream, so
 give the new board its ID alone on the bus first (`set-id` in the host tool).
 
@@ -2224,10 +2325,12 @@ Over **CAN** (1 Mbit/s, standard 11-bit identifiers) the host commands on identi
 (`board_id`, `cmd`, two parameters); the board replies on `0x701 + board_id` with 5 bytes (`board_id`, `cmd`,
 error code, a 16-bit parameter); the firmware image streams in bulk frames on `(board_id << 7) | sequence`,
 16 frames of 8 bytes per chunk, with no reply per frame. Over **UART** (256000 baud) the same commands travel in
-framed packets `[0xBB][CMD][LEN][BOARD_ID][DATA…][CRC16]` with the same 5-byte reply.
+framed packets `[0xBB][CMD][LEN][BOARD_ID][DATA…][CRC16]` with the same 5-byte reply, but the first four have other
+numbers.
 
-Commands: `WBUF` (1), `WPAGE` (2), `WCRC` (3), `PING` (4), `SET_ID` (5), `ERASE_APP` (6), `STREAM_BEGIN` (7),
-`STREAM_STATUS` (8). Error codes: `0` OK, `1` invalid offset, `2` invalid CRC, `3` flash write failed, `4` invalid
+Commands over CAN: `WBUF` (1), `WPAGE` (2), `WCRC` (3), `PING` (4), `SET_ID` (5), `ERASE_APP` (6),
+`STREAM_BEGIN` (7), `STREAM_STATUS` (8). Over UART: `PING` (1), `WBUF` (2), `WPAGE` (3), `WCRC` (4), and the
+others as over CAN, plus `STREAM_DATA` (9), which carries the stream frames. Error codes: `0` OK, `1` invalid offset, `2` invalid CRC, `3` flash write failed, `4` invalid
 page number. A flash is: ping, reset the firmware if it answers, ping until the bootloader answers, `ERASE_APP`
 (about 3.5 s), then for each 1 KB page `STREAM_BEGIN`, 8 chunks of 16 frames, `STREAM_STATUS`, `WPAGE` with the
 page's CRC32; finally `WCRC` with the page count and the image's CRC32. The bootloader stores the CRC and
@@ -2262,7 +2365,7 @@ puts it there once, with a programming adapter at `0x08000000`; from then on the
 
 # Updating through the bootloader
 
-A driver with the bootloader (firmware 104 or newer) is updated over the UART connector or the CAN bus: the host
+A driver with the bootloader (firmware 105 or newer) is updated over the UART connector or the CAN bus: the host
 tells the driver to reset, the bootloader waits two seconds for a host, and the host streams the new image into it.
 No programming adapter, and nothing to open.
 
@@ -2302,8 +2405,8 @@ is the `stepfoc-firmware-V<number>.bin` from the GitHub release.
 
 !!! note "Board ID and node ID"
     The bootloader has its own board ID (0 to 13), kept in its configuration page, separate from the firmware's
-    CAN node ID. The firmware keeps the two in step when the node ID is set (`#CANID`, Send_CAN_ID), so a driver's
-    bootloader ID is normally its node ID.
+    CAN node ID. The firmware keeps the two in step when the configuration is saved (`#Save`, Send_Save_config),
+    so a driver's bootloader ID is normally its node ID. After `#CANID`, save before you flash over CAN.
 
 ## From a PAR6 control box
 
@@ -2358,7 +2461,7 @@ once, with a programming adapter on the JTAG connector. After that, every update
 
 <figure markdown="span">
   ![The JTAG pads and the adapter](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_JTAG.webp){ width="700" }
-  <figcaption>Figure 18: The JTAG pads. The adapter is pressed onto them; a little pressure makes the contact.</figcaption>
+  <figcaption>Figure 18: The JTAG pads, marked 3V3, GND, SWCLK, SWDIO. The adapter is pressed onto them; a little pressure makes the contact.</figcaption>
 </figure>
 
 ## Steps
@@ -2368,7 +2471,7 @@ once, with a programming adapter on the JTAG connector. After that, every update
 3. Erase the chip, or at least the application region: the old firmware and the bootloader must not overlap.
 4. Program the bootloader binary at address **`0x08000000`**.
 5. Disconnect the adapter, power the driver. The bootloader finds no valid application and waits in bootloader
-   mode (the LED stays off).
+   mode, with the LED blinking.
 6. Flash the firmware release through the bootloader, over UART or CAN, as in
    [Updating through the bootloader](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/update/).
 7. `#Info` shows the new release. `#Default`, enter the motor parameters, calibrate, `#Save`.
@@ -2417,9 +2520,17 @@ size fails to link.
 - **Through the bootloader**: flash the built `firmware.bin` with `bl_flash.py` or Motor GUI as in
   [Updating through the bootloader](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/update/). This is how a release is installed, and works on any driver with
   the bootloader.
-- **With the programming adapter**: *Upload* in PlatformIO uses ST-LINK and writes the image at `0x08003000`. The
-  bootloader must already be on the board; the upload does not touch it. The serial monitor (the plug icon) opens
-  the UART at 256000 with `send_on_enter`, so you can type commands to the driver from the same window.
+- **With the programming adapter**: *Upload* in PlatformIO uses ST-LINK and writes the image at `0x08003000`. It
+  leaves the bootloader alone, but it does not update the image CRC the bootloader keeps; see the warning below.
+  The serial monitor (the plug icon) opens the UART at 256000 with `send_on_enter`, so you can type commands to
+  the driver from the same window.
+
+!!! warning "After an ST-LINK upload the firmware does not start"
+    At every power-up the bootloader checks the firmware against the CRC it stored at the last flash through the
+    bootloader. After an upload with the programming adapter that CRC no longer matches, so the bootloader stays in
+    bootloader mode, with the LED blinking, instead of starting the new firmware. Flash the same `firmware.bin`
+    once more through the bootloader to recover. Once the bootloader is on the board, install every firmware
+    through it.
 
 <figure markdown="span">
   ![Upload in VS Code](https://docs.source-robotics.com/STEPFOC-docs/108/assets/VSUPLOAD.png){ width="700" }
@@ -2484,7 +2595,7 @@ flowchart TD
 | LED on, nothing on the terminal | 256000 baud; TX to RX and RX to TX; the adapter's port; 3.3 V adapter; the line ending CR+LF |
 | LED on, nothing on CAN | the node ID; 1 Mbit/s on the adapter; termination (about 60 Ω across CAN H and CAN L with everything unpowered); the CAN cable's orientation |
 | `Unknown command` | the name's spelling and case: `#Kpiq`, not `#kpiq` |
-| the LED is off and nothing works after a firmware update | the bootloader has no valid firmware: flash again, see [Updating through the bootloader](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/update/) |
+| the LED keeps blinking and nothing answers after a firmware update | the bootloader has no valid firmware, or its CRC does not match after an upload with the programming adapter: flash again through the bootloader, see [Updating through the bootloader](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/update/) |
 
 ## Motor GUI
 
@@ -2496,7 +2607,7 @@ flowchart TD
 | *No connection* on CAN | the CANvas adapter's port; the bus termination; the node ID of the driver; 1 Mbit/s |
 | the calibration does not start | calibration runs over the serial connection only, not over CAN |
 | *Unsaved changes* after a power cycle | the settings were not saved to the driver; Save writes them |
-| the firmware update finds no bootloader | a driver with firmware 103 has no bootloader: [Installing the bootloader on an older board](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/bootloader/) |
+| the firmware update finds no bootloader | power-cycle the driver while the GUI scans, to catch the bootloader's 2 s window. A driver with firmware 103 or older from the `main` branch has no bootloader: [Installing the bootloader on an older board](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/bootloader/) |
 
 ## Calibration
 
@@ -2507,10 +2618,10 @@ come back most:
 |---|---|
 | `Magnet test: Failed` | magnet too far, axially magnetised, or missing |
 | the motor wobbles left and right during calibration | one coil is not connected |
-| `Open loop: Failed` | the motor did not turn: a coil open, the open-loop voltage (`#Openv`) too low |
+| the motor does not move in the open-loop step | a coil open or not soldered; calibration then fails at the next step with `Phase order is wrong!` |
 | `Phase order is wrong!` | the motor did not respond to the commutation check; wiring, current limit, magnet |
 | calibration succeeds, the motor then runs badly or in the wrong direction | the magnet slipped on the shaft; glue it and calibrate again |
-| calibration succeeds but the LED stays on and `#Error` shows nothing | `#Info` shows `-1`: `#Default`, parameters, calibrate again |
+| calibration succeeds but the LED stays on and `#Error` shows nothing | should not happen with firmware 106 and newer, which replaces a damaged configuration block with the defaults at power-up; if `#Info` shows `-1`: `#Default`, parameters, calibrate again |
 
 ## The motor
 
@@ -2521,7 +2632,7 @@ come back most:
 | weak torque | `#Ilim` low; the supply's current limit; the wrong `#R`/`#L` (the computed current gains are off) |
 | the motor is hot | normal for a stepper at its rated current; lower `#Ilim`, enable the thermistor |
 | it stops with a Vbus error when decelerating | the supply cannot absorb the returned energy; a different supply, or a brake resistor |
-| it stops with a velocity error | the speed limit `#Vlimit`, or a load that lets the motor overrun |
+| it stops with a velocity error | the speed passed 30,000,000 ticks/s, a fixed threshold that `#Vlimit` does not change: a runaway, so check the magnet and the calibration |
 | it loses position with a load | that is a torque limit: a stepper under FOC does not lose steps, it falls behind; raise `#Ilim` within the motor's rating, or more motor |
 | it holds position with a sawtooth noise | the position loop gain; the magnet distance |
 
@@ -2539,9 +2650,9 @@ poorly and run rough. The [tested motors](https://docs.source-robotics.com/STEPF
 
 ## The driver gets hot or shuts down
 
-The MOSFET driver stage shuts down on its own overtemperature or overcurrent and reports a driver error. Lower
-the current limit, give the board airflow, check the motor leads for a short. Near 2.8 A the driver needs
-cooling.
+The firmware does not monitor the driver stage: if the stage stops on its own, for heat or a short, the motor
+loses torque and no error is reported. Lower the current limit, give the board airflow, check the motor leads for
+a short. Near 2.8 A the driver needs cooling.
 
 ## After a firmware update
 
@@ -2683,8 +2794,8 @@ Which firmware release works with which bootloader, Python library, PAR6 runtime
 
 | Firmware | Released | Bootloader | Spectral Micro equivalent | Python library (Spectral-BLDC) | PAR6 runtime | STEPFOC PCB | Docs |
 |---|---|---|---|---|---|---|---|
-| 108 | 2026-08-26 | required (installed on boards shipped with 104 or newer) | 107 | 1.20 or newer | 0.9 or newer | v1 | 108 |
-| 107 | 2026-08-24 | required | 106 | 1.20 or newer | 0.9 or newer | v1 | not published |
+| 108 | 2026-08-26 | required (installed on boards shipped with 105 or newer) | 107 | 1.20 or newer | 0.9 or newer | v1 | 108 |
+| 107 | 2026-08-24 | required | 107, without its calibration fix (which came with STEPFOC 108) | 1.20 or newer | 0.9 or newer | v1 | not published |
 | 106 | 2026-07-05 | required | 106 | 1.19 or newer | 0.9 or newer | v1 | not published |
 | 105 | 2026-07-04 | required (the first release that needs it) | 105 | 1.19 or newer | 0.9 or newer | v1 | not published |
 | 103 | 2025-12-28 | none (flashed with a programming adapter) | 101 | 1.17 or newer | 0.9 or newer | v1 | 103 |
@@ -2703,9 +2814,9 @@ it. The board reports its hardware revision in `#Info` (`Hardware version`) and 
 
 | Revision | Since | Changes | Firmware | Manual |
 |---|---|---|---|---|
-| v1 | first production | — | 103 and newer; 104 and newer ship with the bootloader | this manual |
+| v1 | first production | — | 101 and newer; 105 and newer ship with the bootloader | this manual |
 
-Boards shipped before firmware 104 have no bootloader; [Installing the bootloader on an older board](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/bootloader/)
+Boards shipped with firmware 103 or older have no bootloader; [Installing the bootloader on an older board](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/bootloader/)
 brings them to the current firmware.
 
 
@@ -2751,9 +2862,12 @@ not from a count of pulses.
 Calibration supplies the constants this needs. The pole pairs come from the step angle. The current loop gains
 follow from the coil's resistance $R$ and inductance $L$ and the chosen bandwidth $\omega_c = 2\pi f_c$ (`#Cbw`):
 $K_p = L\,\omega_c$ and $K_i = R\,\omega_c$ cancel the coil's electrical time constant and give a first-order
-response at $f_c$. The angle offset is found by driving a current along the $d$ axis and reading where the rotor
-settles. The velocity constant $K_V$ comes from the back-EMF the spinning motor generates, and the torque
-constant follows from it: in SI units $K_t = 1/K_V$ (with $K_V$ in rpm/V, $K_t \approx 9.55/K_V$ Nm/A).
+response at $f_c$. The firmware computes a discrete-time form of these and divides $K_p$ by an empirical factor
+of 7, so its gains are softer than the formula. The angle offset is found by locking the rotor with the stator
+field and reading where it settles, then refined by a sweep for the offset at which the motor turns alike in both
+directions. In theory the torque constant follows from the velocity constant: in SI units $K_t = 1/K_V$ (with
+$K_V$ in rpm/V, $K_t \approx 9.55/K_V$ Nm/A). The firmware estimates $K_V$ from the speed the motor reaches at
+500 mA per volt of supply and uses $K_t = 8.27/K_V$; treat both as estimates.
 
 ## The cascade of loops
 
@@ -2782,7 +2896,7 @@ leave the loops to correct what is left, which gives a faster, smoother response
 the whole demand from the error.
 
 An integrator accumulates error over time, and keeps accumulating while the output is at its limit; the overshoot
-this causes when the limit is released is *windup*. The velocity loop's integrator is clamped to the velocity
+this causes when the limit is released is *windup*. The velocity loop's integrator is clamped to the current
 limit, and `#Rstint` resets the integrators on every new setpoint, which suits a host that sends one setpoint
 after another in large steps.
 
@@ -2866,14 +2980,14 @@ yields, whatever the loops ask. Set it for the motor's rating, and for the mecha
 
 **Back-EMF**
 :   The voltage a turning motor generates in its own coils, proportional to speed. It opposes the supply, limits the
-    top speed at a given voltage, and is what calibration measures to find KV, Kt and the flux linkage.
+    top speed at a given voltage. Calibration estimates KV from the speed the motor reaches per volt.
 
 **Board ID**
-:   The bootloader's own address, 0 to 13, stored in its configuration page. The firmware keeps it equal to the CAN
-    node ID.
+:   The bootloader's own address, 0 to 13, stored in its configuration page. Saving the configuration (`#Save`)
+    writes the CAN node ID into it.
 
 **Bootloader**
-:   The program in the first 12 KB of the driver's flash on boards shipped with firmware 104 or newer. It starts the
+:   The program in the first 12 KB of the driver's flash on boards shipped with firmware 105 or newer. It starts the
     firmware, and loads a new firmware over UART or CAN. See [The bootloader](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/the-bootloader/).
 
 **Calibration**
@@ -2882,7 +2996,8 @@ yields, whatever the loops ask. Set it for the motor's rating, and for the mecha
     and measures Kt, KV and the flux linkage. Its result is kept with `#Save`.
 
 **CAN ID** (node ID)
-:   The address of the driver on the CAN bus, 0 to 15. It occupies bits 10 to 7 of the 11-bit CAN frame identifier;
+:   The address of the driver on the CAN bus, 0 to 13 (the bootloader reserves 14 and 15). It occupies bits 10 to 7
+    of the 11-bit CAN frame identifier;
     the command ID occupies bits 6 to 1 and the error bit is bit 0.
 
 **CANvas**
@@ -2938,13 +3053,12 @@ yields, whatever the loops ask. Set it for the motor's rating, and for the mecha
     which gives smooth, quiet, efficient motion with no lost steps and a known position.
 
 **Firmware release**
-:   One build of the firmware, numbered 103, 104, 105, … and tagged `V103`, `V104`, … in the firmware repository.
+:   One build of the firmware, numbered 103, 105, 106, … and tagged `V103`, `V105`, … in the firmware repository.
     `#Info` prints the release a driver runs. This documentation describes one release; the version selector
     switches between them.
 
 **Flux linkage**
-:   The rotor's magnetic flux as seen by a coil, in weber; found by calibration from the back-EMF, together with
-    KV and Kt.
+:   The rotor's magnetic flux as seen by a coil, in weber; calibration computes it from Kt.
 
 **Gripper mode**
 :   The driver running a gripper (`#Gripper 1`): jaw positions from 0 (open) to 255 (closed), a speed, a current
@@ -2952,7 +3066,7 @@ yields, whatever the loops ask. Set it for the motor's rating, and for the mecha
 
 **HALL mode**
 :   Homing against a sensor on ADDITIONAL2: the motor turns at a set speed until the sensor triggers, then holds
-    the position reached.
+    the position reached. With a level trigger it holds only while the pin stays at that level.
 
 **Heartbeat**
 :   A frame (Respond_Heartbeat) the driver sends at a set interval so the host knows it is alive. Off by default.
@@ -3008,8 +3122,8 @@ yields, whatever the loops ask. Set it for the motor's rating, and for the mecha
     error.
 
 **Watchdog**
-:   A timer the driver resets with every valid CAN frame it receives. When it is set (Send_Watchdog) and runs out,
-    the driver reports a watchdog error and stops.
+:   A timer the driver resets with every motion frame and every status request it answers. When it is set
+    (Send_Watchdog) and runs out, the driver reports a watchdog error and stops.
 
 
 ---
@@ -3292,7 +3406,7 @@ Firmware 106 and older wrote the speed into the feedforward instead of the PD lo
 
 <div class="cmd-facts" markdown><span class="fact">ID 31</span><span class="fact">host → driver</span><span class="fact">4 bytes</span><span class="fact">Python: `Send_data_pack_HALL()`</span></div>
 
-Homing against a sensor: the driver spins at the given speed until the input on the ADDITIONAL2 pin shows the trigger condition, then latches the position it reached as its position setpoint and holds it. Sending the command again while the driver is already in HALL mode does not re-arm it; leave the mode first.
+Homing against a sensor: the driver spins at the given speed until the input on the ADDITIONAL2 pin shows the trigger condition, then latches the position it reached as its position setpoint and holds it. With a level trigger (0 or 1) it holds only while the pin stays at that level: when the pin changes back, the driver spins on again until the level returns. The edge trigger (2) holds after the first edge. Sending the command again while the driver is already in HALL mode does not re-arm it; leave the mode first.
 
 **4 bytes**
 
@@ -3334,7 +3448,7 @@ The driver's answer to Send_data_pack_HALL: the position and the state of the se
 | Byte | Bit | Field | Type | Meaning |
 |---|---|---|---|---|
 | 0-2 |  | position | signed 24-bit | encoder ticks |
-| 3 | 7 | HALL_trigger | bit | 1 while the driver waits for the trigger, 0 once it triggered and holds |
+| 3 | 7 | HALL_trigger | bit | 1 while the driver waits for the trigger (with a level trigger, also again after the pin left the level), 0 while it holds |
 | 3 | 6 | additional_pin2 | bit | the raw level of the ADDITIONAL2 pin |
 | 3 | 5 | hall_index | bit | 1 once the trigger has been seen (latched) |
 
@@ -3460,7 +3574,7 @@ The driver does not answer this command.
 
 <div class="cmd-facts" markdown><span class="fact">ID 20</span><span class="fact">host → driver</span><span class="fact">8 bytes</span><span class="fact">Python: `Send_Limits()`</span></div>
 
-Sets the speed limit and the current limit the loops may reach. The current limit is clamped by the firmware to the driver's maximum of 2800 mA.
+Sets the speed limit and the current limit the loops may reach. The firmware stores the current limit as sent: unlike `#Ilim` over UART, it is not clamped to the driver's maximum of 2800 mA. Send 2800 mA or less, and no more than the motor's rated current.
 
 **8 bytes**
 
@@ -3565,7 +3679,7 @@ The driver answers with **Send_Respond_Voltage**.
 
 <div class="cmd-facts" markdown><span class="fact">ID 25</span><span class="fact">host → driver as a remote frame, driver → host as a data frame</span><span class="fact">remote frame, 0 bytes</span><span class="fact">Python: `Send_Respond_Device_Info()`</span></div>
 
-Asks for the driver's identity: hardware version, batch date and serial number from the EEPROM, and the firmware release (from firmware 105 on this is the build's own version; before, a value from the EEPROM).
+Asks for the driver's identity: hardware version and batch date from the EEPROM, the serial number, and the firmware release (from firmware 105 on this is the build's own version; before, a value from the EEPROM). This firmware does not read the serial number back from the EEPROM at power-up: it reports 1 until `#SERNUM` sets it.
 
 **The frame** (7 bytes)
 
@@ -3574,7 +3688,7 @@ Asks for the driver's identity: hardware version, batch date and serial number f
 | 0 |  | HARDWARE_VERSION | unsigned 8-bit | PCB revision |
 | 1 |  | BATCH_DATE | unsigned 8-bit | production batch |
 | 2 |  | SOFTWARE_VERSION | unsigned 8-bit | firmware release, e.g. 108 |
-| 3-6 |  | SERIAL_NUMBER | unsigned 32-bit | serial number |
+| 3-6 |  | SERIAL_NUMBER | unsigned 32-bit | serial number as held in RAM: 1 after a power-up |
 
 The driver answers with **Send_Respond_Device_Info**.
 
@@ -3592,10 +3706,10 @@ Asks for every error flag and the calibrated, activated and watchdog states.
 |---|---|---|---|---|
 | 0 | 7 | error | bit | any error is active |
 | 0 | 6 | temperature_error | bit | motor over the temperature limit |
-| 0 | 5 | encoder_error | bit | magnet not detected or misaligned |
+| 0 | 5 | encoder_error | bit | the encoder reports no magnet (too weak a field) |
 | 0 | 4 | vbus_error | bit | supply voltage outside the limits |
-| 0 | 3 | driver_error | bit | the MOSFET driver reports undervoltage, thermal shutdown or overcurrent |
-| 0 | 2 | velocity_error | bit | speed over the limit |
+| 0 | 3 | driver_error | bit | reserved; never set by this firmware (STEPFOC does not read a fault output of its driver stage) |
+| 0 | 2 | velocity_error | bit | speed above 30,000,000 ticks/s, a fixed threshold (not #Vlimit) |
 | 0 | 1 | current_error | bit | reserved; never set by this firmware |
 | 0 | 0 | estop_error | bit | Send_ESTOP was received |
 | 1 | 7 | calibrated | bit | the motor is calibrated |
@@ -3681,13 +3795,13 @@ Identity, saving, resetting, errors, the watchdog, the heartbeat and the setting
 
 <div class="cmd-facts" markdown><span class="fact">ID 11</span><span class="fact">host → driver</span><span class="fact">1 bytes</span><span class="fact">Python: `Send_CAN_ID()`</span></div>
 
-Gives the driver a new node ID, 0 to 13 (the firmware accepts up to 15, but the bootloader reserves 14 and 15: a driver on one of those cannot be updated over CAN). Setting the ID also sets the bootloader's board ID. The driver answers to the new ID at once; the ID is kept over a power cycle only after Send_Save_config.
+Gives the driver a new node ID, 0 to 13 (the firmware accepts up to 15, but the bootloader reserves 14 and 15: a driver on one of those cannot be updated over CAN). Saving the configuration (Send_Save_config) also writes the ID into the bootloader's board ID. The driver answers to the new ID at once; the ID is kept over a power cycle only after Send_Save_config.
 
 **1 bytes**
 
 | Byte | Bit | Field | Type | Meaning |
 |---|---|---|---|---|
-| 0 |  | ID | unsigned 8-bit | 0 to 15 |
+| 0 |  | ID | unsigned 8-bit | 0 to 13; 14 and 15 are accepted but reserved by the bootloader |
 
 The driver does not answer this command.
 
@@ -3717,7 +3831,7 @@ The driver does not answer this command.
 
 <div class="cmd-facts" markdown><span class="fact">ID 13</span><span class="fact">host → driver</span><span class="fact">0 bytes</span><span class="fact">Python: `Send_Save_config()`</span></div>
 
-Writes the current configuration (gains, limits, calibration, CAN ID, heartbeat, watchdog, gripper flag) to the EEPROM.
+Writes the current configuration (gains, limits, calibration, CAN ID, heartbeat, watchdog, gripper flag) to the EEPROM, and the CAN ID into the bootloader's board ID. The idle behaviour of Send_Settings and the current loop bandwidth are not kept. It also writes the serial number held in RAM, which is 1 after a power-up unless `#SERNUM` set it, over the stored one.
 
 The driver does not answer this command.
 
@@ -3737,7 +3851,7 @@ The driver does not answer this command.
 
 <div class="cmd-facts" markdown><span class="fact">ID 1</span><span class="fact">host → driver</span><span class="fact">0 bytes</span><span class="fact">Python: `Send_Clear_Error()`</span></div>
 
-Clears the error flags and goes to idle. An error whose cause is still present comes straight back. A calibration error is cleared only by calibrating.
+Clears the error flags and goes to idle. An error whose cause is still present comes straight back. A calibration error is cleared only by calibrating. A gripper E-stop comes back until the E-stop bit of Send_gripper_data_pack is 0 again.
 
 The driver does not answer this command.
 
@@ -3747,7 +3861,7 @@ The driver does not answer this command.
 
 <div class="cmd-facts" markdown><span class="fact">ID 15</span><span class="fact">host → driver</span><span class="fact">5 bytes</span><span class="fact">Python: `Send_Watchdog()`</span></div>
 
-Sets the watchdog: every valid CAN frame the driver receives resets it; when the time runs out the driver reports a watchdog error and stops. 0 turns it off (the default). The action byte is stored but not acted on by this firmware: the driver always stops into its idle behaviour.
+Sets the watchdog: when the time runs out the driver reports a watchdog error and stops. Every valid motion frame (Send_data_pack_1, Send_data_pack_PD, Send_data_pack_HALL, Send_gripper_data_pack) and every status request the driver answers resets it; the setting frames (gains, limits, Idle, Clear, Save, Settings and Send_Watchdog itself) do not. 0 turns it off (the default). The action byte is stored but not acted on by this firmware: the driver always stops into its idle behaviour. Send_Save_config keeps the watchdog, and a kept watchdog runs from power-up: a host that sends no motion frame or status request within the time finds the driver in watchdog error, and clears it with Send_Clear_Error.
 
 **5 bytes**
 
@@ -3778,7 +3892,7 @@ Sets the heartbeat interval in ms; 0 turns the heartbeat off (the default). Kept
 
 <div class="cmd-facts" markdown><span class="fact">ID 35</span><span class="fact">host → driver</span><span class="fact">0 bytes</span></div>
 
-Sets boolean settings that have no command of their own: a mask byte says which settings the frame touches, a value byte gives their new values; settings outside the mask are left alone. Bit 0 is the idle behaviour: 1 brake (phases shorted), 0 coast. Added in firmware 108 (Spectral Micro 107). The Python library has no call for it yet.
+Sets boolean settings that have no command of their own: a mask byte says which settings the frame touches, a value byte gives their new values; settings outside the mask are left alone. Bit 0 is the idle behaviour: 1 brake (phases shorted), 0 coast. The setting is not kept by Send_Save_config: at power-up the driver brakes. Added in firmware 107. The Python library has no call for it yet.
 
 **2 bytes**
 
@@ -3820,10 +3934,10 @@ The gripper command, for a driver set up as a gripper (`#Gripper 1`, saved). Pos
 |---|---|---|---|---|
 | 0 |  | Position | unsigned 8-bit | 0 fully open, 255 fully closed |
 | 1 |  | Speed | unsigned 8-bit | 0 slowest, 255 fastest |
-| 2-3 |  | Current | signed 16-bit | current limit of the move in mA; not clamped by the firmware, see the gripper manual for the safe range |
+| 2-3 |  | Current | signed 16-bit | current limit of the move in mA; not clamped by the firmware, not even to the driver's 2800 mA; see the gripper manual for the safe range |
 | 4 | 7 | Activate | bit | 1 activate the gripper, 0 deactivate |
 | 4 | 6 | Action | bit | 1 go to the position, 0 idle |
-| 4 | 5 | E-stop | bit | 1 raises the gripper E-stop error |
+| 4 | 5 | E-stop | bit | 1 raises the gripper E-stop error, again on every control cycle until a frame with this bit 0 arrives; then Send_Clear_Error |
 | 4 | 4 | Release direction | bit | read by the firmware but not used |
 
 The driver answers with **Respond_Gripper_data_pack**.
@@ -3855,9 +3969,9 @@ The driver's answer to Send_gripper_data_pack: position, measured current, and t
 | 3 | 7 | gripper_activated | bit | 1 activated |
 | 3 | 6 | gripper_action_status | bit | 1 going to the position, 0 idle, auto-release or calibrating |
 | 3 | 5-4 | gripper_object_detection | 2 bits | bit 5 is the low bit, bit 4 the high bit: 0 moving, 1 object detected while closing, 2 object detected while opening, 3 at the position |
-| 3 | 3 | gripper_temperature_error | bit |  |
-| 3 | 2 | gripper_timeout_error | bit |  |
-| 3 | 1 | gripper_estop_error | bit |  |
+| 3 | 3 | gripper_temperature_error | bit | a copy of the thermistor temperature error |
+| 3 | 2 | gripper_timeout_error | bit | a copy of the CAN watchdog error (Send_Watchdog), not a move timeout |
+| 3 | 1 | gripper_estop_error | bit | the E-stop bit of Send_gripper_data_pack (or #Gripstop 1) was set |
 | 3 | 0 | gripper_calibrated | bit | 1 calibrated |
 
 ---
@@ -3881,7 +3995,8 @@ hand. [Over UART](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation
 
 - A **Set/Get** command sets the value when a number follows and prints the current value either way.
 - A **Get** command only prints.
-- An **Action** command does something; a number after it is ignored.
+- An **Action** command does something; a number after it is ignored. The exceptions are `#Idle` and `#PWM`:
+  with a number they are answered `Unknown command`.
 - Names are case-sensitive, at most 19 characters; the number at most 19; the line ends with LF (CR before it is
   fine). 256000 baud, 8N1, 3.3 V.
 - A name the parser does not know is answered `Unknown command`.
@@ -3996,20 +4111,20 @@ The parser also accepts `#EN`, `#SIN`, `#SPWM`, `#Vmin`, `#flux`, `#zz`, which h
 | `#Id` | Set/Get | float: current setpoint in mA | Sets the Id setpoint; normally left at 0. | the measured Id in mA |
 | `#V` | Set/Get | int: speed setpoint in encoder ticks/s | Velocity control with the given speed. Enters **velocity** mode. | the measured speed in ticks/s |
 | `#Uq` | Set/Get | int: voltage in mV | Voltage-torque mode with the given q-axis voltage (no current loop). Enters **voltage torque** mode. | the Uq setpoint in mV |
-| `#Ud` | Set/Get | int: voltage in mV | The d-axis voltage used in voltage-torque mode; does not change the mode. Enters **voltage torque** mode. | the Ud setpoint in mV |
-| `#Brake` | Action |  | Goes to idle with the motor braking (phases shorted); also the idle behaviour from then on. Enters **idle** mode. | `Brake 1` |
-| `#HALL` | Action |  | Homing against the sensor on ADDITIONAL2 at 3000 ticks/s (see Send_data_pack_HALL for the CAN form with a chosen speed and trigger). Enters **HALL** mode. | `HALL` |
-| `#Coast` | Action |  | Goes to idle with the motor coasting (phases open); also the idle behaviour from then on. Enters **idle** mode. | `Coast 0` |
+| `#Ud` | Set/Get | int: voltage in mV | The d-axis voltage used in voltage-torque mode; does not change the mode. | the Ud setpoint in mV |
+| `#Brake` | Action |  | Goes to idle with the motor braking (phases shorted); also the idle behaviour from then on. Not kept by Save: the driver brakes at every power-up. Enters **idle** mode. | `Brake 1` |
+| `#HALL` | Action |  | Homing against the sensor on ADDITIONAL2 at 3000 ticks/s, triggered when the pin is low. It holds while the pin stays low and spins on when the pin goes high again (see Send_data_pack_HALL for the CAN form with a chosen speed and trigger). Enters **HALL** mode. | `HALL` |
+| `#Coast` | Action |  | Goes to idle with the motor coasting (phases open); also the idle behaviour until the next power-up, which brakes again. Not kept by Save. Enters **idle** mode. | `Coast 0` |
 | `#P` | Set/Get | int: position setpoint in encoder ticks | Position control to the given position. Enters **position** mode. | the measured position in ticks |
 | `#PD` | Set/Get | int: position setpoint in encoder ticks | Impedance (PD) control around the given position with the gains KP and KD. Enters **PD** mode. | the measured position in ticks |
 | `#PDV` | Set/Get | int: speed setpoint in encoder ticks/s | The speed setpoint of the PD loop. | the PD speed setpoint |
 | `#PDI` | Set/Get | int: current feedforward in mA | The current feedforward of the PD loop. | the PD current feedforward |
 | `#Idle` | Action |  | Goes to idle; the motor coasts or brakes as set by Brake / Coast. Enters **idle** mode. | `Idle` |
 | `#Close` | Action |  | Leaves open loop and goes back to closed-loop idle. Enters **idle** mode. | nothing |
-| `#microstep` | Set/Get | int: microsteps per full step | The microstepping used by gosteps. | the microstep setting |
-| `#stepinterval` | Set/Get | int: step time | The time between steps for gosteps. | the step interval |
-| `#gosteps` | Set/Get | int: number of steps (sign = direction) | Moves the given number of steps open loop, with the timing of stepinterval and microstep. Enters **open-loop steps** mode. | `Moving for N steps` |
-| `#Openloop` | Set/Get | float: electrical speed | Spins the motor open loop, as a plain stepper, with the voltage set by Openv. Enters **open loop** mode. | the open-loop speed |
+| `#microstep` | Set/Get | int: microsteps per electrical cycle | The microsteps gosteps makes per electrical cycle (four full steps), 16 by default. | the microstep setting |
+| `#stepinterval` | Set/Get | int: step time in µs | The time between two microsteps of gosteps, 1000 µs by default. It is rounded down to whole control cycles of 160 µs, and is 160 µs at the least. | the step interval |
+| `#gosteps` | Set/Get | int: number of microsteps (sign = direction) | Moves the given number of microsteps open loop, one every stepinterval, at the voltage set by Openv, then goes to idle. With microstep 16, 16 steps are one electrical cycle: four full steps, 7.2° on a 1.8° motor. Enters **open-loop steps** mode. | `Moving for N steps` |
+| `#Openloop` | Set/Get | float: electrical speed in rad/s | Spins the motor open loop, as a plain stepper, with the voltage set by Openv. The voltage is not current-controlled and Ilim does not apply: see Open-loop stepping on Control modes. Enters **open loop** mode. | the open-loop speed |
 
 
 ---
@@ -4020,8 +4135,8 @@ The parser also accepts `#EN`, `#SIN`, `#SPWM`, `#Vmin`, `#flux`, `#zz`, which h
 
 | Command | Kind | Argument | What it does | Response |
 |---|---|---|---|---|
-| `#Vlimit` | Set/Get | int: speed in encoder ticks/s | The speed limit; the velocity integrator is clamped to it. | the current limit |
-| `#Vlim` | Set/Get | int: voltage in mV | The voltage limit of the current loops (Ud and Uq); 0 means use the supply voltage. | the current limit in mV |
+| `#Vlimit` | Set/Get | int: speed in encoder ticks/s | The speed limit: it clamps the speed setpoint of the velocity loop, and in position mode the speed the position loop asks for. The velocity integrator is clamped to the current limit (Ilim), not to this. | the current limit |
+| `#Vlim` | Set/Get | int: voltage in mV | The voltage limit of the current loops (Ud and Uq), 6000 mV by default. It keeps the loops of low-resistance steppers stable, and it also caps the top speed. 0, or a value above the supply voltage, means the supply voltage. | the current limit in mV |
 | `#Kpp` | Set/Get | float: gain | Kp of the position loop. | the current value |
 | `#KP` | Set/Get | float: gain | KP of the impedance (PD) loop. | the current value |
 | `#KD` | Set/Get | float: gain | KD of the impedance (PD) loop. | the current value |
@@ -4031,8 +4146,8 @@ The parser also accepts `#EN`, `#SIN`, `#SPWM`, `#Vmin`, `#flux`, `#zz`, which h
 | `#Kiv` | Set/Get | float: gain | Ki of the velocity loop. | the current value |
 | `#Kiiq` | Set/Get | float: gain | Ki of the Iq current loop; also sets Kiid. | the current value |
 | `#Kiid` | Set/Get | float: gain | Ki of the Id current loop. | the current value |
-| `#Ilim` | Set/Get | int: current in mA | The Iq current limit. Set it to the rated phase current of your motor; the firmware clamps it to 2800 mA. | the current limit |
-| `#Cbw` | Set/Get | float: bandwidth in Hz | The current loop bandwidth calibration uses to compute Kpiq and Kiiq. | the bandwidth |
+| `#Ilim` | Set/Get | int: current in mA | The Iq current limit, 1700 mA after #Default. Set it to the rated phase current of your motor; this command clamps it to 2800 mA (Send_Limits over CAN does not). Calibration sets it to 1600 mA: set it again after Cal. | the current limit |
+| `#Cbw` | Set/Get | float: bandwidth in Hz | The current loop bandwidth calibration uses to compute Kpiq and Kiiq. Not kept by Save: 500 Hz at every power-up, so set it just before Cal. | the bandwidth |
 | `#Rstint` | Set/Get | int: 0 or 1 | Whether the integral accumulators are reset on every new setpoint. | the setting |
 
 
@@ -4049,18 +4164,18 @@ The parser also accepts `#EN`, `#SIN`, `#SPWM`, `#Vmin`, `#flux`, `#zz`, which h
 | `#Kt` | Set/Get | float: Nm/A | The torque constant, found by calibration. | the current value |
 | `#KV` | Set/Get | float: rpm/V | The velocity constant, found by calibration. | the current value |
 | `#Flux` | Set/Get | float: Wb | The flux linkage, found by calibration. Not reachable over UART: the parser accepts `#flux` (lowercase) but the handler expects `Flux`, so neither spelling works. | the current value |
-| `#Cal` | Action |  | Runs the calibration routine (see Motor parameters and calibration). Enter R, L and PP first. | the calibration log |
-| `#Calangle` | Action |  | Runs only the angle-offset step of the calibration. Enters **angle-offset calibration** mode. | `Idle` when done |
+| `#Cal` | Action |  | Runs the calibration routine (see Motor parameters and calibration), over the serial port only. Enter R, L and PP first. It leaves the current limit at 1600 mA. | the calibration log |
+| `#Calangle` | Action |  | Runs only an angle-offset search. It uses an older routine than the one in Cal, which gives up after about two minutes and keeps the offset it reached. Prints `Idle` at once, before the search starts. Enters **angle-offset calibration** mode. | `Idle`, at once |
 | `#Offset` | Set/Get | float: angle in rad | The angle offset between encoder zero and electrical zero, found by calibration. | the current value |
 | `#Iqoffset` | Set/Get | int: current in mA | The current used by the angle-offset search. | the current value |
 | `#Magnet` | Get |  | Reads the encoder's magnet status. | `Magnet Good` or `Magnet Bad` |
-| `#Dir` | Set/Get | int: 0 or 1 | The counting direction of the encoder (1 is the default). | the current value |
+| `#Dir` | Set/Get | int: 0 or 1 | A stored flag that Info prints as `Phase direction`. The control code does not use it in this release; #Default writes 0. | the current value |
 | `#Phase` | Get |  | Prints the phase order found by calibration. | `Phase order is: N` |
 | `#Resv` | Set/Get | int: voltage in mV | The voltage calibration starts the resistance test at (not used by STEPFOC, which does not measure resistance). | the current value |
 | `#Calpwr` | Set/Get | float: power in W | The power calibration may dissipate in the resistance and inductance tests (not used by STEPFOC). | the current value |
-| `#Openv` | Set/Get | int: voltage in mV | The voltage of the open-loop spin, in calibration and with Openloop. | the current value |
-| `#Opens` | Set/Get | float: electrical speed in rad/s | The speed of the open-loop spin in calibration. | the current value |
-| `#Vp` | Set/Get | int: voltage in mV | The voltage of the phase-order search in calibration. | the current value |
+| `#Openv` | Set/Get | int: voltage in mV | The voltage of the open-loop modes (Openloop, gosteps), 5000 mV at power-up. Calibration does not use it: its open-loop spin has a fixed 5000 mV. Not kept by Save. | the current value |
+| `#Opens` | Set/Get | float: electrical speed in rad/s | The electrical speed of Openloop, the same value Openloop sets. Calibration does not use it. | the current value |
+| `#Vp` | Set/Get | int: voltage in mV | Stored, but not used by this firmware: the phase-order check of calibration uses a fixed 3000 mV. | the current value |
 | `#Calibrated` | Set/Get | int: 0 or 1 | The calibrated flag. `#Calibrated 1` clears a calibration error without calibrating; the motor may still be uncalibrated. | the flag |
 | `#PP` | Set/Get | int: pole pairs | The motor's pole pairs: 50 for a 1.8° stepper, 75 for 1.2°, 100 for 0.9°, 125 for 0.72°. Calibration accepts only these values. | the current value |
 
@@ -4073,26 +4188,26 @@ The parser also accepts `#EN`, `#SIN`, `#SPWM`, `#Vmin`, `#flux`, `#zz`, which h
 
 | Command | Kind | Argument | What it does | Response |
 |---|---|---|---|---|
-| `#Vmax` | Set/Get | int: voltage in mV | The supply voltage above which a Vbus error is raised. | `Vmax in mV: N` |
-| `#Save` | Action |  | Writes the configuration to the EEPROM. Do it after calibration and after tuning. | `Save` |
+| `#Vmax` | Set/Get | int: voltage in mV | The supply voltage above which a Vbus error is raised, 29000 mV after #Default. | `Vmax in mV: N` |
+| `#Save` | Action |  | Writes the configuration to the EEPROM, and the CAN ID into the bootloader's board ID. Do it after calibration and after tuning. It also writes the serial number held in RAM (1 after a power-up, unless SERNUM set it) over the stored one. | `Save` |
 | `#Reset` | Action |  | Resets the driver. From firmware 105 the reset lands in the bootloader, which waits 2 s for a flashing host and then starts the firmware again. | nothing |
 | `#Tlim` | Set/Get | int: temperature in °C | The temperature at which the temperature error is raised; 75 by default. | `Temp limit N` |
-| `#Default` | Action |  | Writes the factory defaults to the EEPROM, including the serial number, hardware version and batch date, and clears the gripper flag, heartbeat and watchdog. Back those up first. | `Loaded default config!` |
+| `#Default` | Action |  | Writes the factory defaults to the EEPROM and loads them: the serial number, hardware version and batch date; the CAN ID (0); the gripper flag, heartbeat, watchdog and thermistor (off); the motor parameters and the calibration (cleared); every gain and limit. See Defaults. | `Loaded default config!` |
 | `#Temp` | Get |  | Prints the thermistor temperature. | °C, or `Temp Off` while the thermistor is disabled |
 | `#Term` | Set/Get | int: 0 or 1 | Enables the thermistor measurement and the temperature error (off by default). | the setting |
-| `#Mode` | Get |  | Prints the control mode. | `Idle mode`, `Position control`, `Speed control`, `Current control`, `PD control`, `Open loop`, `Gripper mode` |
+| `#Mode` | Get |  | Prints the control mode. The voltage-torque mode prints `Gripper mode`; HALL, the angle-offset search, open-loop steps (gosteps) and gripper mode print nothing. | `Idle mode`, `Position control`, `Speed control`, `Current control`, `PD control`, `Open loop`, `Gripper mode`, `Gripper calib mode` |
 | `#Vbus` | Get |  | Prints the supply voltage. | mV |
 | `#Error` | Get |  | Prints which errors are active. | `No errors!` or `In error state!` followed by one line per active error |
 | `#Clear` | Action |  | Clears the errors and goes to idle. An error whose cause is still present comes straight back; a calibration error is cleared only by calibrating (or `#Calibrated 1`). Enters **idle** mode. | `Clear errors` |
 | `#Iabc` | Get |  | Prints the phase currents. | `Ia`, `Ib` in mA |
 | `#PWM` | Get |  | Prints the PWM duty values. | the duties |
-| `#Help` | Action |  | Prints a short command reference. Added in firmware 108. | the reference |
-| `#Info` | Get |  | Prints the driver's identity and state: hardware and firmware version, serial number, motor parameters, calibration, errors. | the report |
+| `#Help` | Action |  | Prints a short command reference. Added in firmware 106. | the reference |
+| `#Info` | Get |  | Prints the hardware version, batch date and firmware version, the control loop's execution time, the CAN ID, the calibration state, the thermistor and the supply voltage, the phase direction, phase order and commutation direction, and the motor parameters (pole pairs, angle offset, R, L, Kt, KV). Not the serial number (SERNUM), the gains (Param) or the errors (Error). | the report |
 | `#Param` | Get |  | Prints every gain of every loop. | the gains |
 | `#Cyc` | Set/Get | int: interval in ms (0 = off) | Sends position, speed and Iq on its own every interval: `$ <position> <speed> <Iq>`; for BetterSerialPlotter. | `Cyclic disabled` when turned off |
 | `#Cyca` | Set/Get | int: interval in ms (0 = off) | Like Cyc, in the Arduino plotter format `Position:x,Speed:y,Iq:z`. | `Cyclic disabled` when turned off |
-| `#CANID` | Set/Get | int: 0 to 13 | The CAN node ID. Use 0 to 13: the firmware accepts 14 and 15, but the bootloader reserves them and a driver on one of those cannot be updated over CAN. Setting the ID also sets the bootloader's board ID. Kept over a power cycle after Save. | the ID, or `Invalid CAN ID` |
-| `#SERNUM` | Set/Get | int: number | The serial number stored in the EEPROM. | `Serial number is: N` |
+| `#CANID` | Set/Get | int: 0 to 13 | The CAN node ID. Use 0 to 13: the firmware accepts 14 and 15, but the bootloader reserves them and a driver on one of those cannot be updated over CAN. Kept over a power cycle after Save, which also writes it into the bootloader's board ID. | the ID, or `Invalid CAN ID` |
+| `#SERNUM` | Set/Get | int: number | The serial number. This firmware does not read it back from the EEPROM at power-up: it reports 1 until set, and Save writes the value in RAM over the stored one. | `Serial number is: N` |
 | `#Activate` | Action |  | Sets the activated flag. | `Controller activated` |
 | `#Pullconfig` | Get |  | Prints the whole configuration on one line, for Motor GUI. | the configuration |
 | `#LED` | Set/Get | int: 0 or 1 | Turns the status LED on or off. | the LED state |
@@ -4107,12 +4222,12 @@ The parser also accepts `#EN`, `#SIN`, `#SPWM`, `#Vmin`, `#flux`, `#zz`, which h
 | Command | Kind | Argument | What it does | Response |
 |---|---|---|---|---|
 | `#Gripper` | Set/Get | int: 0 or 1 | Whether this driver is a gripper. Save it; `#Default` clears it. | the flag |
-| `#Gripcal` | Action |  | Starts the gripper calibration (the jaws find their end stops). Enters **gripper calibration** mode. | `Gripper calibration!` |
+| `#Gripcal` | Action |  | Starts the gripper calibration: the jaws find their end stops at 500 mA. It prints nothing when it ends; after about 24 s without both end stops it gives up, uncalibrated. Gripinfo shows the result. Enters **gripper calibration** mode. | `Gripper calibration!` |
 | `#Gripinfo` | Get |  | Prints the gripper state: calibrated, activated, end stops, position, current. | the report |
-| `#Gripstop` | Set/Get | int: 0 or 1 | The gripper E-stop bit. | the bit |
+| `#Gripstop` | Set/Get | int: 0 or 1 | The gripper E-stop bit. While it is 1 the driver raises the gripper E-stop error on every control cycle: set it to 0, then Clear. | the bit |
 | `#Gripact` | Set/Get | int: 0 or 1 | The activate bit. | the bit |
-| `#Gripcur` | Set/Get | int: current in mA | The current limit of gripper moves. The firmware does not clamp it; see the gripper manual for the safe range. | the setpoint |
-| `#Gripvel` | Set/Get | int: 0 to 255 | The speed setpoint of gripper moves. | the setpoint |
+| `#Gripcur` | Set/Get | int: current in mA | The current limit of gripper moves, 400 mA at power-up. The firmware does not clamp it, not even to the driver's 2800 mA; see the gripper manual for the safe range. | the setpoint |
+| `#Gripvel` | Set/Get | int: 0 to 255 | The speed setpoint of gripper moves, 50 at power-up. | the setpoint |
 | `#Grippos` | Set/Get | int: 0 (open) to 255 (closed) | The position setpoint; also activates the gripper, sets the action bit and goes to gripper mode. Enters **gripper** mode. | the current position |
 
 
@@ -4122,159 +4237,88 @@ The parser also accepts `#EN`, `#SIN`, `#SPWM`, `#Vmin`, `#flux`, `#zz`, which h
 
 # Defaults
 
-The values the firmware starts with, from its source (`common.h`) at the release this site describes. `#Default` writes the EEPROM defaults, which are the same unless the firmware comment says otherwise.
+The settings of the firmware at the release this site describes: their start values in `common.h`, and what
+`EEPROM.cpp` does with each.
 
-| Variable | Default | Firmware comment |
-|---|---|---|
-| `SERIAL_NUMBER` | 1 |  |
-| `HARDWARE_VERSION` | 1 | Version of the Spectral BLDC driver PCB |
-| `BATCH_DATE` | 1 | Date the batch was produced |
-| `SOFTWARE_VERSION` | 1 | Software release |
-| `I_AM_GRIPPER` | 1 | Is motor controller gripper (1) or not (0) |
-| `LED_ON_OFF` | 1 | Use LED for status indication |
-| `interrupt_tick` | 0 | Ticks of our interrupt routine |
-| `TEMP_DEG` | 23 | Temperature in degrees celsius |
-| `theta_offset` | 0.0f | will be determined at calibration |
-| `pole_pairs` | 50 | Number of pole pairs of your Stepper motor |
-| `current_control_bandwidth` | 500 | default 200 HZ; Will set PI gains for Q and D current loops based on phase resistance |
-| `sleep_pin_state` | 0 |  |
-| `reset_pin_state` | 0 |  |
-| `Crossover_frequency` | 0.0 | Crossover frequency, in Radians per sample |
-| `DIR_` | 1 | When looking at the magnetic encoder counter-clockwise is POSITIVE rotation. |
-| `Phase_order` | 2 |  |
-| `commutation_dir` | 1 | +1 or -1, auto-detected at calibration so +Iq/+velocity/+rotation map to +encoder rotation |
-| `Thermistor_on_off` | 0 | Are we taking termistor mesurements? 0 is off, 1 is on |
-| `Controller_mode` | 0 | 0 -> idle, 1 -> Positon, 2 -> Speed, 3 -> Current, 4 -> PD, 5 -> Open-loop speed, 6 -> Voltage Torque mode |
-| `Resistance` | 0 | Resistance of SINGLE PHASE of your BLDC motor |
-| `Total_Resistance` | 0 | = 2 * Resistance + 2 * R_sense + 2 *Rdson |
-| `Inductance` | 0 | Inductance of SINGLE PHASE of your BLDC motor |
-| `Kt` | 0 | Torque constant of your BLDC motor |
-| `flux_linkage` | 0 | Flux linkage of your BLDC motor |
-| `KV` | 0 |  |
-| `Max_temperature` | 75 | Max temperature in degrees |
-| `Min_temperature` | -20 | Min temperature in degrees |
-| `Max_Vbus` | 29500 | Max vbus voltage in mV |
-| `Min_Vbus` | 9000 | Min vbus voltage in mV |
-| `execution_time` | 0 | Execution time of our interrupt loops |
-| `watchdog_time_ms` | 0 |  |
-| `watchdog_reset` | 1 |  |
-| `watchdog_action` | 0 | Hold position, Idle, brake |
-| `Heartbeat_rate_ms` | 0 | Motor controller will send data every Heartbeat_rate_ms |
-| `Send_heartbeat` | 0 |  |
-| `Activated` | 0 | If controller is activated or not |
-| `Error` | 0 | General error |
-| `temperature_error` | 0 | Termistor reported error |
-| `encoder_error` | 0 | Encoder magnet is not alligned error |
-| `Vbus_error` | 0 | Vbus voltage is too small or too large |
-| `Driver_error` | 0 | Driver reported error. 3 possible conditions: Undervoltage, thermal shutdown, overcurrent |
-| `Velocity_error` | 0 | We are moving too fast |
-| `Current_error` | 0 | We go past max current |
-| `ESTOP_error` | 0 | If we received estop command |
-| `Watchdog_error` | 0 | If we pass watchdog timeout time |
-| `commutation` | 0 | 0 is space vector, 1 is sine |
-| `Calibration` | 0 | 0 - outside of calibration, 1 inside of calibration, 2 failed calibration, 3 success calibration |
-| `Calibrated` | 1 | 0 if motor is not calibrated, 1 if it is calibrated |
-| `Resistance_calc_voltage` | 1000 | Voltage used to calculate resistance //1000 |
-| `Calibration_power` | 12 | Max power that can dissipate during inductance test. |
-| `Calibration_Inductance_voltage` | 0 | Calculated from Calibration power and resistance |
-| `Open_loop_voltage` | 5000 | Voltage to use when spinning the motor open loop. In mV |
-| `Open_loop_speed` | 20.0 | Speed to be used when spinning the motor open loop. In RAD/s |
-| `Number_of_rotations` | 8 | Number of open loop electrical rotations during calibration |
-| `Phase_voltage` | 5000 | Max voltage to be used during Kv calculation |
-| `Calib_error` | 0 |  |
-| `PP_status` | 0 |  |
-| `Magnet_cal_status` | 0 |  |
-| `Vbus_cal_status` | 0 |  |
-| `Resistance_cal_status` | 0 |  |
-| `Inductance_cal_status` | 0 |  |
-| `Open_loop_cal_status` | 0 |  |
-| `Kt_cal_status` | 0 |  |
-| `Phase_order_status` | 0 |  |
-| `KV_status` | 0 |  |
-| `Spin_confirm_delta` | 0 | diagnostic: last "confirm commutation" spin delta (ticks), on failure |
-| `Spin_confirm_vbus_mV` | 0 | diagnostic: VBUS_mV sampled at that same failure |
-| `cyclic` | 0 | If 1 we Periodically send messages without request from host. |
-| `cyclic_a` | 0 | If 1 we Periodically send messages without request from host. |
-| `cyclic_period` | 0 | We send messages every cyclic_period |
-| `CAN_ID` | 0 | CAN id of THIS motor driver! No 2 motor drivers can share the same ID. |
-| `Wrong_DL` | 0 |  |
-| `CAN_init_error` | 0 | Set if CAN peripheral failed to initialize; CAN bus is skipped, UART stays usable |
-| `temp` | 0 |  |
-| `temp1` | 0 |  |
-| `temp2` | 0 |  |
-| `handle_can` | 0 |  |
-| `brake_coast` | 1 | 1 is brake 0 is coast |
-| `additional1_var` | 0 |  |
-| `additional2_var` | 0 |  |
-| `hall_trigger` | 1 | used to record if hall sensor was triggered or not, normal state of hall is high (1) |
-| `trigger_value` | 0 | 0=low level, 1=high level, 2=any edge |
-| `hall_index` | 0 | output: set to 1 when edge is detected |
-| `additional2_var_prev` | 0 | previous Hall reading, for edge detection |
-| `hall_edge_needs_init` | 1 | flag to snapshot prev on first call after (re-)arming edge mode |
-| `calibration_offset_current` | 500 |  |
-| `temp_var_offset_calib` | 0 |  |
-| `align_state` | 0 |  |
-| `align_counter` | 0 |  |
-| `aligned_angle` | 0 |  |
-| `align_done` | false |  |
-| `calib_done` | false |  |
-| `calib_reset` | false |  |
-| `Velocity_fwd` | 0 |  |
-| `Velocity_bwd` | 0 |  |
-| `Align_stage` | 0 |  |
-| `Align_point` | 0 |  |
-| `microstep` | 16 |  |
-| `gosteps` | 0 |  |
-| `step_interval` | 1000 | step interval in microseconds |
-| `open_loop_move_done` | 0 | 1 = finished, cleared by user |
-| `Voltage_limit` | 6000 | Voltage limit for Ud and Uq voltages. If 0 value of controller.VBUS_mV will be used |
-| `Reset_integral_accumulator` | 0 |  |
-| `Kp_p` | 5 |  |
-| `Position_setpoint` | 0 |  |
-| `P_errSum` | 0 |  |
-| `Kp_v` | 0.007 | basic values that work for most motors but not optimal |
-| `Ki_v` | 0.0005 | basic values that work for most motors but not optimal |
-| `V_errSum` | 0 |  |
-| `Feedforward_speed` | 0 |  |
-| `Velocity_setpoint` | 0 | -1.5 |
-| `Velocity_limit` | 800000 | Clamp integrals to this  [TICKS/s] |
-| `Velocity_limit_error` | 30000000 | [TICKS/s] ; Velocity when we will report error / For stepper speed runout is around 250 nfo000 |
-| `Ki` | 0 | zero location |
-| `Kp_id` | 7 | motor1 |
-| `Ki_id` | 3 | motor1 |
-| `Id_setpoint` | 0 |  |
-| `Kp_iq` | 3 | motor1 |
-| `Ki_iq` | 0.3 | motor1 |
-| `Iq_current_limit` | 1700 |  |
-| `Id_current_limit` | 0 |  |
-| `Feedforward_current` | 0 |  |
-| `KD` | 0.0028 | [Nm*s/rad] |
-| `KP` | 0.1400 | [Nm/rad] |
-| `Uq_setpoint` | 0 |  |
-| `Ud_setpoint` | 0 |  |
-| `Same_command` | 0 |  |
-| `At_position` | 0 |  |
-| `position_setpoint` | 0 |  |
-| `speed_setpoint` | 50 |  |
-| `current_setpoint` | 400 |  |
-| `position` | 0 |  |
-| `speed` | 0 |  |
-| `current` | 0 |  |
-| `calibrated` | 0 |  |
-| `action_status` | 0 | -0 Stopped(or performing activation /automatic release). |
-| `activated` | 0 |  |
-| `object_detection_status` | 3 |  |
-| `temperature_error` | 0 |  |
-| `timeout_error` | 0 |  |
-| `estop_error` | 0 |  |
-| `release_direction` | 0 |  |
-| `estop_status` | 0 |  |
-| `max_open_position` | 10329 |  |
-| `max_closed_position` | -229 |  |
-| `position_ticks` | 0 |  |
-| `max_speed` | 60000 |  |
-| `min_speed` | 500 |  |
-| `In_calibration` | 0 |  |
+- **Start value**: the value in `common.h`. A setting the EEPROM does not keep starts from it at every power-up. A
+  kept setting is replaced at power-up by the value in the EEPROM, so its start value is only seen before that.
+- **After `#Default`**: what `#Default` writes to the EEPROM and loads; — means `#Default` does not change it.
+- **Kept by `#Save`**: whether `#Save` (Send_Save_config) stores it, so that it survives a power cycle.
+
+Internal state (error flags, counters, calibration steps, scratch variables) is left out; the error flags are in
+[Errors and LED states](https://docs.source-robotics.com/STEPFOC-docs/108/reference/errors/).
+
+| Variable | Start value | After `#Default` | Kept by `#Save` | Firmware comment |
+|---|---|---|---|---|
+| `SERIAL_NUMBER` | 1 | 111 in the EEPROM, not read back | written, not read back |  |
+| `HARDWARE_VERSION` | 1 | 1 | yes | Version of the Spectral BLDC driver PCB |
+| `BATCH_DATE` | 1 | 125 | yes | Date the batch was produced |
+| `SOFTWARE_VERSION` | 1 | 108 | no: set by the firmware | Software release |
+| `I_AM_GRIPPER` | 1 | 0 | yes | Is motor controller gripper (1) or not (0) |
+| `LED_ON_OFF` | 1 | 1 | yes | Use LED for status indication |
+| `theta_offset` | 0.0f | 0 | yes | will be determined at calibration |
+| `pole_pairs` | 50 | 0 | yes | Number of pole pairs of your Stepper motor |
+| `current_control_bandwidth` | 500 | — | no | default 200 HZ; Will set PI gains for Q and D current loops based on phase resistance |
+| `DIR_` | 1 | 0 | yes | When looking at the magnetic encoder counter-clockwise is POSITIVE rotation. |
+| `Phase_order` | 2 | 0 | yes |  |
+| `commutation_dir` | 1 | 1 | yes | +1 or -1, auto-detected at calibration so +Iq/+velocity/+rotation map to +encoder rotation |
+| `Thermistor_on_off` | 0 | 0 | yes | Are we taking termistor mesurements? 0 is off, 1 is on |
+| `Resistance` | 0 | 0 | yes | Resistance of SINGLE PHASE of your BLDC motor |
+| `Total_Resistance` | 0 | 0 | yes | = 2 * Resistance + 2 * R_sense + 2 *Rdson |
+| `Inductance` | 0 | 0 | yes | Inductance of SINGLE PHASE of your BLDC motor |
+| `Kt` | 0 | 0 | yes | Torque constant of your BLDC motor |
+| `flux_linkage` | 0 | 0 | yes | Flux linkage of your BLDC motor |
+| `KV` | 0 | 0 | yes |  |
+| `Max_temperature` | 75 | 75 | yes | Max temperature in degrees |
+| `Min_temperature` | -20 | — | no | Min temperature in degrees |
+| `Max_Vbus` | 29500 | 29000 | yes | Max vbus voltage in mV |
+| `Min_Vbus` | 9000 | — | no | Min vbus voltage in mV |
+| `watchdog_time_ms` | 0 | 0 | yes |  |
+| `watchdog_action` | 0 | 0 | yes | Hold position, Idle, brake |
+| `Heartbeat_rate_ms` | 0 | 0 | yes | Motor controller will send data every Heartbeat_rate_ms |
+| `Calibrated` | 1 | 0 | yes | 0 if motor is not calibrated, 1 if it is calibrated |
+| `Resistance_calc_voltage` | 1000 | — | no | Voltage used to calculate resistance //1000 |
+| `Calibration_power` | 12 | — | no | Max power that can dissipate during inductance test. |
+| `Open_loop_voltage` | 5000 | — | no | Voltage to use when spinning the motor open loop. In mV |
+| `Open_loop_speed` | 20.0 | — | no | Speed to be used when spinning the motor open loop. In RAD/s |
+| `Phase_voltage` | 5000 | — | no | Max voltage to be used during Kv calculation |
+| `cyclic_period` | 0 | — | no | We send messages every cyclic_period |
+| `CAN_ID` | 0 | 0 | yes | CAN id of THIS motor driver! No 2 motor drivers can share the same ID. |
+| `brake_coast` | 1 | — | no | 1 is brake 0 is coast |
+| `trigger_value` | 0 | — | no | 0=low level, 1=high level, 2=any edge |
+| `calibration_offset_current` | 500 | — | no |  |
+| `microstep` | 16 | — | no |  |
+| `gosteps` | 0 | — | no |  |
+| `step_interval` | 1000 | — | no | step interval in microseconds |
+| `Voltage_limit` | 6000 | 6000 | yes | Voltage limit for Ud and Uq voltages. If 0 value of controller.VBUS_mV will be used |
+| `Reset_integral_accumulator` | 0 | 0 | yes |  |
+| `Kp_p` | 5 | 5 | yes |  |
+| `Position_setpoint` | 0 | — | no |  |
+| `Kp_v` | 0.007 | 0.007 | yes | basic values that work for most motors but not optimal |
+| `Ki_v` | 0.0005 | 0.0005 | yes | basic values that work for most motors but not optimal |
+| `Feedforward_speed` | 0 | — | no |  |
+| `Velocity_setpoint` | 0 | — | no | -1.5 |
+| `Velocity_limit` | 800000 | 800000 | yes | Clamp integrals to this  [TICKS/s] |
+| `Velocity_limit_error` | 30000000 | — | no | [TICKS/s] ; Velocity when we will report error / For stepper speed runout is around 250 nfo000 |
+| `Kp_id` | 7 | 7 | yes | motor1 |
+| `Ki_id` | 3 | 3 | yes | motor1 |
+| `Id_setpoint` | 0 | — | no |  |
+| `Kp_iq` | 3 | 3 | yes | motor1 |
+| `Ki_iq` | 0.3 | 0.3 | yes | motor1 |
+| `Iq_current_limit` | 1700 | 1700 | yes |  |
+| `Id_current_limit` | 0 | 0 | yes |  |
+| `Feedforward_current` | 0 | — | no |  |
+| `KD` | 0.0028 | 0.0028 | yes | [Nm*s/rad] |
+| `KP` | 0.1400 | 0.1400 | yes | [Nm/rad] |
+| `Uq_setpoint` | 0 | — | no |  |
+| `Ud_setpoint` | 0 | — | no |  |
+| `position_setpoint` | 0 | — | no |  |
+| `speed_setpoint` | 50 | — | no |  |
+| `current_setpoint` | 400 | — | no |  |
+| `action_status` | 0 | — | no | -0 Stopped(or performing activation /automatic release). |
+| `activated` | 0 | — | no |  |
+| `release_direction` | 0 | — | no |  |
+| `estop_status` | 0 | — | no |  |
 
 
 ---
@@ -4288,13 +4332,14 @@ The values the firmware starts with, from its source (`common.h`) at the release
 | Pattern | State |
 |---|---|
 | three short flashes, a pause | normal operation: calibrated, no error |
-| flashing every 0.5 s | calibration running |
+| fast flashing, about ten times a second | calibration running |
+| a few flashes, then blinking for about 2 s after power-up | the bootloader waits for a host before it starts the firmware; it keeps blinking when there is no valid firmware |
 | on, steady | error mode, or not calibrated |
 | off | no power, or `#LED 0` |
 
 | Normal operation | Calibration | Error mode |
 |---|---|---|
-| ![Three short flashes and a pause](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Normal.webp){ width="180" } | ![Flashing every 0.5 s](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Calib.webp){ width="180" } | ![On, steady](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Error2.webp){ width="180" } |
+| ![Three short flashes and a pause](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Normal.webp){ width="180" } | ![Fast flashing during calibration](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Calib.webp){ width="180" } | ![On, steady](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Error2.webp){ width="180" } |
 
 ## The error flags
 
@@ -4305,24 +4350,26 @@ Send_Respond_State_of_Errors (bits numbered from the most significant).
 |---|---|---|---|
 | `Error` | `In error state!` | 0, 7 | any of the flags below is set (also the error bit of every CAN identifier) |
 | `temperature_error` | `Temp error` | 0, 6 | the thermistor reads above `#Tlim` (with `#Term 1`) |
-| `encoder_error` | `Encoder error` | 0, 5 | the magnet is not detected or the reading fails its check |
-| `Vbus_error` | `Vbus error` | 0, 4 | the supply is below 9 V or above `#Vmax` (29.5 V by default) |
-| `Driver_error` | `Driver error (undervoltage, thermal shutdown, or overcurrent)` | 0, 3 | the MOSFET driver's fault output is active |
-| `Velocity_error` | `Velocity error` | 0, 2 | the speed exceeds the limit |
+| `encoder_error` | `Encoder error` | 0, 5 | the encoder reports no magnet (too weak a field) |
+| `Vbus_error` | `Vbus error` | 0, 4 | the supply is below 9 V or above `#Vmax` (29000 mV after `#Default`) |
+| `Driver_error` | `Driver error (undervoltage, thermal shutdown, or overcurrent)` | 0, 3 | never in this firmware; reserved (STEPFOC reads no fault output of its driver stage) |
+| `Velocity_error` | `Velocity error` | 0, 2 | the speed exceeds 30,000,000 ticks/s, a fixed threshold (`Velocity_limit_error`), not `#Vlimit` |
 | `Current_error` | `Current error` | 0, 1 | never in this firmware; reserved |
 | `ESTOP_error` | `Received ESTOP command` | 0, 0 | Send_ESTOP was received |
 | `Calibrated` (0) | `Not calibrated` | 1, 7 (1 = calibrated) | the motor has not been calibrated |
 | `Activated` | — | 1, 6 | the activated flag, not an error |
-| `Watchdog_error` | `Watchdog error` | 1, 5 | the watchdog time passed without a valid CAN frame |
+| `Watchdog_error` | `Watchdog error` | 1, 5 | the watchdog time passed without a motion frame or a status request |
 
-Gripper mode has its own flags in Respond_Gripper_data_pack: a temperature error, a timeout error (the jaw did
-not reach its target in time) and an E-stop error; see the [Gripper](https://docs.source-robotics.com/STEPFOC-docs/108/reference/can/gripper/) reference.
+Gripper mode has its own flags in Respond_Gripper_data_pack: a temperature error (a copy of the thermistor error),
+a timeout error (a copy of the CAN watchdog error, not a move timeout) and an E-stop error, which stays while the
+E-stop bit is 1; see the [Gripper](https://docs.source-robotics.com/STEPFOC-docs/108/reference/can/gripper/) reference.
 
 ## Clearing
 
 `#Clear` and Send_Clear_Error clear every flag except `Calibrated` and go to idle; a flag whose cause persists is
-set again at once. The watchdog, E-stop and velocity errors clear and stay clear; the Vbus, encoder, driver and
-temperature errors come back until the cause is gone. Calibration clears the calibration error.
+set again at once. The watchdog, E-stop and velocity errors clear and stay clear; the Vbus, encoder and
+temperature errors come back until the cause is gone, and so does a gripper E-stop while its E-stop bit is 1.
+Calibration clears the calibration error.
 
 
 ---
@@ -4385,6 +4432,8 @@ The `Spectral-BLDC` package ([Spectral-BLDC-Python](https://github.com/Source-Ro
 | Send_Respond_Device_Info | `HARDWARE_VERSION`, `BATCH_DATE`, `SOFTWARE_VERSION`, `SERIAL_NUMBER` |
 | Send_Respond_State_of_Errors | `error`, `temperature_error`, `encoder_error`, `vbus_error`, `driver_error`, `velocity_error`, `current_error`, `estop_error`, `calibrated`, `activated`, `watchdog_error` |
 | Send_Respond_Kt | `Kt` |
+| Send_Respond_Ping | `ping` (1) |
+| Respond_Heartbeat | `heartbeat` (1) |
 | Respond_Gripper_data_pack | `gripper_position`, `gripper_current`, `gripper_activated`, `gripper_action_status`, `gripper_object_detection`, `gripper_temperature_error`, `gripper_timeout_error`, `gripper_estop_error`, `gripper_calibrated` |
 
 !!! note "Object detection in the library"
@@ -4484,7 +4533,7 @@ In this guide we will show you how you can control a leg of any quadruped robot 
 !!! tip "Python API and toolbox"
     This guide leverages [Spectral BLDC python API](https://github.com/Source-Robotics/Spectral-BLDC-Python/tree/main) and [Source robotics toolbox](https://github.com/Source-Robotics/Source-Robotics-Toolbox)
 
-![drawing](https://docs.source-robotics.com/STEPFOC-docs/108/assets/LEG_wiring.webp)
+![The two-motor leg on a test stand, with the laptop, the CAN adapter and a bench supply](https://docs.source-robotics.com/STEPFOC-docs/108/assets/LEG_wiring.webp)
 
 !!! note "Building the LEG"
     In this guide we only recommend you the hardware you can use to build the robot you designed. We do not offer already made designs you can build!
@@ -4503,7 +4552,7 @@ What you will need:
 * 1 x 24V power supply
 * A Laptop or raspberry pi
 
-![drawing](https://docs.source-robotics.com/STEPFOC-docs/108/assets/leg_setup.webp)
+![Wiring: the supply to the first driver, the CAN bus from the adapter through both drivers, a motor on each driver](https://docs.source-robotics.com/STEPFOC-docs/108/assets/leg_setup.webp)
 
 The setup will be the same for any kind of quadruped leg. You will need to follow the diagram above to wire everything up.
 
@@ -4514,7 +4563,7 @@ The setup will be the same for any kind of quadruped leg. You will need to follo
 
 ## Leg kinematics
 
-![drawing](https://docs.source-robotics.com/STEPFOC-docs/108/assets/robot_leg_dh_table.webp)
+![The coordinate frames of the leg and its DH table](https://docs.source-robotics.com/STEPFOC-docs/108/assets/robot_leg_dh_table.webp)
 
 First you will need to assign coordinate frames to your leg model.
 We already did it but if you want to learn more on how and why check this [Link](https://automaticaddison.com/how-to-assign-denavit-hartenberg-frames-to-robotic-arms/)<br />
@@ -4527,7 +4576,7 @@ value l1 is 0.112 meters and value l2 is 0.1 meters. The frame 2 is the end / fo
 
 Before running the main code lets check if the comms are working and get initial position values of our robot leg. This code will try to get data from the 2 motors of our robot leg. We are most interested in position data of those 2 motors. Position the leg like shown in this image. Run the leg_calib code and write down position values of each motor. 
 
-![drawing](https://docs.source-robotics.com/STEPFOC-docs/108/assets/leg_terminal.webp)
+![The terminal output of leg_calib.py with the positions of both motors](https://docs.source-robotics.com/STEPFOC-docs/108/assets/leg_terminal.webp)
 
 ``` py title="leg_calib.py"
 
@@ -4590,7 +4639,7 @@ We defined that trajectory with our function generate_circle_coords and with par
 * speed - Speed of the end-effector in meters per second
 * time_var - Elapsed time in seconds
 
-![drawing](https://docs.source-robotics.com/STEPFOC-docs/108/assets/circ_2.webp)
+![The circle the foot traced at speed 1 and at speed 3](https://docs.source-robotics.com/STEPFOC-docs/108/assets/circ_2.webp)
 
 How precise you follow the trajectory depends on the speed you set. With low speeds you can track the circle perfectly. With larger speeds the system can't keep up and overshoots. This is due multiple reaseons like:
 
@@ -4854,13 +4903,11 @@ In robotics, a significant portion of motor power is consumed just fighting agai
 
 ## The Approach
 
-In this example, we use the Robotics Toolbox for Python to model a "robotic arm" with a single revolute joint. We compute the required torque using the Recursive Newton-Euler Algorithm (RNEA) and convert this torque into a motor current/torque that the motor controller will command the motor. In this blog post we will explain in short pseudo code snippets how the algorithm works on a single DOF arm.
+In this example, we use the Robotics Toolbox for Python to model a "robotic arm" with a single revolute joint. We compute the required torque using the Recursive Newton-Euler Algorithm (RNEA) and convert this torque into a motor current/torque that the motor controller will command the motor.
 
-For more info check the full guide here: https://source-robotics.com/blogs/blog/gravity-compensation-in-robotics
-
-Github repos with examples are here: https://github.com/Source-Robotics/Spectral-BLDC-Python/blob/main/examples/Advanced/Gravity%20compensation/BOM.md
-
-https://github.com/Source-Robotics/Spectral-BLDC-Python/tree/main/examples/Advanced/Gravity%20compensation
+The full write-up is the blog post [Gravity compensation in robotics](https://source-robotics.com/blogs/blog/gravity-compensation-in-robotics).
+The example code is in [Gravity compensation](https://github.com/Source-Robotics/Spectral-BLDC-Python/tree/main/examples/Advanced/Gravity%20compensation)
+in the Python library's examples, with its [bill of materials](https://github.com/Source-Robotics/Spectral-BLDC-Python/blob/main/examples/Advanced/Gravity%20compensation/BOM.md).
 
 
 ---
@@ -4877,7 +4924,7 @@ Bilateral teleoperation is a concept that Involves two-way communication where b
 
 The two grippers are virtually coupled to each other, allowing either to act as the master (the haptic interface) or the slave (the manipulator) in the system. We are not using a force sensor at the grippers but are relying on proprioception.
 
-![drawing](https://docs.source-robotics.com/STEPFOC-docs/108/assets/bil_tel.webp)
+![Bilateral teleoperation of two coupled grippers](https://docs.source-robotics.com/STEPFOC-docs/108/assets/bil_tel.webp)
 
 Watch these example videos to get a "feel" of the concept:
 
@@ -4915,7 +4962,7 @@ We recommend these items to create a simple test jig:
 
 Here we are showing you the setup for any 2 motors, for example we are using 2 x [ssg48 grippers](https://source-robotics.com/products/compliant-gripper) that are connected in exactly the same setup.
 
-![drawing](https://docs.source-robotics.com/STEPFOC-docs/108/assets/leg_setup.webp)
+![Wiring: the supply to the first driver, the CAN bus from the adapter through both drivers, a motor on each driver](https://docs.source-robotics.com/STEPFOC-docs/108/assets/leg_setup.webp)
 
 You will need to follow the diagram above to wire everything up.
 
@@ -5034,8 +5081,8 @@ Open an issue in the [firmware repository](https://github.com/Source-Robotics/ST
 for the driver and its firmware, or in [Spectral-BLDC-Python](https://github.com/Source-Robotics/Spectral-BLDC-Python/issues)
 for the Python library. Include:
 
-1. **The output of `#Info`**, copied from the terminal. It carries the hardware and firmware version, the motor
-   parameters, the calibration state and the errors.
+1. **The output of `#Info`, `#Param` and `#Error`**, copied from the terminal. They carry the hardware and
+   firmware version, the motor parameters, the calibration state, the gains and limits, and the errors.
 2. **The motor**: type, and the `#R`, `#L`, `#PP` you entered.
 3. **The supply**: voltage, and whether it has a current limit.
 4. **What you did and what happened**: the commands, in order, and the driver's answers; the calibration log if it

@@ -2213,10 +2213,19 @@ size fails to link.</p>
 <li><strong>Through the bootloader</strong>: flash the built <code>firmware.bin</code> with <code>bl_flash.py</code> or Motor GUI as in
   <a href="../update/">Updating through the bootloader</a>. This is how a release is installed, and works on any driver with
   the bootloader.</li>
-<li><strong>With the programming adapter</strong>: <em>Upload</em> in PlatformIO uses ST-LINK and writes the image at <code>0x08003000</code>. The
-  bootloader must already be on the board; the upload does not touch it. The serial monitor (the plug icon) opens
-  the <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> at 256000 with <code>send_on_enter</code>, so you can type commands to the driver from the same window.</li>
+<li><strong>With the programming adapter</strong>: <em>Upload</em> in PlatformIO uses ST-LINK and writes the image at <code>0x08003000</code>. It
+  leaves the bootloader alone, but it does not update the image <abbr title="Cyclic Redundancy Check">CRC</abbr> the bootloader keeps; see the warning below.
+  The serial monitor (the plug icon) opens the <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> at 256000 with <code>send_on_enter</code>, so you can type commands to
+  the driver from the same window.</li>
 </ul>
+<div class="admonition warning">
+<p class="admonition-title">After an ST-LINK upload the firmware does not start</p>
+<p>At every power-up the bootloader checks the firmware against the <abbr title="Cyclic Redundancy Check">CRC</abbr> it stored at the last flash through the
+bootloader. After an upload with the programming adapter that <abbr title="Cyclic Redundancy Check">CRC</abbr> no longer matches, so the bootloader stays in
+bootloader mode, with the <abbr title="Light-Emitting Diode">LED</abbr> blinking, instead of starting the new firmware. Flash the same <code>firmware.bin</code>
+once more through the bootloader to recover. Once the bootloader is on the board, install every firmware
+through it.</p>
+</div>
 <figure>
   <a class="glightbox" href="../../assets/VSUPLOAD.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Upload in VS Code" src="../../assets/VSUPLOAD.png" width="700" /></a>
 <br />
@@ -2294,7 +2303,7 @@ release 103 and is not maintained; install the bootloader instead,
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 29, 2026 10:22:06 UTC">October 29, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 3, 2026 14:48:56 UTC">November 3, 2026</span>
   </span>
 
     

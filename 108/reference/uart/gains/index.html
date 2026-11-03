@@ -1444,14 +1444,14 @@
 <td><code>#Vlimit</code></td>
 <td>Set/Get</td>
 <td>int: speed in encoder ticks/s</td>
-<td>The speed limit; the velocity integrator is clamped to it.</td>
+<td>The speed limit: it clamps the speed setpoint of the velocity loop, and in position mode the speed the position loop asks for. The velocity integrator is clamped to the current limit (Ilim), not to this.</td>
 <td>the current limit</td>
 </tr>
 <tr>
 <td><code>#Vlim</code></td>
 <td>Set/Get</td>
 <td>int: voltage in mV</td>
-<td>The voltage limit of the current loops (Ud and Uq); 0 means use the supply voltage.</td>
+<td>The voltage limit of the current loops (Ud and Uq), 6000 mV by default. It keeps the loops of low-resistance steppers stable, and it also caps the top speed. 0, or a value above the supply voltage, means the supply voltage.</td>
 <td>the current limit in mV</td>
 </tr>
 <tr>
@@ -1521,14 +1521,14 @@
 <td><code>#Ilim</code></td>
 <td>Set/Get</td>
 <td>int: current in mA</td>
-<td>The Iq current limit. Set it to the rated phase current of your motor; the firmware clamps it to 2800 mA.</td>
+<td>The Iq current limit, 1700 mA after #Default. Set it to the rated phase current of your motor; this command clamps it to 2800 mA (Send_Limits over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> does not). Calibration sets it to 1600 mA: set it again after Cal.</td>
 <td>the current limit</td>
 </tr>
 <tr>
 <td><code>#Cbw</code></td>
 <td>Set/Get</td>
 <td>float: bandwidth in Hz</td>
-<td>The current loop bandwidth calibration uses to compute Kpiq and Kiiq.</td>
+<td>The current loop bandwidth calibration uses to compute Kpiq and Kiiq. Not kept by Save: 500 Hz at every power-up, so set it just before Cal.</td>
 <td>the bandwidth</td>
 </tr>
 <tr>

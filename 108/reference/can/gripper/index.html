@@ -1577,7 +1577,7 @@
 <td></td>
 <td>Current</td>
 <td>signed 16-bit</td>
-<td>current limit of the move in mA; not clamped by the firmware, see the gripper manual for the safe range</td>
+<td>current limit of the move in mA; not clamped by the firmware, not even to the driver's 2800 mA; see the gripper manual for the safe range</td>
 </tr>
 <tr>
 <td>4</td>
@@ -1598,7 +1598,7 @@
 <td>5</td>
 <td>E-stop</td>
 <td>bit</td>
-<td>1 raises the gripper E-stop error</td>
+<td>1 raises the gripper E-stop error, again on every control cycle until a frame with this bit 0 arrives; then Send_Clear_Error</td>
 </tr>
 <tr>
 <td>4</td>
@@ -1675,21 +1675,21 @@
 <td>3</td>
 <td>gripper_temperature_error</td>
 <td>bit</td>
-<td></td>
+<td>a copy of the thermistor temperature error</td>
 </tr>
 <tr>
 <td>3</td>
 <td>2</td>
 <td>gripper_timeout_error</td>
 <td>bit</td>
-<td></td>
+<td>a copy of the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> watchdog error (Send_Watchdog), not a move timeout</td>
 </tr>
 <tr>
 <td>3</td>
 <td>1</td>
 <td>gripper_estop_error</td>
 <td>bit</td>
-<td></td>
+<td>the E-stop bit of Send_gripper_data_pack (or #Gripstop 1) was set</td>
 </tr>
 <tr>
 <td>3</td>

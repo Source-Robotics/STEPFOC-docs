@@ -14,10 +14,10 @@ The gripper command, for a driver set up as a gripper (`#Gripper 1`, saved). Pos
 |---|---|---|---|---|
 | 0 |  | Position | unsigned 8-bit | 0 fully open, 255 fully closed |
 | 1 |  | Speed | unsigned 8-bit | 0 slowest, 255 fastest |
-| 2-3 |  | Current | signed 16-bit | current limit of the move in mA; not clamped by the firmware, see the gripper manual for the safe range |
+| 2-3 |  | Current | signed 16-bit | current limit of the move in mA; not clamped by the firmware, not even to the driver's 2800 mA; see the gripper manual for the safe range |
 | 4 | 7 | Activate | bit | 1 activate the gripper, 0 deactivate |
 | 4 | 6 | Action | bit | 1 go to the position, 0 idle |
-| 4 | 5 | E-stop | bit | 1 raises the gripper E-stop error |
+| 4 | 5 | E-stop | bit | 1 raises the gripper E-stop error, again on every control cycle until a frame with this bit 0 arrives; then Send_Clear_Error |
 | 4 | 4 | Release direction | bit | read by the firmware but not used |
 
 The driver answers with **Respond_Gripper_data_pack**.
@@ -49,9 +49,9 @@ The driver's answer to Send_gripper_data_pack: position, measured current, and t
 | 3 | 7 | gripper_activated | bit | 1 activated |
 | 3 | 6 | gripper_action_status | bit | 1 going to the position, 0 idle, auto-release or calibrating |
 | 3 | 5-4 | gripper_object_detection | 2 bits | bit 5 is the low bit, bit 4 the high bit: 0 moving, 1 object detected while closing, 2 object detected while opening, 3 at the position |
-| 3 | 3 | gripper_temperature_error | bit |  |
-| 3 | 2 | gripper_timeout_error | bit |  |
-| 3 | 1 | gripper_estop_error | bit |  |
+| 3 | 3 | gripper_temperature_error | bit | a copy of the thermistor temperature error |
+| 3 | 2 | gripper_timeout_error | bit | a copy of the CAN watchdog error (Send_Watchdog), not a move timeout |
+| 3 | 1 | gripper_estop_error | bit | the E-stop bit of Send_gripper_data_pack (or #Gripstop 1) was set |
 | 3 | 0 | gripper_calibrated | bit | 1 calibrated |
 
 ---

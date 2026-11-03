@@ -17,7 +17,7 @@ can be updated later without a programming adapter; see [Firmware](https://docs.
 ## A stepper motor
 
 STEPFOC drives bipolar (4-wire) stepper motors. It is made for the NEMA 17 frame, whose mounting holes match the
-board, and it also works with NEMA 14 and NEMA 23 motors on an adapter. Look for a motor with a phase resistance
+board; it also works with NEMA 23 motors on the NEMA 23 spacer, and with other frames on an adapter you make. Look for a motor with a phase resistance
 of 1 to 5 Ω and a rated current of 3 A or less; the [tested motors](https://docs.source-robotics.com/STEPFOC-docs/108/03-technical-data/tested-motors/) are
 known to work.
 

@@ -53,7 +53,7 @@ The driver answers with **Send_Respond_Voltage**.
 
 <div class="cmd-facts" markdown><span class="fact">ID 25</span><span class="fact">host → driver as a remote frame, driver → host as a data frame</span><span class="fact">remote frame, 0 bytes</span><span class="fact">Python: `Send_Respond_Device_Info()`</span></div>
 
-Asks for the driver's identity: hardware version, batch date and serial number from the EEPROM, and the firmware release (from firmware 105 on this is the build's own version; before, a value from the EEPROM).
+Asks for the driver's identity: hardware version and batch date from the EEPROM, the serial number, and the firmware release (from firmware 105 on this is the build's own version; before, a value from the EEPROM). This firmware does not read the serial number back from the EEPROM at power-up: it reports 1 until `#SERNUM` sets it.
 
 **The frame** (7 bytes)
 
@@ -62,7 +62,7 @@ Asks for the driver's identity: hardware version, batch date and serial number f
 | 0 |  | HARDWARE_VERSION | unsigned 8-bit | PCB revision |
 | 1 |  | BATCH_DATE | unsigned 8-bit | production batch |
 | 2 |  | SOFTWARE_VERSION | unsigned 8-bit | firmware release, e.g. 108 |
-| 3-6 |  | SERIAL_NUMBER | unsigned 32-bit | serial number |
+| 3-6 |  | SERIAL_NUMBER | unsigned 32-bit | serial number as held in RAM: 1 after a power-up |
 
 The driver answers with **Send_Respond_Device_Info**.
 
@@ -80,10 +80,10 @@ Asks for every error flag and the calibrated, activated and watchdog states.
 |---|---|---|---|---|
 | 0 | 7 | error | bit | any error is active |
 | 0 | 6 | temperature_error | bit | motor over the temperature limit |
-| 0 | 5 | encoder_error | bit | magnet not detected or misaligned |
+| 0 | 5 | encoder_error | bit | the encoder reports no magnet (too weak a field) |
 | 0 | 4 | vbus_error | bit | supply voltage outside the limits |
-| 0 | 3 | driver_error | bit | the MOSFET driver reports undervoltage, thermal shutdown or overcurrent |
-| 0 | 2 | velocity_error | bit | speed over the limit |
+| 0 | 3 | driver_error | bit | reserved; never set by this firmware (STEPFOC does not read a fault output of its driver stage) |
+| 0 | 2 | velocity_error | bit | speed above 30,000,000 ticks/s, a fixed threshold (not #Vlimit) |
 | 0 | 1 | current_error | bit | reserved; never set by this firmware |
 | 0 | 0 | estop_error | bit | Send_ESTOP was received |
 | 1 | 7 | calibrated | bit | the motor is calibrated |

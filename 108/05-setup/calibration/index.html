@@ -2231,9 +2231,10 @@ off the shaft.</p>
 <p>Calibrate at 24 V. At a lower voltage the KV and Kt come out wrong.</p>
 </div>
 <h2 id="1-restore-the-defaults">1. Restore the defaults<a class="headerlink" href="#1-restore-the-defaults" title="Permanent link">&para;</a></h2>
-<p>The <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> of a new driver, or of one that ran another motor, can hold values that do not fit: another motor's
-parameters, or junk that shows as <code>-1</code> in <code>#Info</code>. Calibration starts from what is there, so start from the factory
-values.</p>
+<p>The <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> of a new driver, or of one that ran another motor, can hold values that do not fit, such as another
+motor's parameters. Calibration starts from what is there, so start from the factory values. (A damaged
+configuration should not show up with firmware 106 and newer, which checks the stored blocks at power-up and
+replaces a damaged one with the defaults; if <code>#Info</code> still shows <code>-1</code> somewhere, restoring the defaults fixes it.)</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Motor GUI</label><label for="__tabbed_1_2">Terminal</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -2245,8 +2246,9 @@ values.</p>
 </div>
 </div>
 </div>
-<p>This also resets the serial number, hardware version and batch date the driver reports; note what <code>#Info</code> printed
-if you need them. <a href="../saving/">Saving the configuration</a> says what else it does.</p>
+<p>This also sets the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID to 0 and resets the serial number, hardware version and batch date stored in the
+<abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>; note the hardware version and batch date <code>#Info</code> prints if you need them.
+<a href="../saving/">Saving the configuration</a> says what else it does.</p>
 <h2 id="2-enter-the-motor-parameters">2. Enter the motor parameters<a class="headerlink" href="#2-enter-the-motor-parameters" title="Permanent link">&para;</a></h2>
 <p>STEPFOC does not measure the resistance and inductance of a stepper (the Spectral Micro does for a BLDC); you
 enter them from the motor's datasheet, as the values of <strong>one coil</strong>, and the pole pairs. Calibration fails on a
@@ -2268,10 +2270,11 @@ value left at 0, and accepts only 50, 75, 100 or 125 pole pairs.</p>
 <figure>
   <a class="glightbox" href="../../assets/Motor_specs.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="An example datasheet" src="../../assets/Motor_specs.webp" width="900" /></a>
 <br />
-<figcaption>Figure 17: The three values on a typical datasheet, here for the 17HS16-2004S1: 1.8°, 1.1 Ω, 2.6 mH.</figcaption>
+<figcaption>Figure 13: The three values on a typical datasheet, here for the 17HS16-2004S1: 1.8°, 1.1 Ω, 2.6 mH.</figcaption>
 </figure>
 <p>The current loop bandwidth (<code>#Cbw</code>, 500 Hz by default) decides the gains calibration computes from R and L;
-leave it for now, <a href="../tuning/">Current limit and loop tuning</a> comes back to it.</p>
+leave it for now, <a href="../tuning/">Current limit and loop tuning</a> comes back to it. It is not saved: after a power
+cycle it is 500 Hz again.</p>
 <h2 id="3-run-it">3. Run it<a class="headerlink" href="#3-run-it" title="Permanent link">&para;</a></h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Motor GUI</label><label for="__tabbed_3_2">Terminal</label></div>
 <div class="tabbed-content">
@@ -2285,7 +2288,7 @@ finishes, the phase order and direction, Kt, KV and the flux linkage it found ap
 </div>
 </div>
 </div>
-<p>The <abbr title="Light-Emitting Diode">LED</abbr> flashes every 0.5 s while the routine runs, and the driver prints each step as it goes:</p>
+<p>The <abbr title="Light-Emitting Diode">LED</abbr> flashes fast while the routine runs, and the driver prints each step as it goes:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>----------------
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Calibration mode
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>----------------
@@ -2297,16 +2300,18 @@ finishes, the phase order and direction, Kt, KV and the flux linkage it found ap
 </span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>Kp_iq = ...
 </span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>Ki_iq = ...
 </span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>Open loop direction: good
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>Angle offset is: ...
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>Phase order is good!
-</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>KV is: ...
-</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>Kt is: ...
-</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>Flux linkage is: ...
-</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>----------------
-</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>Calibration success!
-</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>Save config with #Save
-</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>Going to idle!
-</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a>----------------
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>Calibrating angle offset... stage 1/13, sweep point 0
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>...
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>Angle offset is: ...
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>Phase order is good!
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>KV is: ...
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>Kt is: ...
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>Flux linkage is: ...
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>----------------
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>Calibration success!
+</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a>Save config with #Save
+</span><span id="__span-3-22"><a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a>Going to idle!
+</span><span id="__span-3-23"><a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a>----------------
 </span></code></pre></div>
 <p>What the steps are:</p>
 <table>
@@ -2340,27 +2345,37 @@ finishes, the phase order and direction, Kt, KV and the flux linkage it found ap
 </tr>
 <tr>
 <td>Open loop</td>
-<td>the motor is stepped open loop; the encoder must see it turn. The direction it turned is remembered, so a reversed coil is compensated from here on</td>
-<td><code>Open loop: Failed</code> / <code>Switch motor phases and try again!</code>: the encoder saw no rotation</td>
+<td>the motor is stepped open loop at a fixed 5000 mV. The direction the encoder saw is remembered, so a reversed coil is compensated from here on</td>
+<td>nothing in this firmware: the step always reports <code>good</code>, and a motor that did not turn fails the next step</td>
 </tr>
 <tr>
 <td>Angle offset</td>
-<td>the motor is driven to find the offset between encoder zero and electrical zero. It spins quickly one way, then the other, for up to two minutes</td>
-<td><code>Phase order is wrong!</code> / <code>Switch motor phases and try again!</code>: the commutation check got no response from the motor on two tries. A line <code>Spin-confirm delta: … ticks (need &gt; 8192), Vbus: … mV</code> says how far the motor turned and at what voltage</td>
+<td>a short spin checks that the motor turns (two tries, 90 electrical degrees apart); then the field locks the rotor and a sweep finds the offset at which both directions turn alike. It prints <code>Calibrating angle offset...</code> with its progress every half second</td>
+<td><code>Phase order is wrong!</code> / <code>Switch motor phases and try again!</code>: the motor did not turn on either try. A line <code>Spin-confirm delta: … ticks (need &gt; 8192), Vbus: … mV</code> says how far it turned and at what voltage</td>
 </tr>
 <tr>
 <td>Kt, KV, flux linkage</td>
-<td>the motor spins fast for a moment and the constants are computed from the back-EMF</td>
+<td>the motor spins at 500 mA for about a second; KV is the speed it reaches per volt of supply, Kt follows as 8.27 ÷ KV and the flux linkage from Kt</td>
 <td>—</td>
 </tr>
 </tbody>
 </table>
+<p>A whole run takes up to about a minute, most of it in the angle-offset search. When a step fails, the log ends
+with <code>Calibration failed!</code>, the driver goes to idle, the motor counts as not calibrated and the <abbr title="Light-Emitting Diode">LED</abbr> stays on
+steadily. Nothing is saved; fix the cause and run <code>#Cal</code> again.</p>
 <div class="admonition note">
-<p class="admonition-title">The two 'Switch motor phases' messages</p>
-<p>They are left over from firmware 103, which needed the coils wired a particular way. Since firmware 105 the
-wiring is detected and compensated, so these messages mean the motor did not turn or did not respond: a coil
-not connected or shorted, a current limit at 0, a supply too weak, or a magnet that slips. Swapping wires does
-not fix them.</p>
+<p class="admonition-title">The 'Switch motor phases' message</p>
+<p>It is left over from firmware 103, which needed the coils wired a particular way. Since firmware 105 the
+wiring is detected and compensated, so <code>Phase order is wrong!</code> / <code>Switch motor phases and try again!</code> means the
+motor did not turn or did not respond: a coil not connected or shorted, a supply too weak, or a magnet that
+slips. Swapping wires does not fix it. (<code>Open loop: Failed</code> with the same advice cannot appear in this
+release.)</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">The measured values are estimates</p>
+<p>KV, Kt and the flux linkage come from one short spin and differ a little from one run to the next, more on
+motors with uneven windings. For the loops this does not matter; for a torque estimate in newton-metres,
+measure Kt yourself.</p>
 </div>
 <h2 id="4-save">4. Save<a class="headerlink" href="#4-save" title="Permanent link">&para;</a></h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Motor GUI</label><label for="__tabbed_4_2">Terminal</label></div>
@@ -2376,6 +2391,12 @@ not fix them.</p>
 </div>
 <p>Without it the calibration is gone at the next power cycle. The driver goes to idle and the <abbr title="Light-Emitting Diode">LED</abbr> shows normal
 operation; the state shows <em>Calibrated</em> and the constants.</p>
+<div class="admonition warning">
+<p class="admonition-title">Set the current limit next</p>
+<p>Calibration leaves the current limit at 1600 mA, whatever it was before: more than a small motor's rating.
+Set it for your motor with <code>#Ilim</code> before the motor runs, and save again
+(<a href="../tuning/">Current limit and loop tuning</a>).</p>
+</div>
 <h2 id="when-to-calibrate-again">When to calibrate again<a class="headerlink" href="#when-to-calibrate-again" title="Permanent link">&para;</a></h2>
 <ul>
 <li>After changing the motor, the magnet or the wiring.</li>
@@ -2406,24 +2427,23 @@ shaft between calibration and use: fix the magnet and calibrate again.</p>
 <td>the resistance or the inductance still 0</td>
 </tr>
 <tr>
-<td><code>Open loop: Failed</code></td>
-<td>the motor did not turn: a coil open, the open-loop voltage (<code>#Openv</code>) too low for the motor, no supply current</td>
-</tr>
-<tr>
 <td><code>Phase order is wrong!</code></td>
-<td>see the note above: the motor did not respond to the commutation check; check the wiring, the current limit and the magnet</td>
+<td>see the note above: the motor did not turn on the spin check; check the four wires and their solder joints, the supply and its current limit, and the magnet</td>
 </tr>
 <tr>
 <td>the routine stops in a step and prints nothing more</td>
-<td>reset the driver (<code>#Reset</code>) and try again</td>
+<td>reset the driver (<code>#Reset</code>) and try again; the angle-offset search prints a progress line every half second, so wait for a minute before you decide</td>
 </tr>
 <tr>
 <td>success, but the <abbr title="Light-Emitting Diode">LED</abbr> stays on and no error is reported</td>
-<td>the state shows <code>-1</code> somewhere: the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> is not in the firmware's layout; restore the defaults, enter the parameters, calibrate again</td>
+<td>should not happen with firmware 106 and newer, which replaces a damaged configuration block with the defaults at power-up. If <code>#Info</code> shows <code>-1</code> somewhere, restore the defaults, enter the parameters and calibrate again</td>
 </tr>
 </tbody>
 </table>
-<p>The angle-offset step alone can be repeated with <code>#Calangle</code>.</p>
+<p><code>#Calangle</code> runs an angle-offset search on its own, with an older routine than the one <code>#Cal</code> uses: it gives up
+after about two minutes and keeps the offset it reached. After a change of motor, magnet or wiring, run the whole
+<code>#Cal</code> instead.</p>
+<p>Calibration runs over the serial connection only: a terminal, or Motor GUI over the serial adapter, not over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>.</p>
 
 
 
@@ -2444,7 +2464,7 @@ shaft between calibration and use: fix the magnet and calibrate again.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 29, 2026 22:59:36 UTC">October 29, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 3, 2026 14:48:56 UTC">November 3, 2026</span>
   </span>
 
     

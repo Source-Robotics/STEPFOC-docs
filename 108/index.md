@@ -8,9 +8,9 @@
 
 **Firmware version:** 108
 
-**Revision:** 2026.A (draft)
+**Revision:** 2026.A
 
-**Published:** —
+**Published:** 2026-11-03
 
 **Applies to:** STEPFOC driver PCB v1, firmware 108
 

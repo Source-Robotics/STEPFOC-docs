@@ -1834,7 +1834,7 @@
 <div class="cmd-facts">
 <p><span class="fact">ID 31</span><span class="fact">host → driver</span><span class="fact">4 bytes</span><span class="fact">Python: <code>Send_data_pack_HALL()</code></span></p>
 </div>
-<p>Homing against a sensor: the driver spins at the given speed until the input on the ADDITIONAL2 pin shows the trigger condition, then latches the position it reached as its position setpoint and holds it. Sending the command again while the driver is already in HALL mode does not re-arm it; leave the mode first.</p>
+<p>Homing against a sensor: the driver spins at the given speed until the input on the ADDITIONAL2 pin shows the trigger condition, then latches the position it reached as its position setpoint and holds it. With a level trigger (0 or 1) it holds only while the pin stays at that level: when the pin changes back, the driver spins on again until the level returns. The edge trigger (2) holds after the first edge. Sending the command again while the driver is already in HALL mode does not re-arm it; leave the mode first.</p>
 <p><strong>4 bytes</strong></p>
 <table>
 <thead>
@@ -1936,7 +1936,7 @@
 <td>7</td>
 <td>HALL_trigger</td>
 <td>bit</td>
-<td>1 while the driver waits for the trigger, 0 once it triggered and holds</td>
+<td>1 while the driver waits for the trigger (with a level trigger, also again after the pin left the level), 0 while it holds</td>
 </tr>
 <tr>
 <td>3</td>

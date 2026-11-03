@@ -1869,19 +1869,20 @@ against a sensor wired to it.</dd>
 driver needs it to place the current vector relative to the rotor.</dd>
 <dt><strong>Back-EMF</strong></dt>
 <dd>The voltage a turning motor generates in its own coils, proportional to speed. It opposes the supply, limits the
-top speed at a given voltage, and is what calibration measures to find KV, Kt and the flux linkage.</dd>
+top speed at a given voltage. Calibration estimates KV from the speed the motor reaches per volt.</dd>
 <dt><strong>Board ID</strong></dt>
-<dd>The bootloader's own address, 0 to 13, stored in its configuration page. The firmware keeps it equal to the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>
-node ID.</dd>
+<dd>The bootloader's own address, 0 to 13, stored in its configuration page. Saving the configuration (<code>#Save</code>)
+writes the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID into it.</dd>
 <dt><strong>Bootloader</strong></dt>
-<dd>The program in the first 12 KB of the driver's flash on boards shipped with firmware 104 or newer. It starts the
+<dd>The program in the first 12 KB of the driver's flash on boards shipped with firmware 105 or newer. It starts the
 firmware, and loads a new firmware over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> or <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>. See <a href="../07-firmware/the-bootloader/">The bootloader</a>.</dd>
 <dt><strong>Calibration</strong></dt>
 <dd>The routine (<code>#Cal</code>) that checks the magnet and the supply, takes the motor's resistance, inductance and pole
 pairs, computes the current loop gains, spins the motor in open loop to learn the wiring, finds the angle offset
 and measures Kt, KV and the flux linkage. Its result is kept with <code>#Save</code>.</dd>
 <dt><strong><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> ID</strong> (node ID)</dt>
-<dd>The address of the driver on the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> bus, 0 to 15. It occupies bits 10 to 7 of the 11-bit <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> frame identifier;
+<dd>The address of the driver on the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> bus, 0 to 13 (the bootloader reserves 14 and 15). It occupies bits 10 to 7
+of the 11-bit <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> frame identifier;
 the command ID occupies bits 6 to 1 and the error bit is bit 0.</dd>
 <dt><strong>CANvas</strong></dt>
 <dd>Source Robotics' USB-to-<abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> adapter. It appears as a serial port and speaks slcan, which <code>python-can</code> and Motor
@@ -1923,18 +1924,17 @@ the loops to correct the rest.</dd>
 rotor angle. On a stepper it replaces the fixed step currents with sinusoidal currents that follow the rotor,
 which gives smooth, quiet, efficient motion with no lost steps and a known position.</dd>
 <dt><strong>Firmware release</strong></dt>
-<dd>One build of the firmware, numbered 103, 104, 105, … and tagged <code>V103</code>, <code>V104</code>, … in the firmware repository.
+<dd>One build of the firmware, numbered 103, 105, 106, … and tagged <code>V103</code>, <code>V105</code>, … in the firmware repository.
 <code>#Info</code> prints the release a driver runs. This documentation describes one release; the version selector
 switches between them.</dd>
 <dt><strong>Flux linkage</strong></dt>
-<dd>The rotor's magnetic flux as seen by a coil, in weber; found by calibration from the back-EMF, together with
-KV and Kt.</dd>
+<dd>The rotor's magnetic flux as seen by a coil, in weber; calibration computes it from Kt.</dd>
 <dt><strong>Gripper mode</strong></dt>
 <dd>The driver running a gripper (<code>#Gripper 1</code>): jaw positions from 0 (open) to 255 (closed), a speed, a current
 limit that becomes the grip force, and object detection.</dd>
 <dt><strong>HALL mode</strong></dt>
 <dd>Homing against a sensor on ADDITIONAL2: the motor turns at a set speed until the sensor triggers, then holds
-the position reached.</dd>
+the position reached. With a level trigger it holds only while the pin stays at that level.</dd>
 <dt><strong>Heartbeat</strong></dt>
 <dd>A frame (Respond_Heartbeat) the driver sends at a set interval so the host knows it is alive. Off by default.</dd>
 <dt><strong>Iq, Id</strong></dt>
@@ -1975,8 +1975,8 @@ sets the pole pairs: 360 ÷ (4 × step angle).</dd>
 <dd>The supply voltage at the driver, measured and printed in mV. Outside the limits the driver raises a Vbus
 error.</dd>
 <dt><strong>Watchdog</strong></dt>
-<dd>A timer the driver resets with every valid <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> frame it receives. When it is set (Send_Watchdog) and runs out,
-the driver reports a watchdog error and stops.</dd>
+<dd>A timer the driver resets with every motion frame and every status request it answers. When it is set
+(Send_Watchdog) and runs out, the driver reports a watchdog error and stops.</dd>
 </dl>
 
 

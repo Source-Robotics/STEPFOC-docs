@@ -8,9 +8,14 @@ which is what makes tuning quick.
 ## The current limit
 
 Set the current limit to the rated phase current of your motor in mA (the datasheet value; the tested motors'
-ratings are in [Tested motors](https://docs.source-robotics.com/STEPFOC-docs/108/03-technical-data/tested-motors/)). The firmware clamps the limit to the
-driver's 2800 mA and does not trip on phase current by itself; the MOSFET driver's hardware protection only
-catches a hard fault. A limit above the motor's rating overheats the motor.
+ratings are in [Tested motors](https://docs.source-robotics.com/STEPFOC-docs/108/03-technical-data/tested-motors/)). It is 1700 mA after `#Default`, and
+calibration leaves it at 1600 mA, whatever it was before. `#Ilim` clamps the limit to the driver's 2800 mA. The
+firmware does not trip on phase current by itself and does not monitor the driver stage. A limit above the motor's
+rating overheats the motor.
+
+!!! warning "Over CAN the limit is not clamped"
+    Send_Limits stores the current limit as sent, without the 2800 mA clamp of `#Ilim`. A host program must keep
+    it within the motor's rating and 2800 mA.
 
 === "Motor GUI"
     In the limits set the current limit, then **Save**.
@@ -27,7 +32,7 @@ Crunching and whining sounds at speed usually mean the current limit, or the cur
 
 <figure markdown="span">
   ![The cascaded loops](https://docs.source-robotics.com/STEPFOC-docs/108/assets/cascadeloop.webp){ width="800" }
-  <figcaption>Figure 13: The position loop commands the velocity loop, which commands the current loop.</figcaption>
+  <figcaption>Figure 14: The position loop commands the velocity loop, which commands the current loop.</figcaption>
 </figure>
 
 Tune from the inside out: the current loop first, then velocity, then position. Before you start:
@@ -81,7 +86,7 @@ Run the motor over the whole range of speeds and loads it will see, with a load 
 
 <figure markdown="span">
   ![The PD loop](https://docs.source-robotics.com/STEPFOC-docs/108/assets/PDloop.webp){ width="800" }
-  <figcaption>Figure 14: The impedance loop: a spring (KP) and a damper (KD) around the position setpoint, plus a current feedforward.</figcaption>
+  <figcaption>Figure 15: The impedance loop: a spring (KP) and a damper (KD) around the position setpoint, plus a current feedforward.</figcaption>
 </figure>
 
 In PD mode the motor behaves like a spring and a damper: the torque is `KP × (setpoint − position) + KD × (speed
@@ -92,8 +97,12 @@ explains the loop.
 
 ## Limits
 
-- The velocity limit (`#Vlimit`) clamps the speed the loops may command, in encoder ticks per second. A rough
-  maximum for your motor is 0.8 × Vbus × KV × 16384 / 60 ticks per second, with KV from calibration.
-- The voltage limit (`#Vlim`) clamps the voltage of the current loops in mV; 0 uses the supply voltage.
+- The velocity limit (`#Vlimit`, 800000 by default) clamps the speed the loops may command, in encoder ticks per
+  second. A rough maximum for your motor is 0.8 × V × KV × 16384 / 60 ticks per second, with KV from calibration
+  and V the lower of the voltage limit and the supply voltage.
+- The voltage limit (`#Vlim`) clamps the voltage of the current loops in mV. It is 6000 mV by default: a stepper's
+  low resistance makes the current loop unstable with the full supply voltage, and the firmware's own guidance is
+  6000 mV for a phase resistance below 2 Ω. The limit also caps the top speed. 0, or a value above the supply
+  voltage, uses the supply voltage.
 - `#Rstint 1` resets the integrators on every new setpoint, which avoids windup when a program sends one setpoint
   after another with large steps.

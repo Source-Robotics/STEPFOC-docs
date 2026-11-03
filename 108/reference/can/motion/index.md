@@ -59,7 +59,7 @@ Firmware 106 and older wrote the speed into the feedforward instead of the PD lo
 
 <div class="cmd-facts" markdown><span class="fact">ID 31</span><span class="fact">host → driver</span><span class="fact">4 bytes</span><span class="fact">Python: `Send_data_pack_HALL()`</span></div>
 
-Homing against a sensor: the driver spins at the given speed until the input on the ADDITIONAL2 pin shows the trigger condition, then latches the position it reached as its position setpoint and holds it. Sending the command again while the driver is already in HALL mode does not re-arm it; leave the mode first.
+Homing against a sensor: the driver spins at the given speed until the input on the ADDITIONAL2 pin shows the trigger condition, then latches the position it reached as its position setpoint and holds it. With a level trigger (0 or 1) it holds only while the pin stays at that level: when the pin changes back, the driver spins on again until the level returns. The edge trigger (2) holds after the first edge. Sending the command again while the driver is already in HALL mode does not re-arm it; leave the mode first.
 
 **4 bytes**
 
@@ -101,7 +101,7 @@ The driver's answer to Send_data_pack_HALL: the position and the state of the se
 | Byte | Bit | Field | Type | Meaning |
 |---|---|---|---|---|
 | 0-2 |  | position | signed 24-bit | encoder ticks |
-| 3 | 7 | HALL_trigger | bit | 1 while the driver waits for the trigger, 0 once it triggered and holds |
+| 3 | 7 | HALL_trigger | bit | 1 while the driver waits for the trigger (with a level trigger, also again after the pin left the level), 0 while it holds |
 | 3 | 6 | additional_pin2 | bit | the raw level of the ADDITIONAL2 pin |
 | 3 | 5 | hall_index | bit | 1 once the trigger has been seen (latched) |
 

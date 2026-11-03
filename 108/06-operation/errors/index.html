@@ -2234,7 +2234,7 @@ error bit in every <abbr title="Controller Area Network, the bus between the hos
 <h2 id="seeing-the-error">Seeing the error<a class="headerlink" href="#seeing-the-error" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>The <abbr title="Light-Emitting Diode">LED</abbr></strong>: on and not flashing means error mode (or not calibrated). Three short flashes and a pause is
-  normal operation; flashing every 0.5 s is calibration.</li>
+  normal operation; fast flashing is calibration.</li>
 <li><strong><code>#Error</code></strong> prints <code>In error state!</code> or <code>No errors!</code>, followed by one line per active error.</li>
 <li><strong>Send_Respond_State_of_Errors</strong> returns every flag as a bit; <strong>the error bit</strong> of any frame says whether there
   is one.</li>
@@ -2250,7 +2250,7 @@ error bit in every <abbr title="Controller Area Network, the bus between the hos
 <tbody>
 <tr>
 <td><a class="glightbox" href="../../assets/Normal.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Three short flashes and a pause" src="../../assets/Normal.webp" width="180" /></a></td>
-<td><a class="glightbox" href="../../assets/Calib.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Flashing every 0.5 s" src="../../assets/Calib.webp" width="180" /></a></td>
+<td><a class="glightbox" href="../../assets/Calib.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Fast flashing during calibration" src="../../assets/Calib.webp" width="180" /></a></td>
 <td><a class="glightbox" href="../../assets/Error2.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="On, steady" src="../../assets/Error2.webp" width="180" /></a></td>
 </tr>
 </tbody>
@@ -2270,26 +2270,26 @@ error bit in every <abbr title="Controller Area Network, the bus between the hos
 <tr>
 <td>Vbus</td>
 <td><code>Vbus error</code></td>
-<td>the supply voltage is below 9 V or above 29.5 V (<code>#Vmax</code>)</td>
+<td>the supply voltage is below 9 V or above 29 V (<code>#Vmax</code>, 29000 mV after <code>#Default</code>)</td>
 <td>check the supply and the cable; a decelerating motor can push the voltage up</td>
 </tr>
 <tr>
 <td>Encoder</td>
 <td><code>Encoder error</code></td>
-<td>the magnet is not detected or the reading is invalid</td>
+<td>the encoder reports no magnet: missing, too far away or too weak</td>
 <td>magnet distance and type, see <a href="../../04-mounting/magnet/">The encoder magnet</a></td>
 </tr>
 <tr>
 <td>Driver</td>
 <td><code>Driver error (undervoltage, thermal shutdown, or overcurrent)</code></td>
-<td>the MOSFET driver's own protection tripped</td>
-<td>lower the current limit, cool the driver, check for a short between the motor leads</td>
+<td>reserved: this firmware never raises it, because it does not monitor the driver stage</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Velocity</td>
 <td><code>Velocity error</code></td>
-<td>the speed exceeded the limit</td>
-<td>lower the commanded speed or raise <code>#Vlimit</code></td>
+<td>the speed passed 30,000,000 ticks/s, a fixed threshold that <code>#Vlimit</code> does not change; in practice only a runaway reaches it</td>
+<td>check the magnet and the calibration</td>
 </tr>
 <tr>
 <td>Temperature</td>
@@ -2306,7 +2306,7 @@ error bit in every <abbr title="Controller Area Network, the bus between the hos
 <tr>
 <td>Watchdog</td>
 <td><code>Watchdog error</code></td>
-<td>no valid <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> frame within the watchdog time (Send_Watchdog)</td>
+<td>no motion frame or status request within the watchdog time (Send_Watchdog)</td>
 <td>the host stopped sending; fix the host, then clear</td>
 </tr>
 <tr>
@@ -2327,14 +2327,16 @@ error bit in every <abbr title="Controller Area Network, the bus between the hos
 <p><code>#Clear</code> or Send_Clear_Error clears the flags and goes to idle. An error whose cause is still present comes
 straight back: a Vbus error at 2 V stays until the supply is right; once the supply is 24 V, one <code>#Clear</code> returns
 the driver to normal operation. The calibration error clears only by calibrating (or, for a motor you know is
-calibrated, <code>#Calibrated 1</code>).</p>
+calibrated, <code>#Calibrated 1</code>). A gripper E-stop comes back on every control cycle until its E-stop bit is 0 again:
+<code>#Gripstop 0</code>, or a Send_gripper_data_pack with the bit clear; then clear. While it is active, <code>#Error</code> prints only
+<code>In error state!</code>.</p>
 <h2 id="when-the-driver-does-not-answer">When the driver does not answer<a class="headerlink" href="#when-the-driver-does-not-answer" title="Permanent link">&para;</a></h2>
 <ul>
 <li>No <abbr title="Light-Emitting Diode">LED</abbr> at all: no power. Check DC+ and DC− and the cable orientation.</li>
 <li><abbr title="Light-Emitting Diode">LED</abbr> on, no answer on <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr>: the baud rate (256000), TX and RX crossed, the adapter's port.</li>
 <li>No answer on <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>: the node ID, the termination (about 60 Ω across the bus, unpowered), 1 Mbit/s on the adapter.</li>
-<li><code>#Info</code> shows <code>-1</code> or nonsense: the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> holds a layout the firmware does not expect; <code>#Default</code>, then
-  calibrate again.</li>
+<li><code>#Info</code> shows <code>-1</code> or nonsense: with firmware 106 and newer this should not happen, because the driver replaces a
+  damaged configuration block with the defaults at power-up. If it does, <code>#Default</code>, then calibrate again.</li>
 </ul>
 <p><a href="../../08-troubleshooting/">Troubleshooting</a> goes through the symptoms one by one.</p>
 
@@ -2357,7 +2359,7 @@ calibrated, <code>#Calibrated 1</code>).</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 31, 2026 16:25:05 UTC">October 31, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 3, 2026 14:48:56 UTC">November 3, 2026</span>
   </span>
 
     
