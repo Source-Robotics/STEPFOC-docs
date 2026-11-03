@@ -15,10 +15,8 @@ In robotics, a significant portion of motor power is consumed just fighting agai
 
 ## The Approach
 
-In this example, we use the Robotics Toolbox for Python to model a "robotic arm" with a single revolute joint. We compute the required torque using the Recursive Newton-Euler Algorithm (RNEA) and convert this torque into a motor current/torque that the motor controller will command the motor. In this blog post we will explain in short pseudo code snippets how the algorithm works on a single DOF arm.
+In this example, we use the Robotics Toolbox for Python to model a "robotic arm" with a single revolute joint. We compute the required torque using the Recursive Newton-Euler Algorithm (RNEA) and convert this torque into a motor current/torque that the motor controller will command the motor.
 
-For more info check the full guide here: https://source-robotics.com/blogs/blog/gravity-compensation-in-robotics
-
-Github repos with examples are here: https://github.com/Source-Robotics/Spectral-BLDC-Python/blob/main/examples/Advanced/Gravity%20compensation/BOM.md
-
-https://github.com/Source-Robotics/Spectral-BLDC-Python/tree/main/examples/Advanced/Gravity%20compensation
+The full write-up is the blog post [Gravity compensation in robotics](https://source-robotics.com/blogs/blog/gravity-compensation-in-robotics).
+The example code is in [Gravity compensation](https://github.com/Source-Robotics/Spectral-BLDC-Python/tree/main/examples/Advanced/Gravity%20compensation)
+in the Python library's examples, with its [bill of materials](https://github.com/Source-Robotics/Spectral-BLDC-Python/blob/main/examples/Advanced/Gravity%20compensation/BOM.md).

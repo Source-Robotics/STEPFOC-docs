@@ -20,9 +20,9 @@ connect anything; the few rules here are the ones that destroy a driver, a motor
     from the shop.
 
 !!! warning "Supply voltage"
-    12 to 29 V DC. The driver raises a Vbus error outside 9 to 29.5 V, but the hardware limit is 29 V: do not
-    connect a supply that can rise above it, and allow for the voltage a decelerating motor pushes back into the
-    supply. A bench supply with a current limit is the safest way to start.
+    12 to 29 V DC. The driver raises a Vbus error below 9 V and above 29 V (`#Vmax`, 29000 mV after `#Default`),
+    and 29 V is also the hardware limit: do not connect a supply that can rise above it, and allow for the voltage a
+    decelerating motor pushes back into the supply. A bench supply with a current limit is the safest way to start.
 
 !!! warning "Do not disconnect a running motor"
     Never unplug a motor, or a power cable in the daisy chain, while the driver is powered. The inductive kick of
@@ -43,7 +43,8 @@ connect anything; the few rules here are the ones that destroy a driver, a motor
 !!! warning "Hot motor and driver"
     A stepper running at its rated current gets hot enough to burn. Set the current limit for your motor
     ([Current limit and loop tuning](05-setup/tuning.md)), use the thermistor, and give the driver airflow when it
-    runs near 2.8 A.
+    runs near 2.8 A. `#Ilim` is clamped to 2800 mA, but the current limit of Send_Limits over CAN and the current
+    of a gripper move are used as sent: a host must keep them within the motor's rating and 2800 mA.
 
 ## Stopping the motor
 

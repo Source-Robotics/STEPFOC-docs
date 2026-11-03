@@ -20,7 +20,7 @@ A command is `#`, a name, optionally a space and one number, and a line ending:
 - A **Set/Get** command with a number sets the value and prints it; without a number it only prints it. `#P 16384`
   moves to position 16384 and prints the position; `#P` prints the position.
 - An **action** command takes no number: `#Cal`, `#Save`, `#Idle`.
-- A command the parser does not know is answered with `Unknown command` (firmware 108). A few names the parser
+- A command the parser does not know is answered with `Unknown command` (firmware 106 and newer). A few names the parser
   accepts have no handler and are answered with nothing; the [UART reference](../reference/uart/index.md) lists them.
 - 256000 baud, 8N1, 3.3 V.
 

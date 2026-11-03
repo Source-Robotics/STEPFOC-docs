@@ -25,7 +25,7 @@ flowchart TD
 | LED on, nothing on the terminal | 256000 baud; TX to RX and RX to TX; the adapter's port; 3.3 V adapter; the line ending CR+LF |
 | LED on, nothing on CAN | the node ID; 1 Mbit/s on the adapter; termination (about 60 Ω across CAN H and CAN L with everything unpowered); the CAN cable's orientation |
 | `Unknown command` | the name's spelling and case: `#Kpiq`, not `#kpiq` |
-| the LED is off and nothing works after a firmware update | the bootloader has no valid firmware: flash again, see [Updating through the bootloader](07-firmware/update.md) |
+| the LED keeps blinking and nothing answers after a firmware update | the bootloader has no valid firmware, or its CRC does not match after an upload with the programming adapter: flash again through the bootloader, see [Updating through the bootloader](07-firmware/update.md) |
 
 ## Motor GUI
 
@@ -37,7 +37,7 @@ flowchart TD
 | *No connection* on CAN | the CANvas adapter's port; the bus termination; the node ID of the driver; 1 Mbit/s |
 | the calibration does not start | calibration runs over the serial connection only, not over CAN |
 | *Unsaved changes* after a power cycle | the settings were not saved to the driver; Save writes them |
-| the firmware update finds no bootloader | a driver with firmware 103 has no bootloader: [Installing the bootloader on an older board](07-firmware/bootloader.md) |
+| the firmware update finds no bootloader | power-cycle the driver while the GUI scans, to catch the bootloader's 2 s window. A driver with firmware 103 or older from the `main` branch has no bootloader: [Installing the bootloader on an older board](07-firmware/bootloader.md) |
 
 ## Calibration
 
@@ -48,10 +48,10 @@ come back most:
 |---|---|
 | `Magnet test: Failed` | magnet too far, axially magnetised, or missing |
 | the motor wobbles left and right during calibration | one coil is not connected |
-| `Open loop: Failed` | the motor did not turn: a coil open, the open-loop voltage (`#Openv`) too low |
+| the motor does not move in the open-loop step | a coil open or not soldered; calibration then fails at the next step with `Phase order is wrong!` |
 | `Phase order is wrong!` | the motor did not respond to the commutation check; wiring, current limit, magnet |
 | calibration succeeds, the motor then runs badly or in the wrong direction | the magnet slipped on the shaft; glue it and calibrate again |
-| calibration succeeds but the LED stays on and `#Error` shows nothing | `#Info` shows `-1`: `#Default`, parameters, calibrate again |
+| calibration succeeds but the LED stays on and `#Error` shows nothing | should not happen with firmware 106 and newer, which replaces a damaged configuration block with the defaults at power-up; if `#Info` shows `-1`: `#Default`, parameters, calibrate again |
 
 ## The motor
 
@@ -62,7 +62,7 @@ come back most:
 | weak torque | `#Ilim` low; the supply's current limit; the wrong `#R`/`#L` (the computed current gains are off) |
 | the motor is hot | normal for a stepper at its rated current; lower `#Ilim`, enable the thermistor |
 | it stops with a Vbus error when decelerating | the supply cannot absorb the returned energy; a different supply, or a brake resistor |
-| it stops with a velocity error | the speed limit `#Vlimit`, or a load that lets the motor overrun |
+| it stops with a velocity error | the speed passed 30,000,000 ticks/s, a fixed threshold that `#Vlimit` does not change: a runaway, so check the magnet and the calibration |
 | it loses position with a load | that is a torque limit: a stepper under FOC does not lose steps, it falls behind; raise `#Ilim` within the motor's rating, or more motor |
 | it holds position with a sawtooth noise | the position loop gain; the magnet distance |
 
@@ -80,9 +80,9 @@ poorly and run rough. The [tested motors](03-technical-data/tested-motors.md) ar
 
 ## The driver gets hot or shuts down
 
-The MOSFET driver stage shuts down on its own overtemperature or overcurrent and reports a driver error. Lower
-the current limit, give the board airflow, check the motor leads for a short. Near 2.8 A the driver needs
-cooling.
+The firmware does not monitor the driver stage: if the stage stops on its own, for heat or a short, the motor
+loses torque and no error is reported. Lower the current limit, give the board airflow, check the motor leads for
+a short. Near 2.8 A the driver needs cooling.
 
 ## After a firmware update
 

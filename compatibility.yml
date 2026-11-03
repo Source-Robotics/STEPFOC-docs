@@ -14,7 +14,7 @@ columns:
 rows:
   - firmware: "108"
     date: 2026-08-26
-    bootloader: required (installed on boards shipped with 104 or newer)
+    bootloader: required (installed on boards shipped with 105 or newer)
     spectral: "107"
     python: 1.20 or newer
     runtime: 0.9 or newer
@@ -23,7 +23,7 @@ rows:
   - firmware: "107"
     date: 2026-08-24
     bootloader: required
-    spectral: "106"
+    spectral: 107, without its calibration fix (which came with STEPFOC 108)
     python: 1.20 or newer
     runtime: 0.9 or newer
     pcb: v1

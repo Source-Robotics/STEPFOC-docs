@@ -14,9 +14,10 @@ the motor constants Kt, KV and the flux linkage. It runs once per motor; the res
 
 ## 1. Restore the defaults
 
-The EEPROM of a new driver, or of one that ran another motor, can hold values that do not fit: another motor's
-parameters, or junk that shows as `-1` in `#Info`. Calibration starts from what is there, so start from the factory
-values.
+The EEPROM of a new driver, or of one that ran another motor, can hold values that do not fit, such as another
+motor's parameters. Calibration starts from what is there, so start from the factory values. (A damaged
+configuration should not show up with firmware 106 and newer, which checks the stored blocks at power-up and
+replaces a damaged one with the defaults; if `#Info` still shows `-1` somewhere, restoring the defaults fixes it.)
 
 === "Motor GUI"
     *Default* in the settings.
@@ -26,8 +27,9 @@ values.
     #Default
     ```
 
-This also resets the serial number, hardware version and batch date the driver reports; note what `#Info` printed
-if you need them. [Saving the configuration](saving.md) says what else it does.
+This also sets the CAN node ID to 0 and resets the serial number, hardware version and batch date stored in the
+EEPROM; note the hardware version and batch date `#Info` prints if you need them.
+[Saving the configuration](saving.md) says what else it does.
 
 ## 2. Enter the motor parameters
 
@@ -48,11 +50,12 @@ value left at 0, and accepts only 50, 75, 100 or 125 pole pairs.
 
 <figure markdown="span">
   ![An example datasheet](../assets/Motor_specs.webp){ width="900" }
-  <figcaption>Figure 17: The three values on a typical datasheet, here for the 17HS16-2004S1: 1.8°, 1.1 Ω, 2.6 mH.</figcaption>
+  <figcaption>Figure 13: The three values on a typical datasheet, here for the 17HS16-2004S1: 1.8°, 1.1 Ω, 2.6 mH.</figcaption>
 </figure>
 
 The current loop bandwidth (`#Cbw`, 500 Hz by default) decides the gains calibration computes from R and L;
-leave it for now, [Current limit and loop tuning](tuning.md) comes back to it.
+leave it for now, [Current limit and loop tuning](tuning.md) comes back to it. It is not saved: after a power
+cycle it is 500 Hz again.
 
 ## 3. Run it
 
@@ -65,7 +68,7 @@ leave it for now, [Current limit and loop tuning](tuning.md) comes back to it.
     #Cal
     ```
 
-The LED flashes every 0.5 s while the routine runs, and the driver prints each step as it goes:
+The LED flashes fast while the routine runs, and the driver prints each step as it goes:
 
 ```
 ----------------
@@ -79,6 +82,8 @@ Inductance = 0.002600H
 Kp_iq = ...
 Ki_iq = ...
 Open loop direction: good
+Calibrating angle offset... stage 1/13, sweep point 0
+...
 Angle offset is: ...
 Phase order is good!
 KV is: ...
@@ -99,15 +104,25 @@ What the steps are:
 | Magnet test | the encoder sees enough field: a magnet is there and close enough. The test says nothing about centring, the gap or the glue | `Magnet test: Failed`: magnet missing, too far, or axially magnetised |
 | Vbus test | the supply is within limits | `Vbus test: Failed` |
 | Resistance, inductance | the entered values are not 0; they are printed back and Kp_iq, Ki_iq computed from them and the bandwidth | `Resistance test: Failed` / `Inductance test: Failed`, with `Please enter your stepper resistance by using #R command` |
-| Open loop | the motor is stepped open loop; the encoder must see it turn. The direction it turned is remembered, so a reversed coil is compensated from here on | `Open loop: Failed` / `Switch motor phases and try again!`: the encoder saw no rotation |
-| Angle offset | the motor is driven to find the offset between encoder zero and electrical zero. It spins quickly one way, then the other, for up to two minutes | `Phase order is wrong!` / `Switch motor phases and try again!`: the commutation check got no response from the motor on two tries. A line `Spin-confirm delta: … ticks (need > 8192), Vbus: … mV` says how far the motor turned and at what voltage |
-| Kt, KV, flux linkage | the motor spins fast for a moment and the constants are computed from the back-EMF | — |
+| Open loop | the motor is stepped open loop at a fixed 5000 mV. The direction the encoder saw is remembered, so a reversed coil is compensated from here on | nothing in this firmware: the step always reports `good`, and a motor that did not turn fails the next step |
+| Angle offset | a short spin checks that the motor turns (two tries, 90 electrical degrees apart); then the field locks the rotor and a sweep finds the offset at which both directions turn alike. It prints `Calibrating angle offset...` with its progress every half second | `Phase order is wrong!` / `Switch motor phases and try again!`: the motor did not turn on either try. A line `Spin-confirm delta: … ticks (need > 8192), Vbus: … mV` says how far it turned and at what voltage |
+| Kt, KV, flux linkage | the motor spins at 500 mA for about a second; KV is the speed it reaches per volt of supply, Kt follows as 8.27 ÷ KV and the flux linkage from Kt | — |
 
-!!! note "The two 'Switch motor phases' messages"
-    They are left over from firmware 103, which needed the coils wired a particular way. Since firmware 105 the
-    wiring is detected and compensated, so these messages mean the motor did not turn or did not respond: a coil
-    not connected or shorted, a current limit at 0, a supply too weak, or a magnet that slips. Swapping wires does
-    not fix them.
+A whole run takes up to about a minute, most of it in the angle-offset search. When a step fails, the log ends
+with `Calibration failed!`, the driver goes to idle, the motor counts as not calibrated and the LED stays on
+steadily. Nothing is saved; fix the cause and run `#Cal` again.
+
+!!! note "The 'Switch motor phases' message"
+    It is left over from firmware 103, which needed the coils wired a particular way. Since firmware 105 the
+    wiring is detected and compensated, so `Phase order is wrong!` / `Switch motor phases and try again!` means the
+    motor did not turn or did not respond: a coil not connected or shorted, a supply too weak, or a magnet that
+    slips. Swapping wires does not fix it. (`Open loop: Failed` with the same advice cannot appear in this
+    release.)
+
+!!! note "The measured values are estimates"
+    KV, Kt and the flux linkage come from one short spin and differ a little from one run to the next, more on
+    motors with uneven windings. For the loops this does not matter; for a torque estimate in newton-metres,
+    measure Kt yourself.
 
 ## 4. Save
 
@@ -121,6 +136,11 @@ What the steps are:
 
 Without it the calibration is gone at the next power cycle. The driver goes to idle and the LED shows normal
 operation; the state shows *Calibrated* and the constants.
+
+!!! warning "Set the current limit next"
+    Calibration leaves the current limit at 1600 mA, whatever it was before: more than a small motor's rating.
+    Set it for your motor with `#Ilim` before the motor runs, and save again
+    ([Current limit and loop tuning](tuning.md)).
 
 ## When to calibrate again
 
@@ -138,9 +158,12 @@ shaft between calibration and use: fix the magnet and calibrate again.
 | `Magnet test: Failed` | no magnet, magnet too far (more than about 1.5 mm), or an axially magnetised magnet |
 | `Vbus test: Failed` | supply off, too low, or the cable the wrong way round (if the driver survived it) |
 | `Resistance test: Failed`, `Inductance test: Failed` | the resistance or the inductance still 0 |
-| `Open loop: Failed` | the motor did not turn: a coil open, the open-loop voltage (`#Openv`) too low for the motor, no supply current |
-| `Phase order is wrong!` | see the note above: the motor did not respond to the commutation check; check the wiring, the current limit and the magnet |
-| the routine stops in a step and prints nothing more | reset the driver (`#Reset`) and try again |
-| success, but the LED stays on and no error is reported | the state shows `-1` somewhere: the EEPROM is not in the firmware's layout; restore the defaults, enter the parameters, calibrate again |
+| `Phase order is wrong!` | see the note above: the motor did not turn on the spin check; check the four wires and their solder joints, the supply and its current limit, and the magnet |
+| the routine stops in a step and prints nothing more | reset the driver (`#Reset`) and try again; the angle-offset search prints a progress line every half second, so wait for a minute before you decide |
+| success, but the LED stays on and no error is reported | should not happen with firmware 106 and newer, which replaces a damaged configuration block with the defaults at power-up. If `#Info` shows `-1` somewhere, restore the defaults, enter the parameters and calibrate again |
 
-The angle-offset step alone can be repeated with `#Calangle`.
+`#Calangle` runs an angle-offset search on its own, with an older routine than the one `#Cal` uses: it gives up
+after about two minutes and keeps the offset it reached. After a change of motor, magnet or wiring, run the whole
+`#Cal` instead.
+
+Calibration runs over the serial connection only: a terminal, or Motor GUI over the serial adapter, not over CAN.

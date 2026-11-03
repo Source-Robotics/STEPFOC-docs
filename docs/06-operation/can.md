@@ -1,6 +1,6 @@
 # Over CAN
 
-CAN is the interface for running a machine: compact frames, a fixed cost per message, up to 16 drivers on one bus,
+CAN is the interface for running a machine: compact frames, a fixed cost per message, up to 14 drivers on one bus,
 and a host that can be a PC, a microcontroller or a robot control box. The driver answers a motion command with
 its position, speed and current in the same frame exchange, so a control loop on the host needs one frame out and
 one frame back per motor and cycle.
@@ -12,7 +12,7 @@ error state:
 
 <figure markdown="span">
   ![The CAN identifier](../assets/CANID.PNG){ width="600" }
-  <figcaption>Figure 16: Bits 10 to 7 of the identifier are the node ID, bits 6 to 1 the command ID, bit 0 the error bit.</figcaption>
+  <figcaption>Figure 17: Bits 10 to 7 of the identifier are the node ID, bits 6 to 1 the command ID, bit 0 the error bit.</figcaption>
 </figure>
 
 - **Node ID**, bits 10 to 7: which driver, 0 to 15. A driver acts only on frames with its own node ID and sends
@@ -41,8 +41,11 @@ single precision. Flags inside a byte are numbered from the most significant bit
 ## A control loop
 
 Send Send_data_pack_1 at a fixed rate, 100 Hz to 1 kHz, with the setpoint for this cycle; read Respond_data_pack_1
-for the position, speed and current of the last cycle. Every valid frame resets the watchdog, so with
-Send_Watchdog set to a few cycle times the motor stops when the host stops. The heartbeat is the other way round:
+for the position, speed and current of the last cycle. Every valid motion frame, and every status request the
+driver answers, resets the watchdog; the setting frames (gains, limits, Idle, Clear, Save) do not. So with
+Send_Watchdog set to a few cycle times the motor stops when the host stops. A watchdog kept with Send_Save_config
+runs from power-up: a host that does not start its loop within the watchdog time finds the driver in watchdog
+error, and clears it with Send_Clear_Error. The heartbeat is the other way round:
 Send_Heartbeat_Setup makes the driver send a frame on its own every N ms when it has nothing else to send, so the
 host can see it is alive.
 
@@ -58,7 +61,7 @@ sequenceDiagram
         D-->>H: Respond_data_pack_1: position, speed, current, the error bit
     end
     D-->>H: heartbeat, whenever nothing else was sent for N ms
-    Note over D: no valid frame within the watchdog time: watchdog error, the motor stops
+    Note over D: no motion frame or status request within the watchdog time: watchdog error, the motor stops
 ```
 
 ## From a PC

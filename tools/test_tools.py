@@ -156,6 +156,13 @@ if loaded:
     sec = pages.can_section(answered, d["can"]["commands"][answered], d)
     check("B12 a command section: facts strip, the accepted lengths, the answer",
           "cmd-facts" in sec and "bytes" in sec and ("Respond_" in sec or not facts["can"]["handlers"].get(answered, {}).get("responds")), sec[:200])
+    dt = pages.defaults_table(d)
+    internal = [x["name"] for x in facts["defaults"] if not x.get("setting")]
+    shown = [x["name"] for x in facts["defaults"] if x.get("setting")]
+    check("B13 the defaults table: what #Default sets and #Save keeps, the settings only, no internal state",
+          "After `#Default`" in dt and "Kept by `#Save`" in dt and bool(shown) and bool(internal)
+          and all(f"| `{n}` |" in dt for n in shown) and not any(f"| `{n}` |" in dt for n in internal if n not in shown),
+          dt[:200])
 
 print(f"\n{len(fails)} failure(s)" if fails else "\nall checks passed")
 sys.exit(1 if fails else 0)

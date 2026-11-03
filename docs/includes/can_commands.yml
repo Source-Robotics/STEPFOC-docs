@@ -73,8 +73,10 @@ commands:
     python: Send_data_pack_HALL()
     description: >
       Homing against a sensor: the driver spins at the given speed until the input on the ADDITIONAL2 pin shows the
-      trigger condition, then latches the position it reached as its position setpoint and holds it. Sending the
-      command again while the driver is already in HALL mode does not re-arm it; leave the mode first.
+      trigger condition, then latches the position it reached as its position setpoint and holds it. With a level
+      trigger (0 or 1) it holds only while the pin stays at that level: when the pin changes back, the driver spins
+      on again until the level returns. The edge trigger (2) holds after the first edge. Sending the command again
+      while the driver is already in HALL mode does not re-arm it; leave the mode first.
     forms:
       - length: 4
         fields:
@@ -100,7 +102,7 @@ commands:
       `position`, `HALL_trigger`, `additional_pin2`, `hall_index`.
     response_fields:
       - {bytes: "0-2", name: position, type: signed 24-bit, meaning: encoder ticks}
-      - {bytes: "3", bit: 7, name: HALL_trigger, type: bit, meaning: "1 while the driver waits for the trigger, 0 once it triggered and holds"}
+      - {bytes: "3", bit: 7, name: HALL_trigger, type: bit, meaning: "1 while the driver waits for the trigger (with a level trigger, also again after the pin left the level), 0 while it holds"}
       - {bytes: "3", bit: 6, name: additional_pin2, type: bit, meaning: the raw level of the ADDITIONAL2 pin, _shared: true}
       - {bytes: "3", bit: 5, name: hall_index, type: bit, meaning: 1 once the trigger has been seen (latched), _shared: true}
   IN_DATA_PACK_2:
@@ -169,8 +171,9 @@ commands:
     group: gains
     python: Send_Limits()
     description: >
-      Sets the speed limit and the current limit the loops may reach. The current limit is clamped by the firmware
-      to the driver's maximum of 2800 mA.
+      Sets the speed limit and the current limit the loops may reach. The firmware stores the current limit as
+      sent: unlike `#Ilim` over UART, it is not clamped to the driver's maximum of 2800 mA. Send 2800 mA or less,
+      and no more than the motor's rated current.
     forms:
       - length: 8
         fields:
@@ -223,13 +226,15 @@ commands:
     group: status
     python: Send_Respond_Device_Info()
     description: >
-      Asks for the driver's identity: hardware version, batch date and serial number from the EEPROM, and the
-      firmware release (from firmware 105 on this is the build's own version; before, a value from the EEPROM).
+      Asks for the driver's identity: hardware version and batch date from the EEPROM, the serial number, and the
+      firmware release (from firmware 105 on this is the build's own version; before, a value from the EEPROM). This
+      firmware does not read the serial number back from the EEPROM at power-up: it reports 1 until `#SERNUM` sets
+      it.
     response_fields:
       - {bytes: "0", name: HARDWARE_VERSION, type: unsigned 8-bit, meaning: PCB revision}
       - {bytes: "1", name: BATCH_DATE, type: unsigned 8-bit, meaning: production batch}
       - {bytes: "2", name: SOFTWARE_VERSION, type: unsigned 8-bit, meaning: "firmware release, e.g. 108"}
-      - {bytes: "3-6", name: SERIAL_NUMBER, type: unsigned 32-bit, meaning: serial number}
+      - {bytes: "3-6", name: SERIAL_NUMBER, type: unsigned 32-bit, meaning: "serial number as held in RAM: 1 after a power-up"}
   OUT_IN_STATE_OF_ERRORS_CAN:
     name: Send_Respond_State_of_Errors
     group: status
@@ -238,10 +243,10 @@ commands:
     response_fields:
       - {bytes: "0", bit: 7, name: error, type: bit, meaning: any error is active}
       - {bytes: "0", bit: 6, name: temperature_error, type: bit, meaning: motor over the temperature limit, _shared: true}
-      - {bytes: "0", bit: 5, name: encoder_error, type: bit, meaning: magnet not detected or misaligned, _shared: true}
+      - {bytes: "0", bit: 5, name: encoder_error, type: bit, meaning: the encoder reports no magnet (too weak a field), _shared: true}
       - {bytes: "0", bit: 4, name: vbus_error, type: bit, meaning: supply voltage outside the limits, _shared: true}
-      - {bytes: "0", bit: 3, name: driver_error, type: bit, meaning: "the MOSFET driver reports undervoltage, thermal shutdown or overcurrent", _shared: true}
-      - {bytes: "0", bit: 2, name: velocity_error, type: bit, meaning: speed over the limit, _shared: true}
+      - {bytes: "0", bit: 3, name: driver_error, type: bit, meaning: "reserved; never set by this firmware (STEPFOC does not read a fault output of its driver stage)", _shared: true}
+      - {bytes: "0", bit: 2, name: velocity_error, type: bit, meaning: "speed above 30,000,000 ticks/s, a fixed threshold (not #Vlimit)", _shared: true}
       - {bytes: "0", bit: 1, name: current_error, type: bit, meaning: reserved; never set by this firmware, _shared: true}
       - {bytes: "0", bit: 0, name: estop_error, type: bit, meaning: Send_ESTOP was received, _shared: true}
       - {bytes: "1", bit: 7, name: calibrated, type: bit, meaning: the motor is calibrated}
@@ -285,12 +290,13 @@ commands:
     python: Send_CAN_ID()
     description: >
       Gives the driver a new node ID, 0 to 13 (the firmware accepts up to 15, but the bootloader reserves 14 and 15:
-      a driver on one of those cannot be updated over CAN). Setting the ID also sets the bootloader's board ID.
+      a driver on one of those cannot be updated over CAN). Saving the configuration (Send_Save_config) also writes
+      the ID into the bootloader's board ID.
       The driver answers to the new ID at once; the ID is kept over a power cycle only after Send_Save_config.
     forms:
       - length: 1
         fields:
-          - {bytes: "0", name: ID, type: unsigned 8-bit, meaning: 0 to 15}
+          - {bytes: "0", name: ID, type: unsigned 8-bit, meaning: "0 to 13; 14 and 15 are accepted but reserved by the bootloader"}
   IN_ESTOP:
     name: Send_ESTOP
     group: system
@@ -305,7 +311,11 @@ commands:
     name: Send_Save_config
     group: system
     python: Send_Save_config()
-    description: Writes the current configuration (gains, limits, calibration, CAN ID, heartbeat, watchdog, gripper flag) to the EEPROM.
+    description: >
+      Writes the current configuration (gains, limits, calibration, CAN ID, heartbeat, watchdog, gripper flag) to
+      the EEPROM, and the CAN ID into the bootloader's board ID. The idle behaviour of Send_Settings and the current
+      loop bandwidth are not kept. It also writes the serial number held in RAM, which is 1 after a power-up unless
+      `#SERNUM` set it, over the stored one.
   IN_RESET:
     name: Send_Reset
     group: system
@@ -319,15 +329,20 @@ commands:
     python: Send_Clear_Error()
     description: >
       Clears the error flags and goes to idle. An error whose cause is still present comes straight back. A
-      calibration error is cleared only by calibrating.
+      calibration error is cleared only by calibrating. A gripper E-stop comes back until the E-stop bit of
+      Send_gripper_data_pack is 0 again.
   IN_WATCHDOG_TIMEOUT:
     name: Send_Watchdog
     group: system
     python: Send_Watchdog()
     description: >
-      Sets the watchdog: every valid CAN frame the driver receives resets it; when the time runs out the driver
-      reports a watchdog error and stops. 0 turns it off (the default). The action byte is stored but not acted on
-      by this firmware: the driver always stops into its idle behaviour.
+      Sets the watchdog: when the time runs out the driver reports a watchdog error and stops. Every valid motion
+      frame (Send_data_pack_1, Send_data_pack_PD, Send_data_pack_HALL, Send_gripper_data_pack) and every status
+      request the driver answers resets it; the setting frames (gains, limits, Idle, Clear, Save, Settings and
+      Send_Watchdog itself) do not. 0 turns it off (the default). The action byte is stored but not acted on by
+      this firmware: the driver always stops into its idle behaviour. Send_Save_config keeps the watchdog, and a
+      kept watchdog runs from power-up: a host that sends no motion frame or status request within the time finds
+      the driver in watchdog error, and clears it with Send_Clear_Error.
     forms:
       - length: 5
         fields:
@@ -348,8 +363,8 @@ commands:
     description: >
       Sets boolean settings that have no command of their own: a mask byte says which settings the frame touches, a
       value byte gives their new values; settings outside the mask are left alone. Bit 0 is the idle behaviour: 1
-      brake (phases shorted), 0 coast. Added in firmware 108 (Spectral Micro 107). The Python library has no call for
-      it yet.
+      brake (phases shorted), 0 coast. The setting is not kept by Send_Save_config: at power-up the driver brakes.
+      Added in firmware 107. The Python library has no call for it yet.
     forms:
       - length: 2
         fields:
@@ -374,10 +389,10 @@ commands:
         fields:
           - {bytes: "0", name: Position, type: unsigned 8-bit, meaning: "0 fully open, 255 fully closed"}
           - {bytes: "1", name: Speed, type: unsigned 8-bit, meaning: "0 slowest, 255 fastest"}
-          - {bytes: "2-3", name: Current, type: signed 16-bit, meaning: "current limit of the move in mA; not clamped by the firmware, see the gripper manual for the safe range"}
+          - {bytes: "2-3", name: Current, type: signed 16-bit, meaning: "current limit of the move in mA; not clamped by the firmware, not even to the driver's 2800 mA; see the gripper manual for the safe range"}
           - {bytes: "4", bit: 7, name: Activate, type: bit, meaning: "1 activate the gripper, 0 deactivate"}
           - {bytes: "4", bit: 6, name: Action, type: bit, meaning: "1 go to the position, 0 idle", _shared: true}
-          - {bytes: "4", bit: 5, name: E-stop, type: bit, meaning: 1 raises the gripper E-stop error, _shared: true}
+          - {bytes: "4", bit: 5, name: E-stop, type: bit, meaning: "1 raises the gripper E-stop error, again on every control cycle until a frame with this bit 0 arrives; then Send_Clear_Error", _shared: true}
           - {bytes: "4", bit: 4, name: Release direction, type: bit, meaning: read by the firmware but not used, _shared: true}
   IN_GRIPPER_CALIB:
     name: Send_gripper_calibrate
@@ -398,7 +413,7 @@ commands:
       - {bytes: "3", bit: 7, name: gripper_activated, type: bit, meaning: 1 activated}
       - {bytes: "3", bit: 6, name: gripper_action_status, type: bit, meaning: "1 going to the position, 0 idle, auto-release or calibrating", _shared: true}
       - {bytes: "3", bit: "5-4", name: gripper_object_detection, type: 2 bits, bit_order: lsb_first, meaning: "bit 5 is the low bit, bit 4 the high bit: 0 moving, 1 object detected while closing, 2 object detected while opening, 3 at the position", _shared: true}
-      - {bytes: "3", bit: 3, name: gripper_temperature_error, type: bit, meaning: "", _shared: true}
-      - {bytes: "3", bit: 2, name: gripper_timeout_error, type: bit, meaning: "", _shared: true}
-      - {bytes: "3", bit: 1, name: gripper_estop_error, type: bit, meaning: "", _shared: true}
+      - {bytes: "3", bit: 3, name: gripper_temperature_error, type: bit, meaning: a copy of the thermistor temperature error, _shared: true}
+      - {bytes: "3", bit: 2, name: gripper_timeout_error, type: bit, meaning: "a copy of the CAN watchdog error (Send_Watchdog), not a move timeout", _shared: true}
+      - {bytes: "3", bit: 1, name: gripper_estop_error, type: bit, meaning: "the E-stop bit of Send_gripper_data_pack (or #Gripstop 1) was set", _shared: true}
       - {bytes: "3", bit: 0, name: gripper_calibrated, type: bit, meaning: 1 calibrated, _shared: true}

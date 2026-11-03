@@ -18,8 +18,8 @@ The firmware and hardware files are in
 | `docs/includes/generated/` | written by `tools/sync_firmware.py` from the firmware's release tag: `firmware_facts.json`, `firmware_release_notes.md`. Never edit |
 | `versions.yml` | every version fact: the firmware release the site describes, the manual's number and revision |
 | `compatibility.yml` | which firmware release works with which bootloader, Python library, PAR6 runtime and board |
-| `hooks/` | `versions.py` writes the version facts into the pages; `firmware_pages.py` builds the reference pages; `llms.py` writes the Markdown twin of every page, `llms.txt` and `llms-full.txt` |
-| `tools/` | `sync_firmware.py`, `test_tools.py`, `make_stubs.py`, `root_404.html` |
+| `hooks/` | `versions.py` writes the version facts into the pages; `firmware_pages.py` builds the reference pages; `can_tools.py` the versioned CAN downloads and the frame tool; `llms.py` writes the Markdown twin of every page, `llms.txt` and `llms-full.txt`; `pdf.py` prints the whole manual to PDF |
+| `tools/` | `sync_firmware.py`, `build_model.py`, `make_stubs.py`, `root_404.html`, and the tests `test_tools.py`, `test_can_tools.py`, `test_site_features.py`, `test_can_codec.js` |
 | `overrides/` | the theme changes: the older-version banner, the edit/report line, the header's repository card |
 
 The site is built with [MkDocs](https://www.mkdocs.org/) and the

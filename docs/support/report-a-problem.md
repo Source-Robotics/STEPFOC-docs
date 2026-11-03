@@ -4,8 +4,8 @@ Open an issue in the [firmware repository](https://github.com/Source-Robotics/ST
 for the driver and its firmware, or in [Spectral-BLDC-Python](https://github.com/Source-Robotics/Spectral-BLDC-Python/issues)
 for the Python library. Include:
 
-1. **The output of `#Info`**, copied from the terminal. It carries the hardware and firmware version, the motor
-   parameters, the calibration state and the errors.
+1. **The output of `#Info`, `#Param` and `#Error`**, copied from the terminal. They carry the hardware and
+   firmware version, the motor parameters, the calibration state, the gains and limits, and the errors.
 2. **The motor**: type, and the `#R`, `#L`, `#PP` you entered.
 3. **The supply**: voltage, and whether it has a current limit.
 4. **What you did and what happened**: the commands, in order, and the driver's answers; the calibration log if it

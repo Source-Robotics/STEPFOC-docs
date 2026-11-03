@@ -8,7 +8,7 @@ Bilateral teleoperation is a concept that Involves two-way communication where b
 
 The two grippers are virtually coupled to each other, allowing either to act as the master (the haptic interface) or the slave (the manipulator) in the system. We are not using a force sensor at the grippers but are relying on proprioception.
 
-![drawing](../assets/bil_tel.webp)
+![Bilateral teleoperation of two coupled grippers](../assets/bil_tel.webp)
 
 Watch these example videos to get a "feel" of the concept:
 
@@ -46,7 +46,7 @@ We recommend these items to create a simple test jig:
 
 Here we are showing you the setup for any 2 motors, for example we are using 2 x [ssg48 grippers](https://source-robotics.com/products/compliant-gripper) that are connected in exactly the same setup.
 
-![drawing](../assets/leg_setup.webp)
+![Wiring: the supply to the first driver, the CAN bus from the adapter through both drivers, a motor on each driver](../assets/leg_setup.webp)
 
 You will need to follow the diagram above to wire everything up.
 

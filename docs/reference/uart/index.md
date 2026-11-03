@@ -12,7 +12,8 @@ hand. [Over UART](../../06-operation/uart.md) explains the protocol.
 
 - A **Set/Get** command sets the value when a number follows and prints the current value either way.
 - A **Get** command only prints.
-- An **Action** command does something; a number after it is ignored.
+- An **Action** command does something; a number after it is ignored. The exceptions are `#Idle` and `#PWM`:
+  with a number they are answered `Unknown command`.
 - Names are case-sensitive, at most 19 characters; the number at most 19; the line ends with LF (CR before it is
   fine). 256000 baud, 8N1, 3.3 V.
 - A name the parser does not know is answered `Unknown command`.

@@ -5,9 +5,10 @@
 | | Value |
 |---|---|
 | Supply voltage | 12 to 29 V DC, 24 V typical |
-| Vbus error limits (firmware) | below 9 V or above 29.5 V |
+| Vbus error limits (firmware) | below 9 V or above 29 V (`#Vmax`, 29000 mV after `#Default`) |
 | Phase current, continuous | 1.5 A typical |
-| Phase current, maximum | 2.8 A, the firmware's limit (`#Ilim` is clamped to 2800 mA); needs good cooling and short bursts |
+| Phase current, maximum | 2.8 A; needs good cooling and short bursts. `#Ilim` is clamped to 2800 mA; Send_Limits over CAN is not clamped |
+| Current limit, default | 1700 mA after `#Default`; calibration leaves it at 1600 mA |
 | Power, maximum | 80 W |
 | Power, idle | 0.3 W |
 | PWM frequency | 25 kHz |
@@ -16,12 +17,13 @@
 | Current sensing | inline, both phases |
 | Encoder | 14-bit magnetic, 16384 ticks per revolution, diametrical magnet 1 mm above the chip |
 | UART | 3.3 V, 256000 baud by default (1 000 000 tested) |
-| CAN | CAN 2.0, 1 Mbit/s, 11-bit identifiers, node IDs 0 to 15, 120 Ω termination by switch |
+| CAN | CAN 2.0, 1 Mbit/s, 11-bit identifiers, node IDs 0 to 13 (the bootloader reserves 14 and 15), 120 Ω termination by switch |
 | Thermistor input | 100 kΩ NTC, 54.9 kΩ pull-down |
 | ADDITIONAL2 | analog input or general-purpose input/output, 3.3 V |
-| Driver stage protection | hardware overcurrent, undervoltage and overtemperature shutdown; shown as a driver error |
+| Driver stage protection | not monitored: the firmware reads no fault output of the driver stage, and its driver error flag stays 0 |
 
-!!! warning "Reversing the polarity on DC+ and DC− destroys the board."
+!!! warning "Polarity"
+    Reversing the polarity on DC+ and DC− destroys the board.
 
 ## Thermal and environmental
 
@@ -36,7 +38,7 @@
 |---|---|
 | Dimensions | 39 × 39 mm |
 | Mass | 8 g |
-| Mounting | the NEMA 17 pattern, 31 mm hole spacing; NEMA 14 and 23 motors with an adapter |
+| Mounting | the NEMA 17 pattern, 31 mm hole spacing; NEMA 23 motors with the NEMA 23 spacer, other frames with an adapter you make |
 
 ## Firmware limits
 
