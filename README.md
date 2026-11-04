@@ -18,7 +18,7 @@ The firmware and hardware files are in
 | `docs/includes/generated/` | written by `tools/sync_firmware.py` from the firmware's release tag: `firmware_facts.json`, `firmware_release_notes.md`. Never edit |
 | `versions.yml` | every version fact: the firmware release the site describes, the manual's number and revision |
 | `compatibility.yml` | which firmware release works with which bootloader, Python library, PAR6 runtime and board |
-| `hooks/` | `versions.py` writes the version facts into the pages; `firmware_pages.py` builds the reference pages; `can_tools.py` the versioned CAN downloads and the frame tool; `llms.py` writes the Markdown twin of every page, `llms.txt` and `llms-full.txt`; `pdf.py` prints the whole manual to PDF |
+| `hooks/` | `versions.py` writes the version facts into the pages; `firmware_pages.py` builds the reference pages; `can_tools.py` the versioned CAN downloads and the frame tool; `llms.py` writes the Markdown twin of every page, `llms.txt` and `llms-full.txt`; `figures.py` numbers the figures and writes their captions; `pdf.py` prints the whole manual to PDF |
 | `tools/` | `sync_firmware.py`, `build_model.py`, `make_stubs.py`, `root_404.html`, and the tests `test_tools.py`, `test_can_tools.py`, `test_site_features.py`, `test_can_codec.js` |
 | `overrides/` | the theme changes: the older-version banner, the edit/report line, the header's repository card |
 
@@ -172,3 +172,13 @@ ship separate position, velocity and current files. Never merge those into a sin
 Motor GUI screenshots under `docs/assets/motor-gui/` were captured from the live tool on 2026-10-31.
 The captions distinguish the real connection screen from simulated CAN hardware. Numbered annotations
 are HTML/CSS over the original capture; refresh the captures and captions when the controls change.
+
+## Figures
+
+Every picture on a line of its own is a figure: `hooks/figures.py` wraps it in a `<figure>` and writes its alt text
+under it as the caption, "Figure 4.2: ...", numbered per chapter in reading order (per page outside the numbered
+chapters). So write the alt text as one sentence that says what the picture shows. A light and a dark version of a
+drawing (`name.webp#only-light`, `name_dark.webp#only-dark`, on two lines) count as one figure. A figure written in
+HTML with its own `<figcaption>`, such as the annotated Motor GUI screenshots, is numbered in the same sequence.
+Never type a figure number by hand; `tools/test_tools.py` (E5) fails on one. The hook is PAROL-docs' with that
+one addition.

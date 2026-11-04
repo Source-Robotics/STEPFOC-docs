@@ -1,9 +1,6 @@
 # Connectors and pinout
 
-<figure markdown="span">
-  ![The connectors of the STEPFOC driver](../assets/STEPFOC_CONN.webp){ width="900" }
-  <figcaption>Figure 2: The connectors. The motor coils go to A+, A−, B+, B−; the supply to DC+ and DC−.</figcaption>
-</figure>
+![The connectors. The motor coils go to A+, A−, B+, B−; the supply to DC+ and DC−.](../assets/STEPFOC_CONN.webp){ width="900" }
 
 | Connector | Pins | Type | Cable |
 |---|---|---|---|

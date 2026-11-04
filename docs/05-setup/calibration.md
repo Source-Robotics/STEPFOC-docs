@@ -48,10 +48,7 @@ value left at 0, and accepts only 50, 75, 100 or 125 pole pairs.
     #L 0.0026       phase inductance in henries (2.6 mH)
     ```
 
-<figure markdown="span">
-  ![An example datasheet](../assets/Motor_specs.webp){ width="900" }
-  <figcaption>Figure 13: The three values on a typical datasheet, here for the 17HS16-2004S1: 1.8°, 1.1 Ω, 2.6 mH.</figcaption>
-</figure>
+![The three values on a typical datasheet, here for the 17HS16-2004S1: 1.8°, 1.1 Ω, 2.6 mH.](../assets/Motor_specs.webp){ width="900" }
 
 The current loop bandwidth (`#Cbw`, 500 Hz by default) decides the gains calibration computes from R and L;
 leave it for now, [Current limit and loop tuning](tuning.md) comes back to it. It is not saved: after a power

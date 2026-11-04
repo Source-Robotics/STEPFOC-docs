@@ -6,7 +6,7 @@ pages in order; the magnet first, because it is the one thing you cannot check f
 
 <figure markdown="span">
   ![Hardware setup video](https://img.youtube.com/vi/60UMc95H8iE/hqdefault.jpg){ width="480" }
-  <figcaption>Figure 5: <a href="https://youtu.be/60UMc95H8iE">The motor hardware setup video</a> shows the whole procedure on a NEMA 17 motor.</figcaption>
+  <figcaption><a href="https://youtu.be/60UMc95H8iE">The motor hardware setup video</a> shows the whole procedure on a NEMA 17 motor.</figcaption>
 </figure>
 
 ## In this chapter

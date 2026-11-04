@@ -19,10 +19,7 @@ once, with a programming adapter on the JTAG connector. After that, every update
 - The bootloader binary from the [bootloader repository's `bin/` folder](https://github.com/Source-Robotics/stm32f103c-bootloader/tree/main/bin);
   its `README.md` names the current file.
 
-<figure markdown="span">
-  ![The JTAG pads and the adapter](../assets/STEPFOC_JTAG.webp){ width="700" }
-  <figcaption>Figure 18: The JTAG pads, marked 3V3, GND, SWCLK, SWDIO. The adapter is pressed onto them; a little pressure makes the contact.</figcaption>
-</figure>
+![The JTAG pads, marked 3V3, GND, SWCLK, SWDIO. The adapter is pressed onto them; a little pressure makes the contact.](../assets/STEPFOC_JTAG.webp){ width="700" }
 
 ## Steps
 

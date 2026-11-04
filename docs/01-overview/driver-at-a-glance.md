@@ -6,10 +6,7 @@ servo drive does, instead of the fixed step currents of a conventional stepper d
 runs quietly and efficiently, never loses steps, reports its position, and can be commanded in position, speed,
 current (torque) or impedance.
 
-<figure markdown="span">
-  ![The STEPFOC driver](../assets/STEPFOC.webp){ width="520" }
-  <figcaption>Figure 1: The STEPFOC driver, 39 × 39 mm, with the encoder chip in the middle of the board.</figcaption>
-</figure>
+![The STEPFOC driver, 39 × 39 mm, with the encoder chip in the middle of the board.](../assets/STEPFOC.webp){ width="520" }
 
 ## What is on the board
 

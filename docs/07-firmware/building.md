@@ -32,10 +32,7 @@ size fails to link.
     once more through the bootloader to recover. Once the bootloader is on the board, install every firmware
     through it.
 
-<figure markdown="span">
-  ![Upload in VS Code](../assets/VSUPLOAD.png){ width="700" }
-  <figcaption>Figure 19: Build, upload and the serial monitor in PlatformIO's status bar.</figcaption>
-</figure>
+![Build, upload and the serial monitor in PlatformIO's status bar.](../assets/VSUPLOAD.png){ width="700" }
 
 ## Where things are
 
