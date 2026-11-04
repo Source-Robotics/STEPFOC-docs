@@ -86,5 +86,7 @@ image linked for `0x08000000` (a firmware from the `main` branch) over the firmw
 
 ## Installing it
 
-Boards shipped with firmware 103 or older have no bootloader. [Installing the bootloader on an older board](bootloader.md)
+Boards that run release 103 or older from the `main` branch have no bootloader; some boards shipped before 105
+have it although they report 103 ([Drivers that report 103](releases.md#drivers-that-report-103)).
+[Installing the bootloader on an older board](bootloader.md)
 puts it there once, with a programming adapter at `0x08000000`; from then on the board updates like any other.

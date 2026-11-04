@@ -1,6 +1,8 @@
 # Installing the bootloader on an older board
 
-A driver running firmware 103 or older has no bootloader: its firmware starts at the beginning of the flash. To
+A driver running release 103 or older from the `main` branch has no bootloader: its firmware starts at the
+beginning of the flash. A driver that reports 103 may have the bootloader all the same; check first, as in
+[Drivers that report 103](releases.md#drivers-that-report-103). To
 run any release from 105 on, which is linked to start above the bootloader, the bootloader must be installed
 once, with a programming adapter on the JTAG connector. After that, every update goes over UART or CAN.
 

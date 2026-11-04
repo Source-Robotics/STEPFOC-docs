@@ -21,7 +21,8 @@
     writes the CAN node ID into it.
 
 **Bootloader**
-:   The program in the first 12 KB of the driver's flash on boards shipped with firmware 105 or newer. It starts the
+:   The program in the first 12 KB of the driver's flash on boards shipped with firmware 105 or newer, and on some
+    shipped before. It starts the
     firmware, and loads a new firmware over UART or CAN. See [The bootloader](07-firmware/the-bootloader.md).
 
 **Calibration**

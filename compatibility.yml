@@ -14,7 +14,7 @@ columns:
 rows:
   - firmware: "108"
     date: 2026-08-26
-    bootloader: required (installed on boards shipped with 105 or newer)
+    bootloader: required (installed on boards shipped with 105 or newer, and on some shipped before)
     spectral: "107"
     python: 1.20 or newer
     runtime: 0.9 or newer
