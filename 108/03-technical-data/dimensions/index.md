@@ -12,15 +12,10 @@ on the motor shaft's axis.
   <p class="gripper-viewer__hint">Drag to turn the board, scroll to zoom. The model is the board's STEP file from the <a href="https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/main/STEP%20files">repository</a>, the PCB and everything mounted on it.</p>
 </div>
 
-<figure markdown="span">
-  ![Dimensions of the board](https://docs.source-robotics.com/STEPFOC-docs/108/assets/micro_dimensions.webp){ width="600" }
-  <figcaption>Figure 3: Board dimensions and hole pattern. The drawing is of the Spectral Micro, which has the same outline and hole pattern.</figcaption>
-</figure>
+![Board dimensions and hole pattern. The drawing is of the Spectral Micro, which has the same outline and hole pattern.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/micro_dimensions.webp){ width="600" }
+![Board dimensions and hole pattern. The drawing is of the Spectral Micro, which has the same outline and hole pattern.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/micro_dimensions_dark.webp){ width="600" }
 
-<figure markdown="span">
-  ![The STEP model of the driver](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_STEP.webp){ width="520" }
-  <figcaption>Figure 4: The STEP model.</figcaption>
-</figure>
+![The STEP model.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_STEP.webp){ width="520" }
 
 The STEP files of the board, the magnet spacers for different motor lengths and the tool for pressing the magnet
 onto the shaft are in the firmware repository:
@@ -30,4 +25,4 @@ onto the shaft are in the firmware repository:
   magnet spacers, NEMA 17 spacers for different motor lengths, NEMA 23 spacers
 - [Tools](https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/main/STEP%20files/Tools): the magnet tool
 
-[CAD and downloads](https://docs.source-robotics.com/STEPFOC-docs/108/cad-files/) lists everything that can be downloaded.
+[Downloads and files](https://docs.source-robotics.com/STEPFOC-docs/108/cad-files/) lists everything that can be downloaded.

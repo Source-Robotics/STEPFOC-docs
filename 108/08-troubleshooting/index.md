@@ -1,6 +1,8 @@
 # Troubleshooting
 
-By symptom. The error flags and what clears them are in [Errors and recovery](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/errors/).
+By symptom. The error flags and what clears them are in [Errors and recovery](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/errors/); the
+faults of the firmware that are known and not yet fixed, with what to do until they are, in
+[Known issues](https://docs.source-robotics.com/STEPFOC-docs/108/08-troubleshooting/known-issues/).
 
 ## The motor does not move
 

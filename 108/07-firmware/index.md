@@ -1,8 +1,9 @@
 # Firmware
 
 The driver's firmware is open source and released as numbered builds. A driver shipped with firmware 105 or newer
-carries a bootloader and updates itself over UART or CAN; an older driver needs the bootloader installed once with
-a programming adapter.
+carries a bootloader and updates itself over UART or CAN, and so do some drivers shipped before 105, which report
+103 ([Drivers that report 103](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/releases/#drivers-that-report-103) says how to tell). A driver without the
+bootloader needs it installed once with a programming adapter.
 
 ## In this chapter
 

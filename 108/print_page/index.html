@@ -1296,13 +1296,41 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#08-troubleshooting" class="md-nav__link">
+  <a href="#section-1-3-8" class="md-nav__link">
     <span class="md-ellipsis">
       
         8. Troubleshooting
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="8. Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#08-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#08-troubleshooting-known-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Known issues
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1399,7 +1427,7 @@
   <a href="#cad-files" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CAD and downloads
+        Downloads and files
       
     </span>
   </a>
@@ -1988,15 +2016,30 @@ The motor turns during calibration. The <a href="#02-safety">Safety</a> chapter 
 in the middle of the board, and it must not be able to turn on the shaft. A magnet that slips is the usual cause of
 a calibration that "succeeds" and a motor that then runs badly.</p>
 <p>Read in more detail: <a href="#04-mounting-magnet">The encoder magnet</a>.</p>
+<div class="admonition success">
+<p class="admonition-title">Check</p>
+<p>The magnet sits centred on the shaft, and once the glue has set it does not move when you push it with a
+finger. If it does: <a href="#04-mounting-magnet">The encoder magnet</a>.</p>
+</div>
 <h2 id="quick-start-3-mount-the-board">3. Mount the board<a class="headerlink" href="#quick-start-3-mount-the-board" title="Permanent link">&para;</a></h2>
 <p>Remove the motor's four rear screws, put the spacer on, the board on the spacer with the encoder chip towards the
 magnet, and the longer screws in. Check the gap: 1 mm, not touching.</p>
 <p>Read in more detail: <a href="#04-mounting-mounting">Mounting on the motor</a>.</p>
+<div class="admonition success">
+<p class="admonition-title">Check</p>
+<p>The board sits parallel to the back of the motor, about 1 mm above the magnet, and the shaft turns by hand
+without the magnet touching the chip. If not: <a href="#04-mounting-mounting">Mounting on the motor</a>.</p>
+</div>
 <h2 id="quick-start-4-wire-the-motor">4. Wire the motor<a class="headerlink" href="#quick-start-4-wire-the-motor" title="Permanent link">&para;</a></h2>
 <p>Find the two coils with a multimeter (the two wires of a coil show a few ohms; wires of different coils show
 nothing). Solder one coil to <strong>A+ and A−</strong>, the other to <strong>B+ and B−</strong>. Which coil is which, and which way round,
 does not matter: calibration detects it.</p>
 <p>Read in more detail: <a href="#04-mounting-wiring">Wiring the stepper</a>.</p>
+<div class="admonition success">
+<p class="admonition-title">Check</p>
+<p>With the driver unpowered, a multimeter shows the coil's resistance, a few ohms, between A+ and A− and
+between B+ and B−, and no strand bridges two pads. If not: <a href="#04-mounting-wiring">Wiring the stepper</a>.</p>
+</div>
 <h2 id="quick-start-5-connect-power-and-the-pc">5. Connect power and the PC<a class="headerlink" href="#quick-start-5-connect-power-and-the-pc" title="Permanent link">&para;</a></h2>
 <ol>
 <li>The supply to a power connector: <strong>DC+ to positive, DC− to negative</strong>. Check twice.</li>
@@ -2025,8 +2068,11 @@ errors.</p>
 </div>
 <p>Read in more detail: <a href="#04-mounting-power-and-can">Power and the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> daisy chain</a> ·
 <a href="#03-technical-data-connectors">Connectors and pinout</a>.</p>
-<p><strong>Check:</strong> the driver's identity and live state appear before you change settings. A missing connection
-is covered in <a href="#05-setup-motor-gui-opening-the-port">Motor GUI</a> or <a href="#08-troubleshooting">Troubleshooting</a>.</p>
+<div class="admonition success">
+<p class="admonition-title">Check</p>
+<p>The driver's identity and live state appear before you change settings. A missing connection is covered in
+<a href="#05-setup-motor-gui-opening-the-port">Motor GUI</a> or <a href="#08-troubleshooting">Troubleshooting</a>.</p>
+</div>
 <h2 id="quick-start-6-restore-the-defaults-and-enter-the-motor-parameters">6. Restore the defaults and enter the motor parameters<a class="headerlink" href="#quick-start-6-restore-the-defaults-and-enter-the-motor-parameters" title="Permanent link">&para;</a></h2>
 <p>First the factory defaults, so that calibration does not start from another motor's values or from junk in the
 <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>: <em>Default</em> in the Motor GUI settings, or <code>#Default</code> in the terminal. (It also sets the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID to 0,
@@ -2048,6 +2094,11 @@ fails on a value left at 0.</p>
 </div>
 </div>
 <p>Read in more detail: <a href="#05-setup-calibration">Motor parameters and calibration</a>.</p>
+<div class="admonition success">
+<p class="admonition-title">Check</p>
+<p><code>#Info</code> prints the values you entered as <code>Number of pole pairs</code>, <code>Single phase resistance</code> and <code>Single
+phase Inductance</code> (Motor GUI shows them in the motor settings). None of them may be 0.</p>
+</div>
 <h2 id="quick-start-7-calibrate">7. Calibrate<a class="headerlink" href="#quick-start-7-calibrate" title="Permanent link">&para;</a></h2>
 <p>Fix the motor to the bench, nothing on the shaft, 24 V on the supply.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="quick-start-__tabbed_3_1" name="quick-start-__tabbed_3" type="radio" /><input id="quick-start-__tabbed_3_2" name="quick-start-__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="quick-start-__tabbed_3_1">Motor GUI</label><label for="quick-start-__tabbed_3_2">Terminal</label></div>
@@ -2072,8 +2123,12 @@ the supply, the parameters you entered, the open-loop spin, the angle offset, th
 that the magnet does not slip.</p>
 <p>Read in more detail: <a href="#05-setup-calibration">Motor parameters and calibration</a>, with the whole log and every
 message.</p>
-<p><strong>Check:</strong> the calibration log ends with <code>Calibration success!</code>. If it does not, use the failed step in
-<a href="#05-setup-calibration-troubleshooting">Calibration troubleshooting</a>; do not treat a stopped motor as success.</p>
+<div class="admonition success">
+<p class="admonition-title">Check</p>
+<p>The calibration log ends with <code>Calibration success!</code>. If it does not, use the failed step in
+<a href="#05-setup-calibration-troubleshooting">Calibration troubleshooting</a>; do not treat a stopped motor as
+success.</p>
+</div>
 <h2 id="quick-start-8-set-the-current-limit-and-save">8. Set the current limit and save<a class="headerlink" href="#quick-start-8-set-the-current-limit-and-save" title="Permanent link">&para;</a></h2>
 <p>The current limit is the motor's rated phase current in mA. It is 1700 mA after <code>#Default</code>, and calibration leaves
 it at 1600 mA: both are more than a small motor's rating, so set it now, after calibrating.</p>
@@ -2093,8 +2148,11 @@ it at 1600 mA: both are more than a small motor's rating, so set it now, after c
 pause: normal operation.</p>
 <p>Read in more detail: <a href="#05-setup-tuning">Current limit and loop tuning</a> ·
 <a href="#05-setup-saving">Saving the configuration</a>.</p>
-<p><strong>Check:</strong> after <strong>Save</strong>, Motor GUI no longer marks unsaved changes. <a href="#05-setup-saving">Saving</a> explains
-which settings are kept.</p>
+<div class="admonition success">
+<p class="admonition-title">Check</p>
+<p>After <strong>Save</strong>, Motor GUI no longer marks unsaved changes, and after a power cycle <code>#Info</code> prints
+<code>Calibrated</code>. <a href="#05-setup-saving">Saving</a> explains which settings are kept.</p>
+</div>
 <h2 id="quick-start-9-move-it">9. Move it<a class="headerlink" href="#quick-start-9-move-it" title="Permanent link">&para;</a></h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="5:2"><input checked="checked" id="quick-start-__tabbed_5_1" name="quick-start-__tabbed_5" type="radio" /><input id="quick-start-__tabbed_5_2" name="quick-start-__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="quick-start-__tabbed_5_1">Motor GUI</label><label for="quick-start-__tabbed_5_2">Terminal</label></div>
 <div class="tabbed-content">
@@ -2116,8 +2174,11 @@ speed and current while it moves.</p>
 <p>Position is in encoder ticks, 16384 per revolution; speed in ticks per second; current in mA. If the motor hums
 or whines, lower the current limit or tune the loops.</p>
 <p>Read in more detail: <a href="#06-operation-modes">Control modes</a> · <a href="#05-setup-tuning">Current limit and loop tuning</a>.</p>
-<p><strong>Check:</strong> the position/speed feedback follows the request, and <strong>Idle</strong> stops driving the motor. A motor
-that does not follow needs <a href="#08-troubleshooting">Troubleshooting</a> before a load is attached.</p>
+<div class="admonition success">
+<p class="admonition-title">Check</p>
+<p>The position and speed feedback follow the request, and <strong>Idle</strong> stops driving the motor. A motor that
+does not follow needs <a href="#08-troubleshooting">Troubleshooting</a> before a load is attached.</p>
+</div>
 <h2 id="quick-start-10-where-to-go-next">10. Where to go next<a class="headerlink" href="#quick-start-10-where-to-go-next" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -2257,9 +2318,9 @@ servo drive does, instead of the fixed step currents of a conventional stepper d
 runs quietly and efficiently, never loses steps, reports its position, and can be commanded in position, speed,
 current (torque) or impedance.</p>
 <figure>
-  <a class="glightbox" href="../assets/STEPFOC.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The STEPFOC driver" src="../assets/STEPFOC.webp" width="520" /></a>
+  <a class="glightbox" href="../assets/STEPFOC.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The STEPFOC driver, 39 × 39 mm, with the encoder chip in the middle of the board." src="../assets/STEPFOC.webp" width="520" /></a>
 <br />
-<figcaption>Figure 1: The STEPFOC driver, 39 × 39 mm, with the encoder chip in the middle of the board.</figcaption>
+<figcaption>Figure 1.1: The STEPFOC driver, 39 × 39 mm, with the encoder chip in the middle of the board.</figcaption>
 </figure>
 <h2 id="01-overview-driver-at-a-glance-what-is-on-the-board">What is on the board<a class="headerlink" href="#01-overview-driver-at-a-glance-what-is-on-the-board" title="Permanent link">&para;</a></h2>
 <table>
@@ -2506,12 +2567,25 @@ decelerating motor pushes back into the supply. A bench supply with a current li
 <p>Never unplug a motor, or a power cable in the daisy chain, while the driver is powered. The inductive kick of
 the coils and the arcing at the connector damage the driver stage.</p>
 </div>
+<div class="admonition warning">
+<p class="admonition-title">Static electricity</p>
+<p>Static electricity damages the microcontroller, the encoder chip and the driver stage. Unplug the supply and
+touch earthed metal before you handle the board, and hold it by its edges, away from the chips and the pads.</p>
+</div>
 <h2 id="02-safety-mechanical">Mechanical<a class="headerlink" href="#02-safety-mechanical" title="Permanent link">&para;</a></h2>
 <div class="admonition danger">
 <p class="admonition-title">Moving parts</p>
 <p>A calibrating or running motor turns without warning, in both directions, and the stepper in position mode
 pushes back hard against a hand. Keep fingers, hair and cables away from the shaft and whatever is mounted on
 it, fix the motor to the bench before the first test, and test without a load on the shaft.</p>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">A powered motor can move with nobody at it</p>
+<p>The driver moves its motor whenever a command arrives, over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> or from any host on the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> bus, and keeps
+following the last one. A speed command goes on turning the motor after the program that sent it has crashed
+or its cable has come out, unless the watchdog is set (<a href="#02-safety-stopping-the-motor">Stopping the motor</a>). Before you
+reach for the motor or the mechanism it drives, put the driver in idle (<code>#Idle</code>, Send_Idle) or switch the
+supply off.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">The encoder magnet</p>
@@ -2521,7 +2595,9 @@ damage the microcontroller; a magnet too far away gives a wrong position. Mount 
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Hot motor and driver</p>
-<p>A stepper running at its rated current gets hot enough to burn. Set the current limit for your motor
+<p>A stepper running at its rated current gets hot enough to burn, and so do the driver's chips and the board
+around them. Switch off and let both cool for a few minutes before you touch them. Set the current limit for
+your motor
 (<a href="#05-setup-tuning">Current limit and loop tuning</a>), use the thermistor, and give the driver airflow when it
 runs near 2.8 A. <code>#Ilim</code> is clamped to 2800 mA, but the current limit of Send_Limits over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> and the current
 of a gripper move are used as sent: a host must keep them within the motor's rating and 2800 mA.</p>
@@ -2712,9 +2788,9 @@ tested with the driver.</p>
 </table>
 <p>The defaults of every setting are listed in the <a href="#reference-defaults">Defaults</a> reference.</p></section><section class="print-page" id="03-technical-data-connectors" heading-number="1.3.3.3"><h1 id="03-technical-data-connectors-connectors-and-pinout">Connectors and pinout<a class="headerlink" href="#03-technical-data-connectors-connectors-and-pinout" title="Permanent link">&para;</a></h1>
 <figure>
-  <a class="glightbox" href="../assets/STEPFOC_CONN.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The connectors of the STEPFOC driver" src="../assets/STEPFOC_CONN.webp" width="900" /></a>
+  <a class="glightbox" href="../assets/STEPFOC_CONN.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The connectors. The motor coils go to A+, A−, B+, B−; the supply to DC+ and DC−." src="../assets/STEPFOC_CONN.webp" width="900" /></a>
 <br />
-<figcaption>Figure 2: The connectors. The motor coils go to A+, A−, B+, B−; the supply to DC+ and DC−.</figcaption>
+<figcaption>Figure 3.1: The connectors. The motor coils go to A+, A−, B+, B−; the supply to DC+ and DC−.</figcaption>
 </figure>
 <table>
 <thead>
@@ -2802,14 +2878,15 @@ on the motor shaft's axis.</p>
 </div>
 
 <figure>
-  <a class="glightbox" href="../assets/micro_dimensions.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Dimensions of the board" src="../assets/micro_dimensions.webp" width="600" /></a>
+  <a class="glightbox" href="../assets/micro_dimensions.webp#only-light" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Board dimensions and hole pattern. The drawing is of the Spectral Micro, which has the same outline and hole pattern." src="../assets/micro_dimensions.webp#only-light" width="600" /></a>
+  <a class="glightbox" href="../assets/micro_dimensions_dark.webp#only-dark" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Board dimensions and hole pattern. The drawing is of the Spectral Micro, which has the same outline and hole pattern." src="../assets/micro_dimensions_dark.webp#only-dark" width="600" /></a>
 <br />
-<figcaption>Figure 3: Board dimensions and hole pattern. The drawing is of the Spectral Micro, which has the same outline and hole pattern.</figcaption>
+<figcaption>Figure 3.2: Board dimensions and hole pattern. The drawing is of the Spectral Micro, which has the same outline and hole pattern.</figcaption>
 </figure>
 <figure>
-  <a class="glightbox" href="../assets/STEPFOC_STEP.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The STEP model of the driver" src="../assets/STEPFOC_STEP.webp" width="520" /></a>
+  <a class="glightbox" href="../assets/STEPFOC_STEP.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The STEP model." src="../assets/STEPFOC_STEP.webp" width="520" /></a>
 <br />
-<figcaption>Figure 4: The STEP model.</figcaption>
+<figcaption>Figure 3.3: The STEP model.</figcaption>
 </figure>
 <p>The STEP files of the board, the magnet spacers for different motor lengths and the tool for pressing the magnet
 onto the shaft are in the firmware repository:</p>
@@ -2819,7 +2896,7 @@ onto the shaft are in the firmware repository:</p>
   magnet spacers, <abbr title="the stepper motor frame size with 31 mm mounting-hole spacing">NEMA 17</abbr> spacers for different motor lengths, NEMA 23 spacers</li>
 <li><a href="https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/main/STEP%20files/Tools">Tools</a>: the magnet tool</li>
 </ul>
-<p><a href="#cad-files">CAD and downloads</a> lists everything that can be downloaded.</p></section><section class="print-page" id="03-technical-data-tested-motors" heading-number="1.3.3.5"><h1 id="03-technical-data-tested-motors-tested-motors">Tested motors<a class="headerlink" href="#03-technical-data-tested-motors-tested-motors" title="Permanent link">&para;</a></h1>
+<p><a href="#cad-files">Downloads and files</a> lists everything that can be downloaded.</p></section><section class="print-page" id="03-technical-data-tested-motors" heading-number="1.3.3.5"><h1 id="03-technical-data-tested-motors-tested-motors">Tested motors<a class="headerlink" href="#03-technical-data-tested-motors-tested-motors" title="Permanent link">&para;</a></h1>
 <p>STEPFOC works with bipolar (4-wire) stepper motors whose phase resistance is 1 to 5 Ω and whose rated current is
 3 A or less. The motors below have been run on it; the resistance and inductance are the datasheet values of one
 coil, which is what you enter with <code>#R</code> and <code>#L</code> before calibration.</p>
@@ -2904,7 +2981,7 @@ pages in order; the magnet first, because it is the one thing you cannot check f
 <figure>
   <a class="glightbox" href="https://img.youtube.com/vi/60UMc95H8iE/hqdefault.jpg" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Hardware setup video" src="https://img.youtube.com/vi/60UMc95H8iE/hqdefault.jpg" width="480" /></a>
 <br />
-<figcaption>Figure 5: <a href="https://youtu.be/60UMc95H8iE">The motor hardware setup video</a> shows the whole procedure on a NEMA 17 motor.</figcaption>
+<figcaption>Figure 4.1: <a href="https://youtu.be/60UMc95H8iE">The motor hardware setup video</a> shows the whole procedure on a NEMA 17 motor.</figcaption>
 </figure>
 <h2 id="04-mounting-in-this-chapter">In this chapter<a class="headerlink" href="#04-mounting-in-this-chapter" title="Permanent link">&para;</a></h2>
 <ul>
@@ -2918,9 +2995,9 @@ pages in order; the magnet first, because it is the one thing you cannot check f
 <p>The encoder reads a diametrically magnetised magnet on the rear end of the motor shaft. The magnet must sit
 centred on the shaft's axis, parallel to the board, about <strong>1 mm</strong> above the encoder chip, and it must not move.</p>
 <figure>
-  <a class="glightbox" href="../assets/STEPFOC_MAGNET.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Magnet distance to the encoder" src="../assets/STEPFOC_MAGNET.png" width="700" /></a>
+  <a class="glightbox" href="../assets/STEPFOC_MAGNET.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="About 1 mm between the magnet and the encoder chip in the middle of the board." src="../assets/STEPFOC_MAGNET.png" width="700" /></a>
 <br />
-<figcaption>Figure 6: About 1 mm between the magnet and the encoder chip in the middle of the board.</figcaption>
+<figcaption>Figure 4.2: About 1 mm between the magnet and the encoder chip in the middle of the board.</figcaption>
 </figure>
 <h2 id="04-mounting-magnet-the-magnet">The magnet<a class="headerlink" href="#04-mounting-magnet-the-magnet" title="Permanent link">&para;</a></h2>
 <p>A neodymium disc, <strong>diametrically</strong> magnetised (north and south across the diameter, not through the thickness).
@@ -2975,15 +3052,16 @@ plate you make yourself: the repository has none.</p>
 <div class="admonition warning">
 <p class="admonition-title">The board is bare</p>
 <p>Nothing on the back of the board may touch the motor's housing. Make sure the spacer keeps the board clear of
-the end cap, and keep metal swarf and screws away from the board while you work.</p>
+the end cap, and keep metal swarf and screws away from the board while you work. Touch earthed metal before you pick the
+board up and hold it by its edges: static electricity damages its chips.</p>
 </div></section><section class="print-page" id="04-mounting-wiring" heading-number="1.3.4.4"><h1 id="04-mounting-wiring-wiring-the-stepper">Wiring the stepper<a class="headerlink" href="#04-mounting-wiring-wiring-the-stepper" title="Permanent link">&para;</a></h1>
 <p>A bipolar stepper has two coils and four wires. One coil goes to the terminals <strong>A+ and A−</strong>, the other to <strong>B+
 and B−</strong>. Which coil is A and which is B does not matter, and neither does the polarity of each coil: firmware 105
 and newer finds the wiring during calibration and compensates it.</p>
 <figure>
-  <a class="glightbox" href="../assets/STEPFOC_CONN.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Motor terminals and connectors" src="../assets/STEPFOC_CONN.webp" width="900" /></a>
+  <a class="glightbox" href="../assets/STEPFOC_CONN.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The motor terminals A+, A−, B+, B− and the other connectors." src="../assets/STEPFOC_CONN.webp" width="900" /></a>
 <br />
-<figcaption>Figure 7: The motor terminals A+, A−, B+, B− and the other connectors.</figcaption>
+<figcaption>Figure 4.3: The motor terminals A+, A−, B+, B− and the other connectors.</figcaption>
 </figure>
 <h2 id="04-mounting-wiring-finding-the-two-coils">Finding the two coils<a class="headerlink" href="#04-mounting-wiring-finding-the-two-coils" title="Permanent link">&para;</a></h2>
 <p>On most stepper motors the colours give the pairs away: <strong>black and green</strong> are one coil, <strong>red and blue</strong> the
@@ -3038,9 +3116,9 @@ and the position, speed and current you read back in your host program.</p></sec
 <p>Each driver has two power connectors (JST XH) and two <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> connectors (JST ZH). The second connector of each pair
 feeds the next driver, so a chain of drivers hangs on one supply cable and one <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> cable.</p>
 <figure>
-  <a class="glightbox" href="../assets/Daisy_chain-Photoroom.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="A daisy chain of drivers" src="../assets/Daisy_chain-Photoroom.webp" width="700" /></a>
+  <a class="glightbox" href="../assets/Daisy_chain-Photoroom.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Power and CAN pass from driver to driver. The first and the last node on the bus have their termination switch on." src="../assets/Daisy_chain-Photoroom.webp" width="700" /></a>
 <br />
-<figcaption>Figure 8: Power and CAN pass from driver to driver. The first and the last node on the bus have their termination switch on.</figcaption>
+<figcaption>Figure 4.4: Power and CAN pass from driver to driver. The first and the last node on the bus have their termination switch on.</figcaption>
 </figure>
 <h2 id="04-mounting-power-and-can-power">Power<a class="headerlink" href="#04-mounting-power-and-can-power" title="Permanent link">&para;</a></h2>
 <ul>
@@ -3061,9 +3139,9 @@ ways, and the wrong way puts DC+ on DC−. Every cable must run as in the pictur
 ends. A wrong cable destroys the driver at the moment it is powered.</p>
 </div>
 <figure>
-  <a class="glightbox" href="../assets/Orientation.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Cable orientation" src="../assets/Orientation.webp" width="600" /></a>
+  <a class="glightbox" href="../assets/Orientation.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The orientation of the daisy-chain cables. The picture shows a generic 4-pin cable; the rule is the same for the 2-pin CAN and power cables." src="../assets/Orientation.webp" width="600" /></a>
 <br />
-<figcaption>Figure 9: The orientation of the daisy-chain cables. The picture shows a generic 4-pin cable; the rule is the same for the 2-pin CAN and power cables.</figcaption>
+<figcaption>Figure 4.5: The orientation of the daisy-chain cables. The picture shows a generic 4-pin cable; the rule is the same for the 2-pin CAN and power cables.</figcaption>
 </figure>
 <p>The cables from the shop are made this way: <a href="https://source-robotics.com/products/spectral-micro-can-cable"><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> cable</a>,
 <a href="https://source-robotics.com/products/spectral-micro-power-cable">power cable</a>, and all of them under
@@ -3082,9 +3160,9 @@ ends. A wrong cable destroys the driver at the moment it is powered.</p>
   which has its own termination.</li>
 </ul>
 <figure>
-  <a class="glightbox" href="../assets/STEPFOC_CAN.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The CAN termination switch" src="../assets/STEPFOC_CAN.webp" width="520" /></a>
+  <a class="glightbox" href="../assets/STEPFOC_CAN.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The termination switch, ON for the first and the last node." src="../assets/STEPFOC_CAN.webp" width="520" /></a>
 <br />
-<figcaption>Figure 10: The termination switch, ON for the first and the last node.</figcaption>
+<figcaption>Figure 4.6: The termination switch, ON for the first and the last node.</figcaption>
 </figure></section><section class="print-page" id="04-mounting-thermistor" heading-number="1.3.4.6"><h1 id="04-mounting-thermistor-thermistor">Thermistor<a class="headerlink" href="#04-mounting-thermistor-thermistor" title="Permanent link">&para;</a></h1>
 <p>A 100 kΩ NTC thermistor on the motor lets the driver stop before the motor overheats. It is optional, and off by
 default; use it on any motor that runs near its rated current for long.</p>
@@ -3096,9 +3174,9 @@ overheat and burn its windings without any warning. With the thermistor fitted a
 first. The starter kit includes one.</p>
 </div>
 <figure>
-  <a class="glightbox" href="../assets/STEPFOC_THERMISTOR-Photoroom.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The thermistor connector" src="../assets/STEPFOC_THERMISTOR-Photoroom.webp" width="520" /></a>
+  <a class="glightbox" href="../assets/STEPFOC_THERMISTOR-Photoroom.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The thermistor on its 2-pin connector." src="../assets/STEPFOC_THERMISTOR-Photoroom.webp" width="520" /></a>
 <br />
-<figcaption>Figure 11: The thermistor on its 2-pin connector.</figcaption>
+<figcaption>Figure 4.7: The thermistor on its 2-pin connector.</figcaption>
 </figure>
 <h2 id="04-mounting-thermistor-fitting-it">Fitting it<a class="headerlink" href="#04-mounting-thermistor-fitting-it" title="Permanent link">&para;</a></h2>
 <p>A stepper is sealed: the windings cannot be reached. Place the thermistor on the motor housing, as close to the
@@ -3107,7 +3185,7 @@ bottom with the screw removed, which puts it deep in the stack. Thermal cement h
 <figure>
   <a class="glightbox" href="../assets/Thermal_cement.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Thermal cement" src="../assets/Thermal_cement.webp" width="220" /></a>
 <br />
-<figcaption>Thermal cement: it sets hard and conducts heat. Thermal paste stays soft and lets the bead move, ordinary glue insulates it. <a href="https://s.click.aliexpress.com/e/_c3dBOwTD" target="_blank" rel="noopener">Where to buy it</a>.</figcaption>
+<figcaption>Figure 4.8: Thermal cement: it sets hard and conducts heat. Thermal paste stays soft and lets the bead move, ordinary glue insulates it. <a href="https://s.click.aliexpress.com/e/_c3dBOwTD" target="_blank" rel="noopener">Where to buy it</a>.</figcaption>
 </figure>
 <p>The housing lags behind the windings by some seconds, and reads lower. Set the limit with that in mind: the
 default of 75 °C at the housing corresponds to a hotter winding.</p>
@@ -3180,8 +3258,30 @@ browsers have: Chrome, Edge, Brave, Opera. Firefox and Safari cannot open serial
    calibrated and activated, and the active errors: what <code>#Info</code>, <code>#SERNUM</code> and <code>#Error</code> print in a terminal.</li>
 </ol>
 <p>If the port is not offered, the browser is not Chromium-based, or another program holds the port (a terminal left
-open, PlatformIO's monitor). If the port opens and nothing appears: the driver is unpowered, or TX and RX are
-crossed on an adapter that is not the Source Robotics one.</p>
+open, PlatformIO's monitor), or the operating system does not give the browser the port:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="05-setup-motor-gui-__tabbed_1_1" name="05-setup-motor-gui-__tabbed_1" type="radio" /><input id="05-setup-motor-gui-__tabbed_1_2" name="05-setup-motor-gui-__tabbed_1" type="radio" /><input id="05-setup-motor-gui-__tabbed_1_3" name="05-setup-motor-gui-__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="05-setup-motor-gui-__tabbed_1_1">Windows</label><label for="05-setup-motor-gui-__tabbed_1_2">Linux</label><label for="05-setup-motor-gui-__tabbed_1_3">macOS</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>The adapter is <code>COM</code> and a number. Device Manager lists it under <strong>Ports (COM &amp; LPT)</strong>: the entry that
+disappears when you unplug the adapter is yours. An adapter that shows a warning sign there instead needs the
+driver of its USB chip (on most 3.3 V adapters a CP210x or a CH340) from the chip maker.</p>
+</div>
+<div class="tabbed-block">
+<p>The serial adapter is <code>/dev/ttyUSB0</code> on most adapters, the CANvas adapter <code>/dev/ttyACM0</code>;
+<code>ls /dev/ttyUSB* /dev/ttyACM*</code> lists them. To open them without root, join the <code>dialout</code> group once, then
+log out and in again:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#05-setup-motor-gui-__codelineno-0-1"></a>sudo usermod -aG dialout $USER
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<p>The serial adapter is <code>/dev/cu.usbserial-</code> and a few characters on most adapters, the CANvas adapter
+<code>/dev/cu.usbmodem</code> and a number; <code>ls /dev/cu.*</code> lists them. Use the <code>cu.</code> name, not the <code>tty.</code> one, in a
+terminal or a script.</p>
+</div>
+</div>
+</div>
+<p>The browser's port picker lists the same adapters. If the port opens and nothing appears: the driver is
+unpowered, or TX and RX are crossed on an adapter that is not the Source Robotics one.</p>
 <h2 id="05-setup-motor-gui-what-is-on-the-screen">What is on the screen<a class="headerlink" href="#05-setup-motor-gui-what-is-on-the-screen" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>State</strong>: the identity above, the control mode the driver is in, the errors, and <strong>Clear errors</strong>.</li>
@@ -3208,7 +3308,7 @@ crossed on an adapter that is not the Source Robotics one.</p>
 <span class="gui-shot__mark" style="left:23%;top:20%" aria-hidden="true">3</span></p>
 </div>
 <figcaption>
-<p><strong>1. Transport:</strong> choose <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> for the serial adapter. <strong>2. Baud:</strong> 256000 for a stock driver. <strong>3. Connect:</strong> choose the adapter in the browser's port picker.</p>
+<p>Figure 5.1: <strong>1. Transport:</strong> choose <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> for the serial adapter. <strong>2. Baud:</strong> 256000 for a stock driver. <strong>3. Connect:</strong> choose the adapter in the browser's port picker.</p>
 </figcaption>
 </figure>
 <figure class="gui-shot">
@@ -3220,10 +3320,14 @@ crossed on an adapter that is not the Source Robotics one.</p>
 <span class="gui-shot__mark" style="left:88%;top:17%" aria-hidden="true">4</span></p>
 </div>
 <figcaption>
-<p><strong>1. Connection and node:</strong> confirm the intended driver. <strong>2. State:</strong> calibration, activation and faults. <strong>3. Command mode:</strong> setpoints and jog controls. <strong>4. Live telemetry:</strong> measured position, speed and current. This screenshot uses <strong>Mock <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> (demo)</strong>, not physical hardware.</p>
+<p>Figure 5.2: <strong>1. Connection and node:</strong> confirm the intended driver. <strong>2. State:</strong> calibration, activation and faults. <strong>3. Command mode:</strong> setpoints and jog controls. <strong>4. Live telemetry:</strong> measured position, speed and current. This screenshot uses <strong>Mock <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> (demo)</strong>, not physical hardware.</p>
 </figcaption>
 </figure>
-<p><strong>Check:</strong> after connecting real hardware, the state and identity belong to your driver. If they do not appear, check the transport, selected port, supply and TX/RX wiring before trying to move.</p>
+<div class="admonition success">
+<p class="admonition-title">Check</p>
+<p>After connecting real hardware, the state and identity belong to your driver. If they do not appear, check
+the transport, the selected port, the supply and the TX/RX wiring before trying to move.</p>
+</div>
 <h2 id="05-setup-motor-gui-try-it-without-hardware">Try it without hardware<a class="headerlink" href="#05-setup-motor-gui-try-it-without-hardware" title="Permanent link">&para;</a></h2>
 <p>Open <a href="https://motorgui.com/">Motor GUI</a>, choose <strong>Mock <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> (demo)</strong>, and press <strong>Connect</strong>. The motor and gripper panels run in the browser without a port picker. Motor calibration (<code>#Cal</code>) still requires a real <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> connection; the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> demo does not perform it.</p>
 <h2 id="05-setup-motor-gui-what-next">What next<a class="headerlink" href="#05-setup-motor-gui-what-next" title="Permanent link">&para;</a></h2>
@@ -3236,9 +3340,9 @@ the terminal shows the driver's answers exactly as it prints them, which is usef
 <p>The driver talks on its <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> connector at 256000 baud, 8N1, 3.3 V. Any terminal that sends a line ending in
 CR+LF works.</p>
 <figure>
-  <a class="glightbox" href="../assets/STEPFOC_UART.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The UART connector and the adapter" src="../assets/STEPFOC_UART.webp" width="900" /></a>
+  <a class="glightbox" href="../assets/STEPFOC_UART.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The UART connector. TX of the driver goes to RX of the adapter and RX to TX." src="../assets/STEPFOC_UART.webp" width="900" /></a>
 <br />
-<figcaption>Figure 12: The UART connector. TX of the driver goes to RX of the adapter and RX to TX.</figcaption>
+<figcaption>Figure 5.3: The UART connector. TX of the driver goes to RX of the adapter and RX to TX.</figcaption>
 </figure>
 <h2 id="05-setup-terminal-connecting">Connecting<a class="headerlink" href="#05-setup-terminal-connecting" title="Permanent link">&para;</a></h2>
 <ol>
@@ -3248,14 +3352,35 @@ CR+LF works.</p>
 <li>Connect the motor supply. The adapter's 3.3 V powers the driver's logic, so the driver answers over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> with
    only the adapter plugged in, but it reports a Vbus error and refuses calibration and every motion command
    until the 12 to 29 V supply is on.</li>
-<li>Find the adapter's port: <code>COM…</code> on Windows, <code>/dev/ttyUSB…</code> or <code>/dev/ttyACM…</code> on Linux and macOS.</li>
+<li>Find the adapter's port:</li>
 </ol>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="05-setup-terminal-__tabbed_1_1" name="05-setup-terminal-__tabbed_1" type="radio" /><input id="05-setup-terminal-__tabbed_1_2" name="05-setup-terminal-__tabbed_1" type="radio" /><input id="05-setup-terminal-__tabbed_1_3" name="05-setup-terminal-__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="05-setup-terminal-__tabbed_1_1">Windows</label><label for="05-setup-terminal-__tabbed_1_2">Linux</label><label for="05-setup-terminal-__tabbed_1_3">macOS</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>The adapter is <code>COM</code> and a number. Device Manager lists it under <strong>Ports (COM &amp; LPT)</strong>: the entry that
+disappears when you unplug the adapter is yours. An adapter that shows a warning sign there instead needs the
+driver of its USB chip (on most 3.3 V adapters a CP210x or a CH340) from the chip maker.</p>
+</div>
+<div class="tabbed-block">
+<p>The serial adapter is <code>/dev/ttyUSB0</code> on most adapters, the CANvas adapter <code>/dev/ttyACM0</code>;
+<code>ls /dev/ttyUSB* /dev/ttyACM*</code> lists them. To open them without root, join the <code>dialout</code> group once, then
+log out and in again:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#05-setup-terminal-__codelineno-0-1"></a>sudo usermod -aG dialout $USER
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<p>The serial adapter is <code>/dev/cu.usbserial-</code> and a few characters on most adapters, the CANvas adapter
+<code>/dev/cu.usbmodem</code> and a number; <code>ls /dev/cu.*</code> lists them. Use the <code>cu.</code> name, not the <code>tty.</code> one, in a
+terminal or a script.</p>
+</div>
+</div>
+</div>
 <div class="admonition danger">
 <p class="admonition-title">Danger</p>
 <p>5 V on the <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> pins destroys the board.</p>
 </div>
 <h2 id="05-setup-terminal-a-terminal">A terminal<a class="headerlink" href="#05-setup-terminal-a-terminal" title="Permanent link">&para;</a></h2>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="05-setup-terminal-__tabbed_1_1" name="05-setup-terminal-__tabbed_1" type="radio" /><input id="05-setup-terminal-__tabbed_1_2" name="05-setup-terminal-__tabbed_1" type="radio" /><input id="05-setup-terminal-__tabbed_1_3" name="05-setup-terminal-__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="05-setup-terminal-__tabbed_1_1">PuTTY</label><label for="05-setup-terminal-__tabbed_1_2">VS Code (PlatformIO)</label><label for="05-setup-terminal-__tabbed_1_3">Arduino IDE</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:3"><input checked="checked" id="05-setup-terminal-__tabbed_2_1" name="05-setup-terminal-__tabbed_2" type="radio" /><input id="05-setup-terminal-__tabbed_2_2" name="05-setup-terminal-__tabbed_2" type="radio" /><input id="05-setup-terminal-__tabbed_2_3" name="05-setup-terminal-__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="05-setup-terminal-__tabbed_2_1">PuTTY</label><label for="05-setup-terminal-__tabbed_2_2">VS Code (PlatformIO)</label><label for="05-setup-terminal-__tabbed_2_3">Arduino IDE</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p>PuTTY needs to send CR+LF when you press Enter, which the stock build cannot. Use the
@@ -3299,16 +3424,25 @@ Enter.</p>
 <div class="tabbed-block">
 <p>Select the adapter's port under <em>Tools</em>, any board (the monitor does not care), open the serial monitor, set
 256000 baud and <em>Both NL &amp; CR</em> as the line ending.</p>
-<p><a class="glightbox" href="../assets/Arduino3.PNG" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Arduino serial monitor" src="../assets/Arduino3.PNG" width="420" /></a></p>
+<p><figure markdown="span">
+  <a class="glightbox" href="../assets/Arduino3.PNG" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The Arduino serial monitor at 256000 baud, with Both NL &amp; CR as the line ending" src="../assets/Arduino3.PNG" width="420" /></a>
+  <figcaption>Figure 5.4: The Arduino serial monitor at 256000 baud, with Both NL &amp; CR as the line ending.</figcaption>
+</figure></p>
 </div>
 </div>
 </div>
 <h2 id="05-setup-terminal-the-first-commands">The first commands<a class="headerlink" href="#05-setup-terminal-the-first-commands" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#05-setup-terminal-__codelineno-0-1"></a>#Info
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#05-setup-terminal-__codelineno-1-1"></a>#Info
 </span></code></pre></div>
 <p>prints the driver's identity and state: the hardware and firmware version, the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> ID, the calibration state and
 the motor parameters. <code>#Help</code> (firmware 106 and newer) prints a short command reference, <code>#Error</code> the active
 errors, <code>#Param</code> the gains and limits.</p>
+<div class="admonition success">
+<p class="admonition-title">Check</p>
+<p><code>#Info</code> answers with the driver's identity, the hardware and firmware version first. If nothing comes back:
+the baud rate, the CR+LF line ending, TX and RX, see
+<a href="#08-troubleshooting-the-driver-does-not-answer">The driver does not answer</a>.</p>
+</div>
 <p>Every command starts with <code>#</code>, and a Set/Get command takes one number after a space: <code>#P 16384</code> moves to position
 16384; <code>#P</code> alone prints the position. Names are case-sensitive. The whole set is in the
 <a href="#reference-uart"><abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> commands</a> reference, and <a href="#06-operation-uart">Over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr></a> explains the
@@ -3364,9 +3498,9 @@ value left at 0, and accepts only 50, 75, 100 or 125 pole pairs.</p>
 </div>
 </div>
 <figure>
-  <a class="glightbox" href="../assets/Motor_specs.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="An example datasheet" src="../assets/Motor_specs.webp" width="900" /></a>
+  <a class="glightbox" href="../assets/Motor_specs.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The three values on a typical datasheet, here for the 17HS16-2004S1: 1.8°, 1.1 Ω, 2.6 mH." src="../assets/Motor_specs.webp" width="900" /></a>
 <br />
-<figcaption>Figure 13: The three values on a typical datasheet, here for the 17HS16-2004S1: 1.8°, 1.1 Ω, 2.6 mH.</figcaption>
+<figcaption>Figure 5.5: The three values on a typical datasheet, here for the 17HS16-2004S1: 1.8°, 1.1 Ω, 2.6 mH.</figcaption>
 </figure>
 <p>The current loop bandwidth (<code>#Cbw</code>, 500 Hz by default) decides the gains calibration computes from R and L;
 leave it for now, <a href="#05-setup-tuning">Current limit and loop tuning</a> comes back to it. It is not saved: after a power
@@ -3493,6 +3627,11 @@ operation; the state shows <em>Calibrated</em> and the constants.</p>
 Set it for your motor with <code>#Ilim</code> before the motor runs, and save again
 (<a href="#05-setup-tuning">Current limit and loop tuning</a>).</p>
 </div>
+<div class="admonition success">
+<p class="admonition-title">Check</p>
+<p>After a power cycle <code>#Info</code> prints <code>Calibrated</code> and the constants calibration found, and Motor GUI shows
+<em>Calibrated</em>. <code>Not calibrated</code> means the save did not happen: calibrate and save again.</p>
+</div>
 <h2 id="05-setup-calibration-when-to-calibrate-again">When to calibrate again<a class="headerlink" href="#05-setup-calibration-when-to-calibrate-again" title="Permanent link">&para;</a></h2>
 <ul>
 <li>After changing the motor, the magnet or the wiring.</li>
@@ -3570,9 +3709,9 @@ it within the motor's rating and 2800 mA.</p>
 <p>Crunching and whining sounds at speed usually mean the current limit, or the current loop gains, are too high.</p>
 <h2 id="05-setup-tuning-the-loops">The loops<a class="headerlink" href="#05-setup-tuning-the-loops" title="Permanent link">&para;</a></h2>
 <figure>
-  <a class="glightbox" href="../assets/cascadeloop.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The cascaded loops" src="../assets/cascadeloop.webp" width="800" /></a>
+  <a class="glightbox" href="../assets/cascadeloop.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The position loop commands the velocity loop, which commands the current loop." src="../assets/cascadeloop.webp" width="800" /></a>
 <br />
-<figcaption>Figure 14: The position loop commands the velocity loop, which commands the current loop.</figcaption>
+<figcaption>Figure 5.6: The position loop commands the velocity loop, which commands the current loop.</figcaption>
 </figure>
 <p>Tune from the inside out: the current loop first, then velocity, then position. Before you start:</p>
 <ul>
@@ -3623,9 +3762,9 @@ useful for legged robots.</p>
 <p>Run the motor over the whole range of speeds and loads it will see, with a load if you can, and adjust. Then save.</p>
 <h2 id="05-setup-tuning-impedance-pd-mode">Impedance (<abbr title="Proportional-Derivative controller, the impedance control mode">PD</abbr>) mode<a class="headerlink" href="#05-setup-tuning-impedance-pd-mode" title="Permanent link">&para;</a></h2>
 <figure>
-  <a class="glightbox" href="../assets/PDloop.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The PD loop" src="../assets/PDloop.webp" width="800" /></a>
+  <a class="glightbox" href="../assets/PDloop.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The impedance loop: a spring (KP) and a damper (KD) around the position setpoint, plus a current feedforward." src="../assets/PDloop.webp" width="800" /></a>
 <br />
-<figcaption>Figure 15: The impedance loop: a spring (KP) and a damper (KD) around the position setpoint, plus a current feedforward.</figcaption>
+<figcaption>Figure 5.7: The impedance loop: a spring (KP) and a damper (KD) around the position setpoint, plus a current feedforward.</figcaption>
 </figure>
 <p>In <abbr title="Proportional-Derivative controller, the impedance control mode">PD</abbr> mode the motor behaves like a spring and a damper: the torque is <code>KP × (setpoint − position) + KD × (speed
 setpoint − speed) + feedforward current</code>. Set <code>KP</code> and <code>KD</code> (the gains, or <code>#KP</code>, <code>#KD</code>, or Send_PD_Gains), then
@@ -3747,7 +3886,7 @@ passing through idle; a fault is any of the errors on <a href="#06-operation-err
 <tbody>
 <tr>
 <td>Idle</td>
-<td>nothing: coasts (phases open) or brakes (phases shorted), as set by <code>#Brake</code> / <code>#Coast</code> or Send_Settings</td>
+<td>nothing: brakes (phases shorted), the default, or coasts (phases open), as set by <code>#Brake</code> / <code>#Coast</code> or Send_Settings; see <a href="#06-operation-modes-braking-in-idle">Braking in idle</a></td>
 <td><code>#Idle</code>, Send_Idle, <code>#Clear</code>, errors</td>
 <td>—</td>
 </tr>
@@ -3807,6 +3946,17 @@ passing through idle; a fault is any of the errors on <a href="#06-operation-err
 </tr>
 </tbody>
 </table>
+<h2 id="06-operation-modes-braking-in-idle">Braking in idle<a class="headerlink" href="#06-operation-modes-braking-in-idle" title="Permanent link">&para;</a></h2>
+<p>In idle the driver brakes: it keeps both coils shorted through the driver stage, so the motor resists being
+turned. It does so at every power-up, and also with an error, which puts the driver in idle. <code>#Coast</code> (or
+Send_Settings over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>) lets the motor coast instead, with the coils open, until the next power-up: <code>#Save</code> does
+not keep it. <code>#Brake</code> brakes again.</p>
+<div class="admonition warning">
+<p class="admonition-title">The braking current is not limited</p>
+<p>A motor that is turned while it brakes drives its own back-EMF current through the shorted coils, and the
+current loop does not limit that current. Do not let a load drive a braking motor fast; send <code>#Coast</code> first
+when the shaft must turn freely.</p>
+</div>
 <h2 id="06-operation-modes-units">Units<a class="headerlink" href="#06-operation-modes-units" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Position</strong> is in encoder ticks: 16384 per revolution of the motor shaft, counting up without limit over
@@ -3865,9 +4015,9 @@ keep the test short.</p>
 </div>
 <h2 id="06-operation-modes-positive-rotation">Positive rotation<a class="headerlink" href="#06-operation-modes-positive-rotation" title="Permanent link">&para;</a></h2>
 <figure>
-  <a class="glightbox" href="../assets/STEPFOC_ORIENTATION.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Positive rotation" src="../assets/STEPFOC_ORIENTATION.webp" width="700" /></a>
+  <a class="glightbox" href="../assets/STEPFOC_ORIENTATION.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Positive rotation is counter-clockwise looking at the encoder magnet. A positive current turns the motor that way, a positive speed too, and the position grows." src="../assets/STEPFOC_ORIENTATION.webp" width="700" /></a>
 <br />
-<figcaption>Figure 16: Positive rotation is counter-clockwise looking at the encoder magnet. A positive current turns the motor that way, a positive speed too, and the position grows.</figcaption>
+<figcaption>Figure 6.1: Positive rotation is counter-clockwise looking at the encoder magnet. A positive current turns the motor that way, a positive speed too, and the position grows.</figcaption>
 </figure>
 <h2 id="06-operation-modes-which-mode-am-i-in">Which mode am I in?<a class="headerlink" href="#06-operation-modes-which-mode-am-i-in" title="Permanent link">&para;</a></h2>
 <p><code>#Mode</code> prints the mode: <code>Idle mode</code>, <code>Position control</code>, <code>Speed control</code>, <code>Current control</code>, <code>PD control</code>,
@@ -3927,9 +4077,10 @@ one frame back per motor and cycle.</p>
 <p><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> 2.0 data frames with 11-bit identifiers at 1 Mbit/s. The identifier carries the node, the command and the
 error state:</p>
 <figure>
-  <a class="glightbox" href="../assets/CANID.PNG" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The CAN identifier" src="../assets/CANID.PNG" width="600" /></a>
+  <a class="glightbox" href="../assets/CANID.PNG#only-light" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Bits 10 to 7 of the identifier are the node ID, bits 6 to 1 the command ID, bit 0 the error bit." src="../assets/CANID.PNG#only-light" width="600" /></a>
+  <a class="glightbox" href="../assets/CANID_dark.webp#only-dark" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Bits 10 to 7 of the identifier are the node ID, bits 6 to 1 the command ID, bit 0 the error bit." src="../assets/CANID_dark.webp#only-dark" width="600" /></a>
 <br />
-<figcaption>Figure 17: Bits 10 to 7 of the identifier are the node ID, bits 6 to 1 the command ID, bit 0 the error bit.</figcaption>
+<figcaption>Figure 6.2: Bits 10 to 7 of the identifier are the node ID, bits 6 to 1 the command ID, bit 0 the error bit.</figcaption>
 </figure>
 <ul>
 <li><strong>Node ID</strong>, bits 10 to 7: which driver, 0 to 15. A driver acts only on frames with its own node ID and sends
@@ -3986,53 +4137,89 @@ daisy chain as in <a href="#04-mounting-power-and-can">Power and the <abbr title
 attributes. It runs on Windows, Linux and macOS with any adapter <code>python-can</code> supports, such as the CANvas adapter
 over slcan.</p>
 <h2 id="06-operation-python-installing">Installing<a class="headerlink" href="#06-operation-python-installing" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#06-operation-python-__codelineno-0-1"></a>pip install Spectral-BLDC
+<p>In a virtual environment:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="06-operation-python-__tabbed_1_1" name="06-operation-python-__tabbed_1" type="radio" /><input id="06-operation-python-__tabbed_1_2" name="06-operation-python-__tabbed_1" type="radio" /><input id="06-operation-python-__tabbed_1_3" name="06-operation-python-__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="06-operation-python-__tabbed_1_1">Windows</label><label for="06-operation-python-__tabbed_1_2">Linux</label><label for="06-operation-python-__tabbed_1_3">macOS</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#06-operation-python-__codelineno-0-1"></a>py -m venv .venv
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#06-operation-python-__codelineno-0-2"></a>.venv\Scripts\activate
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#06-operation-python-__codelineno-0-3"></a>pip install Spectral-BLDC
 </span></code></pre></div>
+The CANvas adapter is <code>COM</code> and a number (Device Manager, <strong>Ports (COM &amp; LPT)</strong>): <code>channel='COM41'</code>.</p>
+</div>
+<div class="tabbed-block">
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#06-operation-python-__codelineno-1-1"></a>python3 -m venv .venv
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#06-operation-python-__codelineno-1-2"></a>source .venv/bin/activate
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#06-operation-python-__codelineno-1-3"></a>pip install Spectral-BLDC
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#06-operation-python-__codelineno-1-4"></a>sudo usermod -aG dialout $USER     # access to the serial port; log out and in again once
+</span></code></pre></div>
+The CANvas adapter is <code>/dev/ttyACM0</code> (<code>ls /dev/ttyACM*</code> lists it): <code>channel='/dev/ttyACM0'</code>.</p>
+</div>
+<div class="tabbed-block">
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#06-operation-python-__codelineno-2-1"></a>python3 -m venv .venv
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#06-operation-python-__codelineno-2-2"></a>source .venv/bin/activate
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#06-operation-python-__codelineno-2-3"></a>pip install Spectral-BLDC
+</span></code></pre></div>
+The CANvas adapter is <code>/dev/cu.usbmodem</code> and a number (<code>ls /dev/cu.usbmodem*</code> lists it):
+<code>channel='/dev/cu.usbmodem1101'</code>, with your number.</p>
+</div>
+</div>
+</div>
+<div class="admonition success">
+<p class="admonition-title">Check</p>
+<p><code>python -c "import Spectral_BLDC"</code> returns without an error message.</p>
+</div>
 <p>The source and the examples are in <a href="https://github.com/Source-Robotics/Spectral-BLDC-Python">Spectral-BLDC-Python</a>.
 For joints with a gear ratio and an offset, the <a href="https://github.com/Source-Robotics/Source-Robotics-Toolbox">Source Robotics Toolbox</a>
 (<code>pip install SourceRoboticsToolbox</code>) turns encoder ticks into joint angles.</p>
 <h2 id="06-operation-python-the-first-program">The first program<a class="headerlink" href="#06-operation-python-the-first-program" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#06-operation-python-__codelineno-1-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">Spectral_BLDC</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">Spectral</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#06-operation-python-__codelineno-1-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#06-operation-python-__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#06-operation-python-__codelineno-1-4"></a><span class="c1"># the adapter: a CANvas on COM41 (Windows) or /dev/ttyACM0 (Linux), 1 Mbit/s</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#06-operation-python-__codelineno-1-5"></a><span class="n">comms</span> <span class="o">=</span> <span class="n">Spectral</span><span class="o">.</span><span class="n">CanCommunication</span><span class="p">(</span><span class="n">bustype</span><span class="o">=</span><span class="s1">'slcan'</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="s1">'COM41'</span><span class="p">,</span> <span class="n">bitrate</span><span class="o">=</span><span class="mi">1000000</span><span class="p">)</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#06-operation-python-__codelineno-1-6"></a><span class="c1"># the driver with node ID 0</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#06-operation-python-__codelineno-1-7"></a><span class="n">motor</span> <span class="o">=</span> <span class="n">Spectral</span><span class="o">.</span><span class="n">SpectralCAN</span><span class="p">(</span><span class="n">node_id</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">communication</span><span class="o">=</span><span class="n">comms</span><span class="p">)</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#06-operation-python-__codelineno-1-8"></a>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#06-operation-python-__codelineno-1-9"></a><span class="n">motor</span><span class="o">.</span><span class="n">Send_Clear_Error</span><span class="p">()</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#06-operation-python-__codelineno-1-10"></a>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#06-operation-python-__codelineno-1-11"></a><span class="c1"># A configured, calibrated motor with a clear shaft: command one turn for five seconds.</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#06-operation-python-__codelineno-1-12"></a><span class="c1"># Each command requests a fresh position/speed/current reply; heartbeat is not required.</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#06-operation-python-__codelineno-1-13"></a><span class="k">try</span><span class="p">:</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#06-operation-python-__codelineno-1-14"></a>    <span class="n">deadline</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span> <span class="o">+</span> <span class="mf">5.0</span>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#06-operation-python-__codelineno-1-15"></a>    <span class="n">next_cycle</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span>
-</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#06-operation-python-__codelineno-1-16"></a>    <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">deadline</span><span class="p">:</span>
-</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#06-operation-python-__codelineno-1-17"></a>        <span class="n">motor</span><span class="o">.</span><span class="n">Send_data_pack_1</span><span class="p">(</span><span class="n">Position</span><span class="o">=</span><span class="mi">16384</span><span class="p">,</span> <span class="n">Speed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">Current</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#06-operation-python-__codelineno-1-18"></a>        <span class="n">reply_deadline</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">deadline</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span> <span class="o">+</span> <span class="mf">0.02</span><span class="p">)</span>
-</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#06-operation-python-__codelineno-1-19"></a>        <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">reply_deadline</span><span class="p">:</span>
-</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#06-operation-python-__codelineno-1-20"></a>            <span class="n">message</span><span class="p">,</span> <span class="n">ids</span> <span class="o">=</span> <span class="n">comms</span><span class="o">.</span><span class="n">receive_can_messages</span><span class="p">(</span>
-</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#06-operation-python-__codelineno-1-21"></a>                <span class="n">timeout</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">reply_deadline</span> <span class="o">-</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()))</span>
-</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#06-operation-python-__codelineno-1-22"></a>            <span class="k">if</span> <span class="n">message</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#06-operation-python-__codelineno-1-23"></a>                <span class="nb">print</span><span class="p">(</span><span class="s2">"No motion feedback in this cycle; check the bus and node ID"</span><span class="p">)</span>
-</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#06-operation-python-__codelineno-1-24"></a>                <span class="k">break</span>
-</span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25" href="#06-operation-python-__codelineno-1-25"></a>            <span class="k">if</span> <span class="n">ids</span><span class="o">.</span><span class="n">node_id</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">ids</span><span class="o">.</span><span class="n">command_id</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>  <span class="c1"># Respond_data_pack_1</span>
-</span><span id="__span-1-26"><a id="__codelineno-1-26" name="__codelineno-1-26" href="#06-operation-python-__codelineno-1-26"></a>                <span class="k">continue</span>
-</span><span id="__span-1-27"><a id="__codelineno-1-27" name="__codelineno-1-27" href="#06-operation-python-__codelineno-1-27"></a>            <span class="n">motor</span><span class="o">.</span><span class="n">UnpackData</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">ids</span><span class="p">)</span>
-</span><span id="__span-1-28"><a id="__codelineno-1-28" name="__codelineno-1-28" href="#06-operation-python-__codelineno-1-28"></a>            <span class="nb">print</span><span class="p">(</span><span class="n">motor</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">motor</span><span class="o">.</span><span class="n">speed</span><span class="p">,</span> <span class="n">motor</span><span class="o">.</span><span class="n">current</span><span class="p">,</span> <span class="n">ids</span><span class="o">.</span><span class="n">error_bit</span><span class="p">)</span>
-</span><span id="__span-1-29"><a id="__codelineno-1-29" name="__codelineno-1-29" href="#06-operation-python-__codelineno-1-29"></a>            <span class="k">if</span> <span class="n">ids</span><span class="o">.</span><span class="n">error_bit</span><span class="p">:</span>
-</span><span id="__span-1-30"><a id="__codelineno-1-30" name="__codelineno-1-30" href="#06-operation-python-__codelineno-1-30"></a>                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Driver fault: inspect State_of_Errors before retrying"</span><span class="p">)</span>
-</span><span id="__span-1-31"><a id="__codelineno-1-31" name="__codelineno-1-31" href="#06-operation-python-__codelineno-1-31"></a>            <span class="k">break</span>
-</span><span id="__span-1-32"><a id="__codelineno-1-32" name="__codelineno-1-32" href="#06-operation-python-__codelineno-1-32"></a>        <span class="n">next_cycle</span> <span class="o">+=</span> <span class="mf">0.02</span>
-</span><span id="__span-1-33"><a id="__codelineno-1-33" name="__codelineno-1-33" href="#06-operation-python-__codelineno-1-33"></a>        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">next_cycle</span> <span class="o">-</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()))</span>
-</span><span id="__span-1-34"><a id="__codelineno-1-34" name="__codelineno-1-34" href="#06-operation-python-__codelineno-1-34"></a><span class="k">finally</span><span class="p">:</span>
-</span><span id="__span-1-35"><a id="__codelineno-1-35" name="__codelineno-1-35" href="#06-operation-python-__codelineno-1-35"></a>    <span class="n">motor</span><span class="o">.</span><span class="n">Send_Idle</span><span class="p">()</span>                    <span class="c1"># also on Ctrl-C; the shaft no longer holds torque</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#06-operation-python-__codelineno-3-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">Spectral_BLDC</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">Spectral</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#06-operation-python-__codelineno-3-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#06-operation-python-__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#06-operation-python-__codelineno-3-4"></a><span class="c1"># the adapter: a CANvas on COM41 (Windows) or /dev/ttyACM0 (Linux), 1 Mbit/s</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#06-operation-python-__codelineno-3-5"></a><span class="n">comms</span> <span class="o">=</span> <span class="n">Spectral</span><span class="o">.</span><span class="n">CanCommunication</span><span class="p">(</span><span class="n">bustype</span><span class="o">=</span><span class="s1">'slcan'</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="s1">'COM41'</span><span class="p">,</span> <span class="n">bitrate</span><span class="o">=</span><span class="mi">1000000</span><span class="p">)</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#06-operation-python-__codelineno-3-6"></a><span class="c1"># the driver with node ID 0</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#06-operation-python-__codelineno-3-7"></a><span class="n">motor</span> <span class="o">=</span> <span class="n">Spectral</span><span class="o">.</span><span class="n">SpectralCAN</span><span class="p">(</span><span class="n">node_id</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">communication</span><span class="o">=</span><span class="n">comms</span><span class="p">)</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#06-operation-python-__codelineno-3-8"></a>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#06-operation-python-__codelineno-3-9"></a><span class="n">motor</span><span class="o">.</span><span class="n">Send_Clear_Error</span><span class="p">()</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#06-operation-python-__codelineno-3-10"></a>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#06-operation-python-__codelineno-3-11"></a><span class="c1"># A configured, calibrated motor with a clear shaft: command one turn for five seconds.</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#06-operation-python-__codelineno-3-12"></a><span class="c1"># Each command requests a fresh position/speed/current reply; heartbeat is not required.</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#06-operation-python-__codelineno-3-13"></a><span class="k">try</span><span class="p">:</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#06-operation-python-__codelineno-3-14"></a>    <span class="n">deadline</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span> <span class="o">+</span> <span class="mf">5.0</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#06-operation-python-__codelineno-3-15"></a>    <span class="n">next_cycle</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#06-operation-python-__codelineno-3-16"></a>    <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">deadline</span><span class="p">:</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#06-operation-python-__codelineno-3-17"></a>        <span class="n">motor</span><span class="o">.</span><span class="n">Send_data_pack_1</span><span class="p">(</span><span class="n">Position</span><span class="o">=</span><span class="mi">16384</span><span class="p">,</span> <span class="n">Speed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">Current</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#06-operation-python-__codelineno-3-18"></a>        <span class="n">reply_deadline</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">deadline</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span> <span class="o">+</span> <span class="mf">0.02</span><span class="p">)</span>
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#06-operation-python-__codelineno-3-19"></a>        <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">reply_deadline</span><span class="p">:</span>
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#06-operation-python-__codelineno-3-20"></a>            <span class="n">message</span><span class="p">,</span> <span class="n">ids</span> <span class="o">=</span> <span class="n">comms</span><span class="o">.</span><span class="n">receive_can_messages</span><span class="p">(</span>
+</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#06-operation-python-__codelineno-3-21"></a>                <span class="n">timeout</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">reply_deadline</span> <span class="o">-</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()))</span>
+</span><span id="__span-3-22"><a id="__codelineno-3-22" name="__codelineno-3-22" href="#06-operation-python-__codelineno-3-22"></a>            <span class="k">if</span> <span class="n">message</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-3-23"><a id="__codelineno-3-23" name="__codelineno-3-23" href="#06-operation-python-__codelineno-3-23"></a>                <span class="nb">print</span><span class="p">(</span><span class="s2">"No motion feedback in this cycle; check the bus and node ID"</span><span class="p">)</span>
+</span><span id="__span-3-24"><a id="__codelineno-3-24" name="__codelineno-3-24" href="#06-operation-python-__codelineno-3-24"></a>                <span class="k">break</span>
+</span><span id="__span-3-25"><a id="__codelineno-3-25" name="__codelineno-3-25" href="#06-operation-python-__codelineno-3-25"></a>            <span class="k">if</span> <span class="n">ids</span><span class="o">.</span><span class="n">node_id</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">ids</span><span class="o">.</span><span class="n">command_id</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>  <span class="c1"># Respond_data_pack_1</span>
+</span><span id="__span-3-26"><a id="__codelineno-3-26" name="__codelineno-3-26" href="#06-operation-python-__codelineno-3-26"></a>                <span class="k">continue</span>
+</span><span id="__span-3-27"><a id="__codelineno-3-27" name="__codelineno-3-27" href="#06-operation-python-__codelineno-3-27"></a>            <span class="n">motor</span><span class="o">.</span><span class="n">UnpackData</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">ids</span><span class="p">)</span>
+</span><span id="__span-3-28"><a id="__codelineno-3-28" name="__codelineno-3-28" href="#06-operation-python-__codelineno-3-28"></a>            <span class="nb">print</span><span class="p">(</span><span class="n">motor</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">motor</span><span class="o">.</span><span class="n">speed</span><span class="p">,</span> <span class="n">motor</span><span class="o">.</span><span class="n">current</span><span class="p">,</span> <span class="n">ids</span><span class="o">.</span><span class="n">error_bit</span><span class="p">)</span>
+</span><span id="__span-3-29"><a id="__codelineno-3-29" name="__codelineno-3-29" href="#06-operation-python-__codelineno-3-29"></a>            <span class="k">if</span> <span class="n">ids</span><span class="o">.</span><span class="n">error_bit</span><span class="p">:</span>
+</span><span id="__span-3-30"><a id="__codelineno-3-30" name="__codelineno-3-30" href="#06-operation-python-__codelineno-3-30"></a>                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Driver fault: inspect State_of_Errors before retrying"</span><span class="p">)</span>
+</span><span id="__span-3-31"><a id="__codelineno-3-31" name="__codelineno-3-31" href="#06-operation-python-__codelineno-3-31"></a>            <span class="k">break</span>
+</span><span id="__span-3-32"><a id="__codelineno-3-32" name="__codelineno-3-32" href="#06-operation-python-__codelineno-3-32"></a>        <span class="n">next_cycle</span> <span class="o">+=</span> <span class="mf">0.02</span>
+</span><span id="__span-3-33"><a id="__codelineno-3-33" name="__codelineno-3-33" href="#06-operation-python-__codelineno-3-33"></a>        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">next_cycle</span> <span class="o">-</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()))</span>
+</span><span id="__span-3-34"><a id="__codelineno-3-34" name="__codelineno-3-34" href="#06-operation-python-__codelineno-3-34"></a><span class="k">finally</span><span class="p">:</span>
+</span><span id="__span-3-35"><a id="__codelineno-3-35" name="__codelineno-3-35" href="#06-operation-python-__codelineno-3-35"></a>    <span class="n">motor</span><span class="o">.</span><span class="n">Send_Idle</span><span class="p">()</span>                    <span class="c1"># also on Ctrl-C; the shaft no longer holds torque</span>
 </span></code></pre></div>
 <p><code>receive_can_messages</code> returns the raw <code>python-can</code> message and a tuple with the node ID, the command ID and the
 error bit of the identifier; <code>UnpackData</code> decodes the message into the attributes the message carries. This example resends the same
 setpoint at 50 Hz for five seconds, prints only matching motion feedback, and puts the motor in idle when it
 ends. Idle releases torque: support any attached mechanism before running it. A missing reply is reported
 without claiming that a move finished. Configure and calibrate the driver first (<a href="#quick-start">Quick start</a>).</p>
+<div class="admonition success">
+<p class="admonition-title">Check</p>
+<p>The program prints a line of position, speed, current and error bit for each cycle, the position moves to
+16384 and the error bit stays 0. <code>No motion feedback in this cycle</code> means no answer came back: the port, the
+node ID and the bus, see <a href="#06-operation-can">Over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr></a>.</p>
+</div>
 <h2 id="06-operation-python-what-is-where">What is where<a class="headerlink" href="#06-operation-python-what-is-where" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -4080,13 +4267,13 @@ message's bytes in the <a href="#reference-can"><abbr title="Controller Area Net
 <h2 id="06-operation-python-several-motors">Several motors<a class="headerlink" href="#06-operation-python-several-motors" title="Permanent link">&para;</a></h2>
 <p>One <code>CanCommunication</code> per bus, one <code>SpectralCAN</code> per driver with its node ID. Send to each, then read the bus:
 every answer carries the node ID in <code>ids.node_id</code>, so route it to the right object.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#06-operation-python-__codelineno-2-1"></a><span class="n">motors</span> <span class="o">=</span> <span class="p">[</span><span class="n">Spectral</span><span class="o">.</span><span class="n">SpectralCAN</span><span class="p">(</span><span class="n">node_id</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">communication</span><span class="o">=</span><span class="n">comms</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#06-operation-python-__codelineno-2-2"></a><span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">motors</span><span class="p">:</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#06-operation-python-__codelineno-2-3"></a>    <span class="n">m</span><span class="o">.</span><span class="n">Send_Respond_Encoder_data</span><span class="p">()</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#06-operation-python-__codelineno-2-4"></a><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">motors</span><span class="p">:</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#06-operation-python-__codelineno-2-5"></a>    <span class="n">message</span><span class="p">,</span> <span class="n">ids</span> <span class="o">=</span> <span class="n">comms</span><span class="o">.</span><span class="n">receive_can_messages</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#06-operation-python-__codelineno-2-6"></a>    <span class="k">if</span> <span class="n">message</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#06-operation-python-__codelineno-2-7"></a>        <span class="n">motors</span><span class="p">[</span><span class="n">ids</span><span class="o">.</span><span class="n">node_id</span><span class="p">]</span><span class="o">.</span><span class="n">UnpackData</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">ids</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#06-operation-python-__codelineno-4-1"></a><span class="n">motors</span> <span class="o">=</span> <span class="p">[</span><span class="n">Spectral</span><span class="o">.</span><span class="n">SpectralCAN</span><span class="p">(</span><span class="n">node_id</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">communication</span><span class="o">=</span><span class="n">comms</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#06-operation-python-__codelineno-4-2"></a><span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">motors</span><span class="p">:</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#06-operation-python-__codelineno-4-3"></a>    <span class="n">m</span><span class="o">.</span><span class="n">Send_Respond_Encoder_data</span><span class="p">()</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#06-operation-python-__codelineno-4-4"></a><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">motors</span><span class="p">:</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#06-operation-python-__codelineno-4-5"></a>    <span class="n">message</span><span class="p">,</span> <span class="n">ids</span> <span class="o">=</span> <span class="n">comms</span><span class="o">.</span><span class="n">receive_can_messages</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#06-operation-python-__codelineno-4-6"></a>    <span class="k">if</span> <span class="n">message</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#06-operation-python-__codelineno-4-7"></a>        <span class="n">motors</span><span class="p">[</span><span class="n">ids</span><span class="o">.</span><span class="n">node_id</span><span class="p">]</span><span class="o">.</span><span class="n">UnpackData</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">ids</span><span class="p">)</span>
 </span></code></pre></div>
 <p>The <a href="#guides">Guides</a> build on this: a quadruped leg, gravity compensation, bilateral teleoperation.</p></section><section class="print-page" id="06-operation-motor-gui" heading-number="1.3.6.6"><h1 id="06-operation-motor-gui-working-in-motor-gui">Working in Motor GUI<a class="headerlink" href="#06-operation-motor-gui-working-in-motor-gui" title="Permanent link">&para;</a></h1>
 <p>Everyday use of the driver from <a href="#05-setup-motor-gui">Motor GUI</a>: moving the motor, watching it, recording
@@ -4134,10 +4321,14 @@ the GUI's telemetry stream uses over serial, so do not start it by hand while th
 <span class="gui-shot__mark" style="left:7%;top:26%" aria-hidden="true">4</span></p>
 </div>
 <figcaption>
-<p><strong>1. Errors state:</strong> a fault is active. <strong>2. Errors tab:</strong> inspect individual flags. <strong>3. E-stop error:</strong> 1 identifies the latched fault in this simulation. <strong>4. Clear errors:</strong> clear it after removing its cause; a persistent cause returns on the next update. Screenshot captured from <strong>Mock <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> (demo)</strong>.</p>
+<p>Figure 6.3: <strong>1. Errors state:</strong> a fault is active. <strong>2. Errors tab:</strong> inspect individual flags. <strong>3. E-stop error:</strong> 1 identifies the latched fault in this simulation. <strong>4. Clear errors:</strong> clear it after removing its cause; a persistent cause returns on the next update. Screenshot captured from <strong>Mock <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> (demo)</strong>.</p>
 </figcaption>
 </figure>
-<p><strong>Check:</strong> after recovery the fault flag returns to 0 and the state shows No errors. If it returns, stop and follow <a href="#06-operation-errors">Errors and recovery</a>.</p></section><section class="print-page" id="06-operation-errors" heading-number="1.3.6.7"><h1 id="06-operation-errors-errors-and-recovery">Errors and recovery<a class="headerlink" href="#06-operation-errors-errors-and-recovery" title="Permanent link">&para;</a></h1>
+<div class="admonition success">
+<p class="admonition-title">Check</p>
+<p>After recovery the fault flag returns to 0 and the state shows <em>No errors</em>. If it returns, stop and follow
+<a href="#06-operation-errors">Errors and recovery</a>.</p>
+</div></section><section class="print-page" id="06-operation-errors" heading-number="1.3.6.7"><h1 id="06-operation-errors-errors-and-recovery">Errors and recovery<a class="headerlink" href="#06-operation-errors-errors-and-recovery" title="Permanent link">&para;</a></h1>
 <p>When the driver detects a fault it stops the motor, goes to idle, turns the status <abbr title="Light-Emitting Diode">LED</abbr> on steadily and sets the
 error bit in every <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> frame it sends. It stays there until the error is cleared.</p>
 <h2 id="06-operation-errors-seeing-the-error">Seeing the error<a class="headerlink" href="#06-operation-errors-seeing-the-error" title="Permanent link">&para;</a></h2>
@@ -4265,6 +4456,10 @@ The driver prints nothing when it is done. If it has not found both end stops wi
 the gripper stays uncalibrated. Check the result with <code>#Gripinfo</code> (<code>Gripper calibrated is: 1</code>) or the
 <code>gripper_calibrated</code> bit of Respond_Gripper_data_pack: a move is carried out only once the gripper is calibrated.
 The motor itself must be calibrated (<code>#Cal</code>) and saved before that, once.</p>
+<p>While the gripper calibrates, send only empty status polls. A 5-byte Send_gripper_data_pack, Send_Clear_Error
+or <code>#Clear</code> stops the calibration without a message, and the next one then starts part way through, where the
+stopped one left off: switch the driver off and on before you calibrate again
+(<a href="#08-troubleshooting-known-issues">known issue KI-7</a>).</p>
 <h2 id="06-operation-gripper-mode-moving">Moving<a class="headerlink" href="#06-operation-gripper-mode-moving" title="Permanent link">&para;</a></h2>
 <p>Over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#06-operation-gripper-mode-__codelineno-1-1"></a>#Gripvel 100       speed, 0 to 255
@@ -4300,7 +4495,11 @@ and the object detection:</p>
 </tr>
 </tbody>
 </table>
-<p>An empty Send_gripper_data_pack (0 bytes) only asks for the state. Send_gripper_data_pack's E-stop bit raises the
+<p>An empty Send_gripper_data_pack (0 bytes) only asks for the state. The answer to a 5-byte command goes out
+before the driver acts on it, so its object detection and error bits are still those of the moment before
+(KI-6); the answers to the next frames show the new move. The action bit in the answer is a copy of the last
+command's action bit and stays 1 after the move ends (KI-8): the object detection tells when it has ended.</p>
+<p>Send_gripper_data_pack's E-stop bit raises the
 gripper E-stop error; <code>#Gripstop 1</code> does the same over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr>. The error stays: while the E-stop bit is 1 the driver
 raises it again on every control cycle, and <code>#Error</code> prints only <code>In error state!</code>. To recover, clear the bit
 (<code>#Gripstop 0</code>, or a Send_gripper_data_pack with the bit 0), then <code>#Clear</code> or Send_Clear_Error.</p>
@@ -4318,8 +4517,9 @@ the <a href="#reference-uart-gripper"><abbr title="the serial port of the driver
                         </h1>
                     <section class="print-page" id="07-firmware" heading-number="1.3.7.1"><h1 id="07-firmware-firmware">Firmware<a class="headerlink" href="#07-firmware-firmware" title="Permanent link">&para;</a></h1>
 <p>The driver's firmware is open source and released as numbered builds. A driver shipped with firmware 105 or newer
-carries a bootloader and updates itself over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> or <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>; an older driver needs the bootloader installed once with
-a programming adapter.</p>
+carries a bootloader and updates itself over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> or <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>, and so do some drivers shipped before 105, which report
+103 (<a href="#07-firmware-releases-drivers-that-report-103">Drivers that report 103</a> says how to tell). A driver without the
+bootloader needs it installed once with a programming adapter.</p>
 <h2 id="07-firmware-in-this-chapter">In this chapter<a class="headerlink" href="#07-firmware-in-this-chapter" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="#07-firmware-releases">Releases and versions</a>: how releases are numbered, how to see which one a driver runs, what the
@@ -4340,12 +4540,25 @@ the commit it was built from, and the release notes. The notes are the firmware'
 <h2 id="07-firmware-releases-which-release-does-my-driver-run">Which release does my driver run?<a class="headerlink" href="#07-firmware-releases-which-release-does-my-driver-run" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#07-firmware-releases-__codelineno-0-1"></a>#Info
 </span></code></pre></div>
-<p>prints <code>Software version: &lt;number&gt;</code> among the rest. Over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>, Send_Respond_Device_Info returns it as the third
-byte. From firmware 105 the number is the build's own version; before that it was read from the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> and could
-be stale after an update until <code>#Default</code>. So a driver that reports 103 may still carry the bootloader: the builds
-of the <code>bootloader-version</code> branch before 105 read 103 from the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> too. To tell, power the driver up while
-<code>bl_flash.py list</code> or Motor GUI's <em>Scan bootloaders</em> is polling: a driver with the bootloader answers in its first
-two seconds.</p>
+<p>prints <code>Software version: &lt;number&gt;</code> among the rest; Motor GUI shows the same number in the driver's identity, and
+over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> Send_Respond_Device_Info returns it as the third byte. From firmware 105 the number is the build's own
+version. Before that it was read from the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr>, where the last <code>#Default</code> wrote it, so it names the firmware
+that last restored the defaults, not necessarily the one running: 101 and 102 write 101, 103 writes 103.</p>
+<h3 id="07-firmware-releases-drivers-that-report-103">Drivers that report 103<a class="headerlink" href="#07-firmware-releases-drivers-that-report-103" title="Permanent link">&para;</a></h3>
+<p>A driver that reports 103 runs either release 103 from the <code>main</code> branch, without a bootloader, or an early build
+of the <code>bootloader-version</code> branch, which also writes 103 and runs above the bootloader. Some drivers were shipped
+with the bootloader before release 105. Which image those carry was not recorded: most likely 103, built for
+the bootloader.</p>
+<p>To tell whether yours has the bootloader:</p>
+<ul>
+<li>Watch the <abbr title="Light-Emitting Diode">LED</abbr> as you switch the driver on: with the bootloader it blinks for about two seconds before the
+  firmware starts.</li>
+<li>Or power it up while <code>bl_flash.py list</code> or Motor GUI's <em>Scan bootloaders</em> is polling: a driver with the
+  bootloader answers in its first two seconds.</li>
+</ul>
+<p>With the bootloader, update it to the current release as in <a href="#07-firmware-update">Updating through the bootloader</a>; the
+release it ran before does not matter then. Without one, install it first:
+<a href="#07-firmware-bootloader">Installing the bootloader on an older board</a>.</p>
 <h2 id="07-firmware-releases-which-release-does-this-site-describe">Which release does this site describe?<a class="headerlink" href="#07-firmware-releases-which-release-does-this-site-describe" title="Permanent link">&para;</a></h2>
 <p>The one in the version box on the <a href="#.">landing page</a> and in the version selector in the header. When a
 newer release changes what a page says, a new version of the site is published and the previous one stays
@@ -4471,7 +4684,9 @@ not lost: flash again. A board that answers nothing at all: power-cycle it with 
 the 2 s window. The one thing the tools refuse, and that would need a programming adapter to undo, is flashing an
 image linked for <code>0x08000000</code> (a firmware from the <code>main</code> branch) over the firmware region.</p>
 <h2 id="07-firmware-the-bootloader-installing-it">Installing it<a class="headerlink" href="#07-firmware-the-bootloader-installing-it" title="Permanent link">&para;</a></h2>
-<p>Boards shipped with firmware 103 or older have no bootloader. <a href="#07-firmware-bootloader">Installing the bootloader on an older board</a>
+<p>Boards that run release 103 or older from the <code>main</code> branch have no bootloader; some boards shipped before 105
+have it although they report 103 (<a href="#07-firmware-releases-drivers-that-report-103">Drivers that report 103</a>).
+<a href="#07-firmware-bootloader">Installing the bootloader on an older board</a>
 puts it there once, with a programming adapter at <code>0x08000000</code>; from then on the board updates like any other.</p></section><section class="print-page" id="07-firmware-update" heading-number="1.3.7.4"><h1 id="07-firmware-update-updating-through-the-bootloader">Updating through the bootloader<a class="headerlink" href="#07-firmware-update-updating-through-the-bootloader" title="Permanent link">&para;</a></h1>
 <p>A driver with the bootloader (firmware 105 or newer) is updated over the <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> connector or the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> bus: the host
 tells the driver to reset, the bootloader waits two seconds for a host, and the host streams the new image into it.
@@ -4493,6 +4708,9 @@ the SHA-256, resets the driver into its bootloader and flashes it. This is the w
 <h2 id="07-firmware-update-with-the-bootloaders-command-line-tool">With the bootloader's command-line tool<a class="headerlink" href="#07-firmware-update-with-the-bootloaders-command-line-tool" title="Permanent link">&para;</a></h2>
 <p>The <a href="https://github.com/Source-Robotics/stm32f103c-bootloader">bootloader repository</a> has <code>host_tools/bl_flash.py</code>,
 which flashes an image over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> (slcan or candleLight/gs_usb adapters) or over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr>:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="07-firmware-update-__tabbed_1_1" name="07-firmware-update-__tabbed_1" type="radio" /><input id="07-firmware-update-__tabbed_1_2" name="07-firmware-update-__tabbed_1" type="radio" /><input id="07-firmware-update-__tabbed_1_3" name="07-firmware-update-__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="07-firmware-update-__tabbed_1_1">Windows</label><label for="07-firmware-update-__tabbed_1_2">Linux</label><label for="07-firmware-update-__tabbed_1_3">macOS</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#07-firmware-update-__codelineno-0-1"></a>cd host_tools
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#07-firmware-update-__codelineno-0-2"></a>pip install -r requirements.txt
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#07-firmware-update-__codelineno-0-3"></a>
@@ -4502,6 +4720,32 @@ which flashes an image over <abbr title="Controller Area Network, the bus betwee
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#07-firmware-update-__codelineno-0-7"></a># over UART on COM7
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#07-firmware-update-__codelineno-0-8"></a>python bl_flash.py --transport uart --port COM7 --baudrate 256000 flash stepfoc-firmware-V108.bin --board 0 --erase-first
 </span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#07-firmware-update-__codelineno-1-1"></a>cd host_tools
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#07-firmware-update-__codelineno-1-2"></a>pip install -r requirements.txt
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#07-firmware-update-__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#07-firmware-update-__codelineno-1-4"></a># over CAN with a CANvas (slcan) adapter, driver with board ID 0
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#07-firmware-update-__codelineno-1-5"></a>python3 bl_flash.py --transport can --can-interface slcan --channel /dev/ttyACM0 flash stepfoc-firmware-V108.bin --board 0 --erase-first
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#07-firmware-update-__codelineno-1-6"></a>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#07-firmware-update-__codelineno-1-7"></a># over UART with the serial adapter
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#07-firmware-update-__codelineno-1-8"></a>python3 bl_flash.py --transport uart --port /dev/ttyUSB0 --baudrate 256000 flash stepfoc-firmware-V108.bin --board 0 --erase-first
+</span></code></pre></div>
+Your user needs the <code>dialout</code> group for both ports (<a href="#05-setup-motor-gui-opening-the-port">Motor GUI: the port</a>).</p>
+</div>
+<div class="tabbed-block">
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#07-firmware-update-__codelineno-2-1"></a>cd host_tools
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#07-firmware-update-__codelineno-2-2"></a>pip install -r requirements.txt
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#07-firmware-update-__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#07-firmware-update-__codelineno-2-4"></a># over CAN with a CANvas (slcan) adapter, driver with board ID 0; ls /dev/cu.usbmodem* gives the name
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#07-firmware-update-__codelineno-2-5"></a>python3 bl_flash.py --transport can --can-interface slcan --channel /dev/cu.usbmodem1101 flash stepfoc-firmware-V108.bin --board 0 --erase-first
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#07-firmware-update-__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#07-firmware-update-__codelineno-2-7"></a># over UART with the serial adapter; ls /dev/cu.usbserial* gives the name
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#07-firmware-update-__codelineno-2-8"></a>python3 bl_flash.py --transport uart --port /dev/cu.usbserial-0001 --baudrate 256000 flash stepfoc-firmware-V108.bin --board 0 --erase-first
+</span></code></pre></div>
+</div>
+</div>
+</div>
 <p>The tool sends the reset command to the running firmware (<code>#Reset</code> over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr>, Send_Reset over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>), catches the
 bootloader's two-second window, erases the application pages and streams the image page by page, each page
 verified by a <abbr title="Cyclic Redundancy Check">CRC</abbr>; <code>list</code> shows the boards in bootloader mode, <code>set-id</code> changes a board's bootloader ID. The image
@@ -4511,6 +4755,12 @@ is the <code>stepfoc-firmware-V&lt;number&gt;.bin</code> from the GitHub release
 <p>The bootloader has its own board ID (0 to 13), kept in its configuration page, separate from the firmware's
 <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID. The firmware keeps the two in step when the configuration is saved (<code>#Save</code>, Send_Save_config),
 so a driver's bootloader ID is normally its node ID. After <code>#CANID</code>, save before you flash over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>.</p>
+</div>
+<div class="admonition success">
+<p class="admonition-title">Check</p>
+<p>After the flash, from Motor GUI or the tool, the driver starts the new firmware: <code>#Info</code> prints the release
+you flashed as <code>Software version</code>, and Motor GUI shows it in the driver's identity. If the driver does not
+answer, see <a href="#07-firmware-update-when-it-fails">When it fails</a>.</p>
 </div>
 <h2 id="07-firmware-update-from-a-par6-control-box">From a PAR6 control box<a class="headerlink" href="#07-firmware-update-from-a-par6-control-box" title="Permanent link">&para;</a></h2>
 <p>A robot built on the Robot Control Box updates every joint from the box itself, over its own <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> bus, from the
@@ -4532,7 +4782,9 @@ the two-second window.</p>
 <p>An image linked for <code>0x08000000</code> (a firmware from the <code>main</code> branch, release 103 and earlier) must never be
 flashed through the bootloader: it would overwrite the bootloader's own region if the tool did not refuse it.
 The tools validate the image first.</p></section><section class="print-page" id="07-firmware-bootloader" heading-number="1.3.7.5"><h1 id="07-firmware-bootloader-installing-the-bootloader-on-an-older-board">Installing the bootloader on an older board<a class="headerlink" href="#07-firmware-bootloader-installing-the-bootloader-on-an-older-board" title="Permanent link">&para;</a></h1>
-<p>A driver running firmware 103 or older has no bootloader: its firmware starts at the beginning of the flash. To
+<p>A driver running release 103 or older from the <code>main</code> branch has no bootloader: its firmware starts at the
+beginning of the flash. A driver that reports 103 may have the bootloader all the same; check first, as in
+<a href="#07-firmware-releases-drivers-that-report-103">Drivers that report 103</a>. To
 run any release from 105 on, which is linked to start above the bootloader, the bootloader must be installed
 once, with a programming adapter on the JTAG connector. After that, every update goes over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> or <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>.</p>
 <div class="admonition warning">
@@ -4551,10 +4803,25 @@ powers the board at 3.3 V.</p>
 <li>The bootloader binary from the <a href="https://github.com/Source-Robotics/stm32f103c-bootloader/tree/main/bin">bootloader repository's <code>bin/</code> folder</a>;
   its <code>README.md</code> names the current file.</li>
 </ul>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="07-firmware-bootloader-__tabbed_1_1" name="07-firmware-bootloader-__tabbed_1" type="radio" /><input id="07-firmware-bootloader-__tabbed_1_2" name="07-firmware-bootloader-__tabbed_1" type="radio" /><input id="07-firmware-bootloader-__tabbed_1_3" name="07-firmware-bootloader-__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="07-firmware-bootloader-__tabbed_1_1">Windows</label><label for="07-firmware-bootloader-__tabbed_1_2">Linux</label><label for="07-firmware-bootloader-__tabbed_1_3">macOS</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>STM32CubeProgrammer or the ST-LINK Utility, and the ST-LINK USB driver (STSW-LINK009) for the adapter.</p>
+</div>
+<div class="tabbed-block">
+<p>STM32CubeProgrammer; the ST-LINK Utility runs on Windows only. The adapter needs no driver, but your user
+needs access to its USB device: install the udev rules that come with STM32CubeProgrammer, or run it with
+<code>sudo</code>.</p>
+</div>
+<div class="tabbed-block">
+<p>STM32CubeProgrammer; the ST-LINK Utility runs on Windows only. The adapter needs no driver.</p>
+</div>
+</div>
+</div>
 <figure>
-  <a class="glightbox" href="../assets/STEPFOC_JTAG.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The JTAG pads and the adapter" src="../assets/STEPFOC_JTAG.webp" width="700" /></a>
+  <a class="glightbox" href="../assets/STEPFOC_JTAG.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The JTAG pads, marked 3V3, GND, SWCLK, SWDIO. The adapter is pressed onto them; a little pressure makes the contact." src="../assets/STEPFOC_JTAG.webp" width="700" /></a>
 <br />
-<figcaption>Figure 18: The JTAG pads, marked 3V3, GND, SWCLK, SWDIO. The adapter is pressed onto them; a little pressure makes the contact.</figcaption>
+<figcaption>Figure 7.1: The JTAG pads, marked 3V3, GND, SWCLK, SWDIO. The adapter is pressed onto them; a little pressure makes the contact.</figcaption>
 </figure>
 <h2 id="07-firmware-bootloader-steps">Steps<a class="headerlink" href="#07-firmware-bootloader-steps" title="Permanent link">&para;</a></h2>
 <ol>
@@ -4568,6 +4835,12 @@ powers the board at 3.3 V.</p>
    <a href="#07-firmware-update">Updating through the bootloader</a>.</li>
 <li><code>#Info</code> shows the new release. <code>#Default</code>, enter the motor parameters, calibrate, <code>#Save</code>.</li>
 </ol>
+<div class="admonition success">
+<p class="admonition-title">Check</p>
+<p><code>#Info</code> prints the release you flashed, and a driver powered up while <code>bl_flash.py list</code> or Motor GUI's
+<em>Scan bootloaders</em> is polling answers in its first two seconds: the bootloader is there. If the firmware does
+not start, see <a href="#07-firmware-update-when-it-fails">Updating through the bootloader: when it fails</a>.</p>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Memory layout</p>
 <p><code>0x08000000</code>–<code>0x080022FF</code> bootloader, <code>0x08002C00</code> its configuration page (board ID, the application's <abbr title="Cyclic Redundancy Check">CRC</abbr>),
@@ -4606,7 +4879,15 @@ on the <code>bootloader-version</code> branch.</p>
 <p>The project is linked for the bootloader: <code>VECT_TAB_OFFSET=0x3000</code>, the linker script <code>ldscript_bootloader.ld</code>,
 the upload offset <code>0x08003000</code> and a maximum size of 118784 bytes, in <code>platformio.ini</code>. A build that exceeds the
 size fails to link.</p>
+<div class="admonition success">
+<p class="admonition-title">Check</p>
+<p>PlatformIO ends the build with <code>SUCCESS</code>, and <code>.pio/build/genericSTM32F103CB/firmware.bin</code> is there. If it
+fails, the first error above the summary names the cause.</p>
+</div>
 <h2 id="07-firmware-building-uploading">Uploading<a class="headerlink" href="#07-firmware-building-uploading" title="Permanent link">&para;</a></h2>
+<p>PlatformIO runs on Windows, Linux and macOS alike. On Linux, an upload with the programming adapter also needs
+PlatformIO's udev rules (<code>99-platformio-udev.rules</code>, in the PlatformIO documentation), and a serial port the
+<code>dialout</code> group.</p>
 <ul>
 <li><strong>Through the bootloader</strong>: flash the built <code>firmware.bin</code> with <code>bl_flash.py</code> or Motor GUI as in
   <a href="#07-firmware-update">Updating through the bootloader</a>. This is how a release is installed, and works on any driver with
@@ -4625,9 +4906,9 @@ once more through the bootloader to recover. Once the bootloader is on the board
 through it.</p>
 </div>
 <figure>
-  <a class="glightbox" href="../assets/VSUPLOAD.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Upload in VS Code" src="../assets/VSUPLOAD.png" width="700" /></a>
+  <a class="glightbox" href="../assets/VSUPLOAD.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Build, upload and the serial monitor in PlatformIO's status bar." src="../assets/VSUPLOAD.png" width="700" /></a>
 <br />
-<figcaption>Figure 19: Build, upload and the serial monitor in PlatformIO's status bar.</figcaption>
+<figcaption>Figure 7.2: Build, upload and the serial monitor in PlatformIO's status bar.</figcaption>
 </figure>
 <h2 id="07-firmware-building-where-things-are">Where things are<a class="headerlink" href="#07-firmware-building-where-things-are" title="Permanent link">&para;</a></h2>
 <table>
@@ -4680,8 +4961,14 @@ version box names the release.</p>
 <h2 id="07-firmware-building-a-firmware-for-a-board-without-a-bootloader">A firmware for a board without a bootloader<a class="headerlink" href="#07-firmware-building-a-firmware-for-a-board-without-a-bootloader" title="Permanent link">&para;</a></h2>
 <p>The <code>main</code> branch builds a firmware linked at <code>0x08000000</code> for boards that have no bootloader. It stops at
 release 103 and is not maintained; install the bootloader instead,
-<a href="#07-firmware-bootloader">Installing the bootloader on an older board</a>.</p></section></section><section class="print-page" id="08-troubleshooting" heading-number="1.3.8"><h1 id="08-troubleshooting-troubleshooting">Troubleshooting<a class="headerlink" href="#08-troubleshooting-troubleshooting" title="Permanent link">&para;</a></h1>
-<p>By symptom. The error flags and what clears them are in <a href="#06-operation-errors">Errors and recovery</a>.</p>
+<a href="#07-firmware-bootloader">Installing the bootloader on an older board</a>.</p></section></section>
+                    <section class='print-page md-section' id='section-1-3-8' heading-number='1.3.8'>
+                        <h1>8. Troubleshooting<a class='headerlink' href='#section-1-3-8' title='Permanent link'></a>
+                        </h1>
+                    <section class="print-page" id="08-troubleshooting" heading-number="1.3.8.1"><h1 id="08-troubleshooting-troubleshooting">Troubleshooting<a class="headerlink" href="#08-troubleshooting-troubleshooting" title="Permanent link">&para;</a></h1>
+<p>By symptom. The error flags and what clears them are in <a href="#06-operation-errors">Errors and recovery</a>; the
+faults of the firmware that are known and not yet fixed, with what to do until they are, in
+<a href="#08-troubleshooting-known-issues">Known issues</a>.</p>
 <h2 id="08-troubleshooting-the-motor-does-not-move">The motor does not move<a class="headerlink" href="#08-troubleshooting-the-motor-does-not-move" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TD
     A([The motor does not move]) --&gt; B{Does the driver answer?}
@@ -4861,7 +5148,118 @@ a short. Near 2.8 A the driver needs cooling.</p>
 <p><code>#Info</code> shows the new release. If the values look wrong or the <abbr title="Light-Emitting Diode">LED</abbr> stays on: <code>#Default</code>, enter the motor
 parameters, <code>#Cal</code>, <code>#Save</code>. A release note says when an update clears the calibration.</p>
 <h2 id="08-troubleshooting-getting-help">Getting help<a class="headerlink" href="#08-troubleshooting-getting-help" title="Permanent link">&para;</a></h2>
-<p><a href="#support">Support</a> says where to ask and what to include; <code>#Info</code>'s output is the first thing.</p></section></section>
+<p><a href="#support">Support</a> says where to ask and what to include; <code>#Info</code>'s output is the first thing.</p></section><section class="print-page" id="08-troubleshooting-known-issues" heading-number="1.3.8.2"><h1 id="08-troubleshooting-known-issues-known-issues">Known issues<a class="headerlink" href="#08-troubleshooting-known-issues-known-issues" title="Permanent link">&para;</a></h1>
+<p>The faults in the STEPFOC firmware that are known and not yet fixed, and what to do until they are. The pages that
+describe each part say the same where it matters; this page collects them in one place. Which releases work
+together is in <a href="#appendix-compatibility">Versions and compatibility</a>.</p>
+<h3 id="08-troubleshooting-known-issues-stepfoc-firmware">STEPFOC firmware<a class="headerlink" href="#08-troubleshooting-known-issues-stepfoc-firmware" title="Permanent link">&para;</a></h3>
+<p>Seen in: 108.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>What happens</th>
+<th>What to do</th>
+<th>More</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>KI-1</td>
+<td>The current limit of Send_Limits over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> is used as sent, also above the driver's 2800 mA; only <code>#Ilim</code> over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> clamps it.</td>
+<td>Keep the current limit your host sends within the motor's rating and 2800 mA.</td>
+<td><a href="#reference-can-gains-and-limits-send_limits">Send_Limits</a></td>
+</tr>
+<tr>
+<td>KI-2</td>
+<td>Calibration sets the current limit to 1600 mA and leaves it there, whatever it was before; a <code>#Save</code> right after calibration stores the 1600 mA.</td>
+<td>After every calibration set <code>#Ilim</code> for your motor, then <code>#Save</code>.</td>
+<td><a href="#05-setup-calibration-4-save">Calibration: save</a></td>
+</tr>
+<tr>
+<td>KI-3</td>
+<td>The serial number is not read back from the <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> at power-up, so <code>#SERNUM</code>, Motor GUI and Send_Respond_Device_Info report 1, and every <code>#Save</code> writes that 1 over the stored number.</td>
+<td>Tell drivers apart by their <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID. To keep a serial number stored, set it with <code>#SERNUM</code> before every <code>#Save</code>.</td>
+<td><a href="#05-setup-saving">Saving the configuration</a></td>
+</tr>
+<tr>
+<td>KI-4</td>
+<td>For anyone reading or changing the source, the start values in <code>common.h</code> are not the factory defaults (the gripper and calibrated flags start at 1, the pole pairs at 50, <code>Max_Vbus</code> at 29500 mV). The <abbr title="the non-volatile memory on the driver that holds its configuration">EEPROM</abbr> replaces them at power-up, so a running driver does not show them.</td>
+<td>Take the defaults from the Defaults page, which lists what <code>#Default</code> writes, or from <code>Set_Default_config()</code> in <code>EEPROM.cpp</code>.</td>
+<td><a href="#reference-defaults">Defaults</a></td>
+</tr>
+<tr>
+<td>KI-5</td>
+<td>While the E-stop bit of the last Send_gripper_data_pack (or <code>#Gripstop 1</code>) is 1, the driver raises the gripper E-stop error again on every control cycle, so Send_Clear_Error or <code>#Clear</code> alone does not clear it.</td>
+<td>Send a gripper frame with the E-stop bit 0 (or <code>#Gripstop 0</code>) first, then clear the error.</td>
+<td><a href="#06-operation-gripper-mode-moving">Gripper mode: moving</a></td>
+</tr>
+<tr>
+<td>KI-6</td>
+<td>The answer to a 5-byte Send_gripper_data_pack goes out before the driver has acted on the command, so its object detection and error bits are those of the moment before, for example 3 (position reached) from the previous move.</td>
+<td>Judge the new move by the answers to later frames, or poll with an empty Send_gripper_data_pack.</td>
+<td><a href="#06-operation-gripper-mode-moving">Gripper mode: moving</a></td>
+</tr>
+<tr>
+<td>KI-7</td>
+<td>A 5-byte Send_gripper_data_pack, Send_Clear_Error or <code>#Clear</code> during the gripper calibration stops it without a message and leaves its counters as they were, so the next calibration starts part way through; it may skip the opening or give up early.</td>
+<td>Send only empty status polls while the gripper calibrates (up to about 24 s). After an interrupted calibration, switch the driver off and on before you calibrate again.</td>
+<td><a href="#06-operation-gripper-mode-calibrating-the-gripper">Gripper mode: calibrating</a></td>
+</tr>
+<tr>
+<td>KI-8</td>
+<td>The action bit in Respond_Gripper_data_pack is a copy of the last command's action bit; the driver never clears it, so it stays 1 after the move has ended.</td>
+<td>Tell the end of a move by the object detection, 3 position reached, 1 or 2 stopped on an object.</td>
+<td><a href="#reference-can-gripper-respond_gripper_data_pack">Respond_Gripper_data_pack</a></td>
+</tr>
+<tr>
+<td>KI-9</td>
+<td>Open loop (<code>#Openloop</code>, <code>#gosteps</code>) puts <code>#Openv</code> on the coils without a current limit; <code>#Ilim</code> does not apply. The default 5000 mV drives about 4.5 A through a 1.1 Ω coil.</td>
+<td>Set <code>#Openv</code> to the motor's rated current times its phase resistance first, and keep open-loop tests short.</td>
+<td><a href="#06-operation-modes-open-loop-stepping">Open-loop stepping</a></td>
+</tr>
+<tr>
+<td>KI-10</td>
+<td>The velocity error trips only above a fixed 30,000,000 ticks/s, about 1830 revolutions per second and far above any speed a stepper reaches; <code>#Vlimit</code> does not change it, so it does not catch a motor that runs away.</td>
+<td>Watch the speed in your host and send Send_Idle or Send_ESTOP when it is wrong.</td>
+<td><a href="#06-operation-errors">Errors and recovery</a></td>
+</tr>
+<tr>
+<td>KI-11</td>
+<td>Only motion frames and answered status requests reset the watchdog. Setting frames (gains, limits, Idle, Clear, Save) and <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> commands do not, so a host that only configures the driver, or a terminal session with a saved watchdog, ends in a watchdog error.</td>
+<td>While the watchdog runs, send a status request such as Send_Respond_Encoder_data within every watchdog period. Before you work over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> alone, set the watchdog to 0 over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> and save.</td>
+<td><a href="#06-operation-can-a-control-loop">Over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>: a control loop</a></td>
+</tr>
+<tr>
+<td>KI-12</td>
+<td>The driver error flag (<code>Driver_error</code>, <code>Driver error</code> in <code>#Error</code>) is never raised. STEPFOC reads no fault output of its driver stage, so a stage that shuts down for heat or a short only makes the motor lose torque, with no error.</td>
+<td>Watch the current and the position in your host; a commanded motor that goes limp points to the driver stage. Lower the current limit and give the board air.</td>
+<td><a href="#08-troubleshooting-the-driver-gets-hot-or-shuts-down">Troubleshooting: the driver gets hot</a></td>
+</tr>
+<tr>
+<td>KI-13</td>
+<td><code>#Dir</code> stores a flag that <code>#Info</code> prints as <code>Phase direction</code>, but the control code does not use it: it does not reverse the motor.</td>
+<td>To make the other direction positive, negate the setpoints and the values you read back in your host.</td>
+<td><a href="#04-mounting-wiring-phase-order-and-direction">Wiring: phase order and direction</a></td>
+</tr>
+<tr>
+<td>KI-14</td>
+<td><code>#Mode</code> prints <code>Gripper mode</code> in voltage-torque mode (<code>#Uq</code>), and nothing at all in gripper mode, HALL mode, the angle-offset search and open-loop steps (<code>#gosteps</code>).</td>
+<td>In those modes go by the command you sent last, not by <code>#Mode</code>.</td>
+<td><a href="#reference-uart-utility"><abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> commands: status and utility</a></td>
+</tr>
+<tr>
+<td>KI-15</td>
+<td>In idle the driver brakes, with the coils shorted, at every power-up and also with an error; <code>#Coast</code> is not kept by <code>#Save</code>. The current a turned motor drives through the shorted coils is not limited.</td>
+<td>Send <code>#Coast</code> (or Send_Settings) after every power-up if the motor must turn freely in idle, and do not let a load drive a braking motor fast.</td>
+<td><a href="#06-operation-modes-braking-in-idle">Braking in idle</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="08-troubleshooting-known-issues-something-that-is-not-here">Something that is not here<a class="headerlink" href="#08-troubleshooting-known-issues-something-that-is-not-here" title="Permanent link">&para;</a></h2>
+<p>Check the <a href="#08-troubleshooting">symptom tables</a> first. If it is still not explained, <a href="#support-report-a-problem">Report a problem</a>
+says what to include so it can be reproduced. A fixed issue stays on this page, under "Fixed", with the release
+that fixes it.</p></section></section></section>
                     <section class='print-page md-section' id='section-1-4' heading-number='1.4'>
                         <h1>Appendix<a class='headerlink' href='#section-1-4' title='Permanent link'></a>
                         </h1>
@@ -4997,7 +5395,7 @@ parameters, <code>#Cal</code>, <code>#Save</code>. A release note says when an u
 <tr>
 <td>108</td>
 <td>2026-08-26</td>
-<td>required (installed on boards shipped with 105 or newer)</td>
+<td>required (installed on boards shipped with 105 or newer, and on some shipped before)</td>
 <td>107</td>
 <td>1.20 or newer</td>
 <td>0.9 or newer</td>
@@ -5064,13 +5462,14 @@ it. The board reports its hardware revision in <code>#Info</code> (<code>Hardwar
 <td>v1</td>
 <td>first production</td>
 <td>—</td>
-<td>101 and newer; 105 and newer ship with the bootloader</td>
+<td>101 and newer; 105 and newer ship with the bootloader, and so did some boards before 105, most likely with 103</td>
 <td>this manual</td>
 </tr>
 </tbody>
 </table>
-<p>Boards shipped with firmware 103 or older have no bootloader; <a href="#07-firmware-bootloader">Installing the bootloader on an older board</a>
-brings them to the current firmware.</p></section><section class="print-page" id="appendix-theory" heading-number="1.4.4"><h1 id="appendix-theory-theory-corner">Theory corner<a class="headerlink" href="#appendix-theory-theory-corner" title="Permanent link">&para;</a></h1>
+<p>Boards with release 103 or older from the <code>main</code> branch have no bootloader;
+<a href="#07-firmware-bootloader">Installing the bootloader on an older board</a> brings them to the current firmware.
+<a href="#07-firmware-releases-drivers-that-report-103">Drivers that report 103</a> says how to tell which kind you have.</p></section><section class="print-page" id="appendix-theory" heading-number="1.4.4"><h1 id="appendix-theory-theory-corner">Theory corner<a class="headerlink" href="#appendix-theory-theory-corner" title="Permanent link">&para;</a></h1>
 <p>The control concepts behind the driver's modes, for readers who want to know why a setting does what it does.
 Nothing here is needed to use the driver; the chapters say what to type.</p>
 <h2 id="appendix-theory-field-oriented-control-of-a-stepper">Field-oriented control of a stepper<a class="headerlink" href="#appendix-theory-field-oriented-control-of-a-stepper" title="Permanent link">&para;</a></h2>
@@ -5223,7 +5622,8 @@ top speed at a given voltage. Calibration estimates KV from the speed the motor 
 <dd>The bootloader's own address, 0 to 13, stored in its configuration page. Saving the configuration (<code>#Save</code>)
 writes the <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> node ID into it.</dd>
 <dt><strong>Bootloader</strong></dt>
-<dd>The program in the first 12 KB of the driver's flash on boards shipped with firmware 105 or newer. It starts the
+<dd>The program in the first 12 KB of the driver's flash on boards shipped with firmware 105 or newer, and on some
+shipped before. It starts the
 firmware, and loads a new firmware over <abbr title="the serial port of the driver, 3.3 V, 256000 baud by default">UART</abbr> or <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr>. See <a href="#07-firmware-the-bootloader">The bootloader</a>.</dd>
 <dt><strong>Calibration</strong></dt>
 <dd>The routine (<code>#Cal</code>) that checks the magnet and the supply, takes the motor's resistance, inductance and pole
@@ -5326,7 +5726,83 @@ error.</dd>
 <dt><strong>Watchdog</strong></dt>
 <dd>A timer the driver resets with every motion frame and every status request it answers. When it is set
 (Send_Watchdog) and runs out, the driver reports a watchdog error and stops.</dd>
-</dl></section><section class="print-page" id="cad-files" heading-number="1.5.2"><h1 id="cad-files-cad-and-downloads">CAD and downloads<a class="headerlink" href="#cad-files-cad-and-downloads" title="Permanent link">&para;</a></h1>
+</dl></section><section class="print-page" id="cad-files" heading-number="1.5.2"><h1 id="cad-files-downloads-and-files">Downloads and files<a class="headerlink" href="#cad-files-downloads-and-files" title="Permanent link">&para;</a></h1>
+<p>Everything to download for STEPFOC, at the versions these pages describe. The versions come from one file,
+<code>versions.yml</code>, so this page changes with them; which versions work together is in
+<a href="#appendix-compatibility">Versions and compatibility</a>.</p>
+<h2 id="cad-files-firmware-and-software">Firmware and software<a class="headerlink" href="#cad-files-firmware-and-software" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>Version</th>
+<th>Download</th>
+<th>How to install</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Firmware image (<code>stepfoc-firmware-V&lt;number&gt;.bin</code>), its manifest <code>firmware.json</code> and the release notes</td>
+<td><a href="https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/V108">108</a> (2026-08-26)</td>
+<td><a href="https://github.com/Source-Robotics/STEPFOC-stepper-controller/releases/tag/V108">the GitHub release</a></td>
+<td><a href="#07-firmware-update">Updating through the bootloader</a></td>
+</tr>
+<tr>
+<td>Firmware source, a PlatformIO project</td>
+<td>the same release</td>
+<td><a href="https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/V108/STEPFOC%20firmware">the firmware folder at the tag</a></td>
+<td><a href="#07-firmware-building">Building from source</a></td>
+</tr>
+<tr>
+<td>The bootloader binary, for a board without one</td>
+<td><a href="https://github.com/Source-Robotics/stm32f103c-bootloader/tree/V0.1">0.1</a> (2026-06-05)</td>
+<td><a href="https://github.com/Source-Robotics/stm32f103c-bootloader/tree/V0.1/bin">bin</a></td>
+<td><a href="#07-firmware-bootloader">Installing the bootloader on an older board</a></td>
+</tr>
+<tr>
+<td>The bootloader's host tool <code>bl_flash.py</code></td>
+<td>the same release</td>
+<td><a href="https://github.com/Source-Robotics/stm32f103c-bootloader/tree/V0.1/host_tools">host_tools</a></td>
+<td><a href="#07-firmware-update">Updating through the bootloader</a></td>
+</tr>
+<tr>
+<td>Python library (<code>Spectral-BLDC</code>)</td>
+<td><a href="https://github.com/Source-Robotics/Spectral-BLDC-Python/tree/ef30bbe4fdd1e9a93544f7f356bbaeedeaa3b459">1.20</a> (2026-06-19)</td>
+<td><code>pip install Spectral-BLDC</code>; the source and examples on GitHub, <a href="https://github.com/Source-Robotics/Spectral-BLDC-Python/tree/ef30bbe4fdd1e9a93544f7f356bbaeedeaa3b459">at that version</a></td>
+<td><a href="#06-operation-python">With Python</a></td>
+</tr>
+<tr>
+<td>Motor GUI</td>
+<td>runs in the browser, always the latest</td>
+<td><a href="https://motorgui.com/">motorgui.com</a></td>
+<td><a href="#05-setup-motor-gui">Motor GUI</a></td>
+</tr>
+<tr>
+<td><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> definitions for this release: JSON, and DBC files for the motion layouts</td>
+<td>this site's release</td>
+<td><a href="#reference-can-tools"><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> frame tool and downloads</a></td>
+<td></td>
+</tr>
+<tr>
+<td>ST-LINK USB driver, for the programming adapter on Windows</td>
+<td></td>
+<td><a href="https://www.st.com/en/development-tools/stsw-link009.html">STSW-LINK009</a></td>
+<td><a href="#07-firmware-bootloader">Installing the bootloader on an older board</a></td>
+</tr>
+<tr>
+<td>STM32CubeProgrammer, for the programming adapter</td>
+<td></td>
+<td><a href="https://www.st.com/en/development-tools/stm32cubeprog.html">STM32CubeProgrammer</a></td>
+<td><a href="#07-firmware-bootloader">Installing the bootloader on an older board</a></td>
+</tr>
+</tbody>
+</table>
+<p>The version links open the files at exactly that release; the dates are those of the releases on GitHub, and on
+PyPI for the Python library.
+Motor GUI has no versions to choose: the page is always the current one. Known faults of the firmware are on
+<a href="#08-troubleshooting-known-issues">Known issues</a>.</p>
+<h2 id="cad-files-cad-and-hardware-files">CAD and hardware files<a class="headerlink" href="#cad-files-cad-and-hardware-files" title="Permanent link">&para;</a></h2>
+<p>The latest files, on the main branch of the <a href="https://github.com/Source-Robotics/STEPFOC-stepper-controller">firmware repository</a>.</p>
 <table>
 <thead>
 <tr>
@@ -5337,7 +5813,7 @@ error.</dd>
 <tbody>
 <tr>
 <td>STEP model of the board</td>
-<td><a href="https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/main/STEP%20files">STEP files</a> in the firmware repository</td>
+<td><a href="https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/main/STEP%20files">STEP files</a></td>
 </tr>
 <tr>
 <td>Magnet spacers, <abbr title="the stepper motor frame size with 31 mm mounting-hole spacing">NEMA 17</abbr> and NEMA 23 spacers</td>
@@ -5347,33 +5823,28 @@ error.</dd>
 <td>The magnet tool</td>
 <td><a href="https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/main/STEP%20files/Tools">Tools</a></td>
 </tr>
+</tbody>
+</table>
+<h2 id="cad-files-more">More<a class="headerlink" href="#cad-files-more" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
 <tr>
-<td>Firmware source</td>
-<td><a href="https://github.com/Source-Robotics/STEPFOC-stepper-controller">STEPFOC-stepper-controller</a>, branch <code>bootloader-version</code></td>
+<th>What</th>
+<th>Where</th>
 </tr>
-<tr>
-<td>Firmware releases (image, manifest, notes)</td>
-<td><a href="https://github.com/Source-Robotics/STEPFOC-stepper-controller/releases">Releases</a></td>
-</tr>
-<tr>
-<td>The bootloader, its binary and its host tools</td>
-<td><a href="https://github.com/Source-Robotics/stm32f103c-bootloader">stm32f103c-bootloader</a></td>
-</tr>
-<tr>
-<td>Python library</td>
-<td><a href="https://github.com/Source-Robotics/Spectral-BLDC-Python">Spectral-BLDC-Python</a>, <code>pip install Spectral-BLDC</code></td>
-</tr>
+</thead>
+<tbody>
 <tr>
 <td>Source Robotics Toolbox (joints from encoder ticks)</td>
 <td><a href="https://github.com/Source-Robotics/Source-Robotics-Toolbox">Source-Robotics-Toolbox</a></td>
 </tr>
 <tr>
-<td>Motor GUI</td>
-<td><a href="https://motorgui.com/">motorgui.com</a></td>
-</tr>
-<tr>
 <td>CANvas USB-to-<abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> adapter</td>
 <td><a href="https://github.com/Source-Robotics/CANvas-adapter">CANvas-adapter</a></td>
+</tr>
+<tr>
+<td>All firmware releases</td>
+<td><a href="https://github.com/Source-Robotics/STEPFOC-stepper-controller/releases">Releases</a></td>
 </tr>
 <tr>
 <td>This documentation</td>
@@ -5482,8 +5953,11 @@ one of its documented forms. To inspect a reply, enter its identifier and data b
   <noscript>Enable JavaScript for the frame tool, or use the reference tables and downloads above.</noscript>
 </div>
 
-<p><strong>Check:</strong> the example decodes to the values above. Change the identifier to <code>0x1FA</code> to see the same command
+<div class="admonition success">
+<p class="admonition-title">Check</p>
+<p>The example decodes to the values above. Change the identifier to <code>0x1FA</code> to see the same command
 addressed to node 3. An invalid length or out-of-range field produces an explanation instead of a frame.</p>
+</div>
 <p>For wiring, termination, host timing and recovery, use <a href="#06-operation-can">Over <abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr></a>. To look up a
 message's purpose and accepted lengths, use the <a href="#reference-can"><abbr title="Controller Area Network, the bus between the host and the drivers">CAN</abbr> reference</a>.</p></section>
                     <section class='print-page md-section' id='section-2-3' heading-number='2.3'>
@@ -6957,7 +7431,7 @@ numbered from the most significant bit (bit 7 first).</p>
 <td>6</td>
 <td>gripper_action_status</td>
 <td>bit</td>
-<td>1 going to the position, 0 idle, auto-release or calibrating</td>
+<td>the action bit of the last Send_gripper_data_pack (1 after #Grippos); the driver never clears it, so it stays 1 after the move ends: the object detection tells when the move has ended</td>
 </tr>
 <tr>
 <td>3</td>
@@ -9134,7 +9608,11 @@ the <a href="https://docs.source-robotics.com/Spectral-BLDC-docs/">Spectral Micr
 <p class="admonition-title">Python API and toolbox</p>
 <p>This guide leverages <a href="https://github.com/Source-Robotics/Spectral-BLDC-Python/tree/main">Spectral BLDC python API</a> and <a href="https://github.com/Source-Robotics/Source-Robotics-Toolbox">Source robotics toolbox</a></p>
 </div>
-<p><a class="glightbox" href="../assets/LEG_wiring.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The two-motor leg on a test stand, with the laptop, the CAN adapter and a bench supply" src="../assets/LEG_wiring.webp" /></a></p>
+<figure>
+  <a class="glightbox" href="../assets/LEG_wiring.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The two-motor leg on a test stand, with the laptop, the CAN adapter and a bench supply" src="../assets/LEG_wiring.webp" /></a>
+<br />
+<figcaption>Figure 1: The two-motor leg on a test stand, with the laptop, the CAN adapter and a bench supply.</figcaption>
+</figure>
 <div class="admonition note">
 <p class="admonition-title">Building the LEG</p>
 <p>In this guide we only recommend you the hardware you can use to build the robot you designed. We do not offer already made designs you can build!</p>
@@ -9153,7 +9631,11 @@ the <a href="https://docs.source-robotics.com/Spectral-BLDC-docs/">Spectral Micr
 <li>1 x 24V power supply</li>
 <li>A Laptop or raspberry pi</li>
 </ul>
-<p><a class="glightbox" href="../assets/leg_setup.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Wiring: the supply to the first driver, the CAN bus from the adapter through both drivers, a motor on each driver" src="../assets/leg_setup.webp" /></a></p>
+<figure>
+  <a class="glightbox" href="../assets/leg_setup.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Wiring: the supply to the first driver, the CAN bus from the adapter through both drivers, a motor on each driver" src="../assets/leg_setup.webp" /></a>
+<br />
+<figcaption>Figure 2: Wiring: the supply to the first driver, the CAN bus from the adapter through both drivers, a motor on each driver.</figcaption>
+</figure>
 <p>The setup will be the same for any kind of quadruped leg. You will need to follow the diagram above to wire everything up.</p>
 <ul>
 <li>First you need to calibrate your Spectral BLDC drivers with the motors you are using. </li>
@@ -9162,14 +9644,22 @@ the <a href="https://docs.source-robotics.com/Spectral-BLDC-docs/">Spectral Micr
 <li>Connect the power to both drivers. (Use daisy chain)</li>
 </ul>
 <h2 id="guides-quadruped-leg-kinematics">Leg kinematics<a class="headerlink" href="#guides-quadruped-leg-kinematics" title="Permanent link">&para;</a></h2>
-<p><a class="glightbox" href="../assets/robot_leg_dh_table.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The coordinate frames of the leg and its DH table" src="../assets/robot_leg_dh_table.webp" /></a></p>
+<figure>
+  <a class="glightbox" href="../assets/robot_leg_dh_table.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The coordinate frames of the leg and its DH table" src="../assets/robot_leg_dh_table.webp" /></a>
+<br />
+<figcaption>Figure 3: The coordinate frames of the leg and its DH table.</figcaption>
+</figure>
 <p>First you will need to assign coordinate frames to your leg model.
 We already did it but if you want to learn more on how and why check this <a href="https://automaticaddison.com/how-to-assign-denavit-hartenberg-frames-to-robotic-arms/">Link</a><br /></p>
 <p>Now we will need to find DH (Denavit-Hartenberg) table values. You can learn more on how and why we did it <a href="https://automaticaddison.com/how-to-find-denavit-hartenberg-parameter-tables/">Here!</a></p>
 <p>value l1 is 0.112 meters and value l2 is 0.1 meters. The frame 2 is the end / foot of our leg.</p>
 <h2 id="guides-quadruped-testing-calibrating-the-leg">Testing / Calibrating the leg<a class="headerlink" href="#guides-quadruped-testing-calibrating-the-leg" title="Permanent link">&para;</a></h2>
 <p>Before running the main code lets check if the comms are working and get initial position values of our robot leg. This code will try to get data from the 2 motors of our robot leg. We are most interested in position data of those 2 motors. Position the leg like shown in this image. Run the leg_calib code and write down position values of each motor. </p>
-<p><a class="glightbox" href="../assets/leg_terminal.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The terminal output of leg_calib.py with the positions of both motors" src="../assets/leg_terminal.webp" /></a></p>
+<figure>
+  <a class="glightbox" href="../assets/leg_terminal.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The terminal output of leg_calib.py with the positions of both motors" src="../assets/leg_terminal.webp" /></a>
+<br />
+<figcaption>Figure 4: The terminal output of leg_calib.py with the positions of both motors.</figcaption>
+</figure>
 <div class="language-py highlight"><span class="filename">leg_calib.py</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#guides-quadruped-__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">Spectral_BLDC</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">Spectral</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#guides-quadruped-__codelineno-0-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#guides-quadruped-__codelineno-0-3"></a>
@@ -9225,7 +9715,11 @@ We defined that trajectory with our function generate_circle_coords and with par
 <li>speed - Speed of the end-effector in meters per second</li>
 <li>time_var - Elapsed time in seconds</li>
 </ul>
-<p><a class="glightbox" href="../assets/circ_2.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The circle the foot traced at speed 1 and at speed 3" src="../assets/circ_2.webp" /></a></p>
+<figure>
+  <a class="glightbox" href="../assets/circ_2.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="The circle the foot traced at speed 1 and at speed 3" src="../assets/circ_2.webp" /></a>
+<br />
+<figcaption>Figure 5: The circle the foot traced at speed 1 and at speed 3.</figcaption>
+</figure>
 <p>How precise you follow the trajectory depends on the speed you set. With low speeds you can track the circle perfectly. With larger speeds the system can't keep up and overshoots. This is due multiple reaseons like:</p>
 <ul>
 <li>Inertia and Momentum: At higher speeds, the inertia and momentum of the robot leg increase, making it harder to change directions quickly and accurately.</li>
@@ -9476,7 +9970,11 @@ in the Python library's examples, with its <a href="https://github.com/Source-Ro
 <h2 id="guides-bilateral-teleoperation-what-is-bilateral-teleoperation">What is bilateral teleoperation?<a class="headerlink" href="#guides-bilateral-teleoperation-what-is-bilateral-teleoperation" title="Permanent link">&para;</a></h2>
 <p>Bilateral teleoperation is a concept that Involves two-way communication where both the operator and the remote device send and receive feedback. The operator controls the device remotely and receives sensory feedback (such as force) from the device to adjust their actions.</p>
 <p>The two grippers are virtually coupled to each other, allowing either to act as the master (the haptic interface) or the slave (the manipulator) in the system. We are not using a force sensor at the grippers but are relying on proprioception.</p>
-<p><a class="glightbox" href="../assets/bil_tel.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Bilateral teleoperation of two coupled grippers" src="../assets/bil_tel.webp" /></a></p>
+<figure>
+  <a class="glightbox" href="../assets/bil_tel.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Bilateral teleoperation of two coupled grippers" src="../assets/bil_tel.webp" /></a>
+<br />
+<figcaption>Figure 1: Bilateral teleoperation of two coupled grippers.</figcaption>
+</figure>
 <p>Watch these example videos to get a "feel" of the concept:</p>
 <ul>
 <li><a href="https://www.youtube.com/watch?v=8jfgFuEFNdI">Gripper bilateral</a> </li>
@@ -9508,7 +10006,11 @@ in the Python library's examples, with its <a href="https://github.com/Source-Ro
 </ul>
 <h2 id="guides-bilateral-teleoperation-setup">Setup<a class="headerlink" href="#guides-bilateral-teleoperation-setup" title="Permanent link">&para;</a></h2>
 <p>Here we are showing you the setup for any 2 motors, for example we are using 2 x <a href="https://source-robotics.com/products/compliant-gripper">ssg48 grippers</a> that are connected in exactly the same setup.</p>
-<p><a class="glightbox" href="../assets/leg_setup.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Wiring: the supply to the first driver, the CAN bus from the adapter through both drivers, a motor on each driver" src="../assets/leg_setup.webp" /></a></p>
+<figure>
+  <a class="glightbox" href="../assets/leg_setup.webp" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Wiring: the supply to the first driver, the CAN bus from the adapter through both drivers, a motor on each driver" src="../assets/leg_setup.webp" /></a>
+<br />
+<figcaption>Figure 2: Wiring: the supply to the first driver, the CAN bus from the adapter through both drivers, a motor on each driver.</figcaption>
+</figure>
 <p>You will need to follow the diagram above to wire everything up.</p>
 <ul>
 <li>First you need to calibrate your Spectral BLDC drivers with the motors you are using. </li>
@@ -9734,7 +10236,10 @@ source, and GitHub turns your change into a pull request. For anything larger, o
 
 .print-site-enumerate-headings #07-firmware-building > h1:before { content: '1.3.7.6 ' }
 
-.print-site-enumerate-headings #08-troubleshooting > h1:before { content: '1.3.8 ' }
+.print-site-enumerate-headings #section-1-3-8 > h1:before { content: '1.3.8 ' }
+.print-site-enumerate-headings #08-troubleshooting > h1:before { content: '1.3.8.1 ' }
+
+.print-site-enumerate-headings #08-troubleshooting-known-issues > h1:before { content: '1.3.8.2 ' }
 
 .print-site-enumerate-headings #section-1-4 > h1:before { content: '1.4 ' }
 .print-site-enumerate-headings #appendix-firmware-release-notes > h1:before { content: '1.4.1 ' }
@@ -9969,17 +10474,6 @@ Code examples <a href="https://github.com/Source-Robotics/STEPFOC-docs/blob/main
     
     <a href="https://discord.gg/prjUvjmGpZ" target="_blank" rel="noopener" title="discord.gg" class="md-social__link">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M492.5 69.8c-.2-.3-.4-.6-.8-.7-38.1-17.5-78.4-30-119.7-37.1-.4-.1-.8 0-1.1.1s-.6.4-.8.8c-5.5 9.9-10.5 20.2-14.9 30.6-44.6-6.8-89.9-6.8-134.4 0-4.5-10.5-9.5-20.7-15.1-30.6-.2-.3-.5-.6-.8-.8s-.7-.2-1.1-.2C162.5 39 122.2 51.5 84.1 69c-.3.1-.6.4-.8.7C7.1 183.5-13.8 294.6-3.6 404.2c0 .3.1.5.2.8s.3.4.5.6c44.4 32.9 94 58 146.8 74.2.4.1.8.1 1.1 0s.7-.4.9-.7c11.3-15.4 21.4-31.8 30-48.8.1-.2.2-.5.2-.8s0-.5-.1-.8-.2-.5-.4-.6-.4-.3-.7-.4c-15.8-6.1-31.2-13.4-45.9-21.9-.3-.2-.5-.4-.7-.6s-.3-.6-.3-.9 0-.6.2-.9.3-.5.6-.7c3.1-2.3 6.2-4.7 9.1-7.1.3-.2.6-.4.9-.4s.7 0 1 .1c96.2 43.9 200.4 43.9 295.5 0 .3-.1.7-.2 1-.2s.7.2.9.4c2.9 2.4 6 4.9 9.1 7.2.2.2.4.4.6.7s.2.6.2.9-.1.6-.3.9-.4.5-.6.6c-14.7 8.6-30 15.9-45.9 21.8-.2.1-.5.2-.7.4s-.3.4-.4.7-.1.5-.1.8.1.5.2.8c8.8 17 18.8 33.3 30 48.8.2.3.6.6.9.7s.8.1 1.1 0c52.9-16.2 102.6-41.3 147.1-74.2.2-.2.4-.4.5-.6s.2-.5.2-.8c12.3-126.8-20.5-236.9-86.9-334.5zm-302 267.7c-29 0-52.8-26.6-52.8-59.2s23.4-59.2 52.8-59.2c29.7 0 53.3 26.8 52.8 59.2 0 32.7-23.4 59.2-52.8 59.2m195.4 0c-29 0-52.8-26.6-52.8-59.2s23.4-59.2 52.8-59.2c29.7 0 53.3 26.8 52.8 59.2 0 32.7-23.2 59.2-52.8 59.2"/></svg>
-    </a>
-  
-    
-    
-    
-    
-      
-      
-    
-    <a href="https://www.patreon.com/PCrnjak" target="_blank" rel="noopener" title="www.patreon.com" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M490 153.8c-.1-65.4-51-119-110.7-138.3-74.2-24-172-20.5-242.9 12.9C50.6 68.9 23.6 157.7 22.6 246.2 21.8 319 29 510.6 137.2 512c80.3 1 92.3-102.5 129.5-152.3 26.4-35.5 60.5-45.5 102.4-55.9 72-17.8 121.1-74.7 121-150z"/></svg>
     </a>
   
 </div>

@@ -9,10 +9,7 @@ default; use it on any motor that runs near its rated current for long.
     overheat and burn its windings without any warning. With the thermistor fitted and enabled, the driver stops
     first. The starter kit includes one.
 
-<figure markdown="span">
-  ![The thermistor connector](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_THERMISTOR-Photoroom.webp){ width="520" }
-  <figcaption>Figure 11: The thermistor on its 2-pin connector.</figcaption>
-</figure>
+![The thermistor on its 2-pin connector.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_THERMISTOR-Photoroom.webp){ width="520" }
 
 ## Fitting it
 

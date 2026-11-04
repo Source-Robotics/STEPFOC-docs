@@ -1,6 +1,8 @@
 # Installing the bootloader on an older board
 
-A driver running firmware 103 or older has no bootloader: its firmware starts at the beginning of the flash. To
+A driver running release 103 or older from the `main` branch has no bootloader: its firmware starts at the
+beginning of the flash. A driver that reports 103 may have the bootloader all the same; check first, as in
+[Drivers that report 103](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/releases/#drivers-that-report-103). To
 run any release from 105 on, which is linked to start above the bootloader, the bootloader must be installed
 once, with a programming adapter on the JTAG connector. After that, every update goes over UART or CAN.
 
@@ -19,10 +21,18 @@ once, with a programming adapter on the JTAG connector. After that, every update
 - The bootloader binary from the [bootloader repository's `bin/` folder](https://github.com/Source-Robotics/stm32f103c-bootloader/tree/main/bin);
   its `README.md` names the current file.
 
-<figure markdown="span">
-  ![The JTAG pads and the adapter](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_JTAG.webp){ width="700" }
-  <figcaption>Figure 18: The JTAG pads, marked 3V3, GND, SWCLK, SWDIO. The adapter is pressed onto them; a little pressure makes the contact.</figcaption>
-</figure>
+=== "Windows"
+    STM32CubeProgrammer or the ST-LINK Utility, and the ST-LINK USB driver (STSW-LINK009) for the adapter.
+
+=== "Linux"
+    STM32CubeProgrammer; the ST-LINK Utility runs on Windows only. The adapter needs no driver, but your user
+    needs access to its USB device: install the udev rules that come with STM32CubeProgrammer, or run it with
+    `sudo`.
+
+=== "macOS"
+    STM32CubeProgrammer; the ST-LINK Utility runs on Windows only. The adapter needs no driver.
+
+![The JTAG pads, marked 3V3, GND, SWCLK, SWDIO. The adapter is pressed onto them; a little pressure makes the contact.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_JTAG.webp){ width="700" }
 
 ## Steps
 
@@ -35,6 +45,11 @@ once, with a programming adapter on the JTAG connector. After that, every update
 6. Flash the firmware release through the bootloader, over UART or CAN, as in
    [Updating through the bootloader](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/update/).
 7. `#Info` shows the new release. `#Default`, enter the motor parameters, calibrate, `#Save`.
+
+!!! success "Check"
+    `#Info` prints the release you flashed, and a driver powered up while `bl_flash.py list` or Motor GUI's
+    *Scan bootloaders* is polling answers in its first two seconds: the bootloader is there. If the firmware does
+    not start, see [Updating through the bootloader: when it fails](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/update/#when-it-fails).
 
 !!! note "Memory layout"
     `0x08000000`–`0x080022FF` bootloader, `0x08002C00` its configuration page (board ID, the application's CRC),

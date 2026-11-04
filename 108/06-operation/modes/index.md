@@ -23,7 +23,7 @@ passing through idle; a fault is any of the errors on [Errors and recovery](http
 
 | ControlMode | What the motor does | Entered by | Setpoint unit |
 |---|---|---|---|
-| Idle | nothing: coasts (phases open) or brakes (phases shorted), as set by `#Brake` / `#Coast` or Send_Settings | `#Idle`, Send_Idle, `#Clear`, errors | — |
+| Idle | nothing: brakes (phases shorted), the default, or coasts (phases open), as set by `#Brake` / `#Coast` or Send_Settings; see [Braking in idle](#braking-in-idle) | `#Idle`, Send_Idle, `#Clear`, errors | — |
 | Position | holds and moves to a position with the cascade of position, velocity and current loops | `#P`, Send_data_pack_1 (8 bytes) | encoder ticks |
 | Velocity | turns at a speed with the velocity and current loops | `#V`, Send_data_pack_1 (5 bytes) | encoder ticks/s |
 | Current (torque) | applies a current, so a torque, with the current loop alone | `#Iq`, Send_data_pack_1 (2 bytes) | mA |
@@ -33,6 +33,18 @@ passing through idle; a fault is any of the errors on [Errors and recovery](http
 | HALL | spins until a sensor on ADDITIONAL2 triggers, then holds the position reached; with a level trigger only while the pin stays at that level | `#HALL`, Send_data_pack_HALL | encoder ticks/s |
 | Gripper | runs the gripper state machine: move to a jaw position with a speed and a current limit | `#Grippos`, Send_gripper_data_pack (with `#Gripper 1`) | 0 to 255 |
 | Calibration | the calibration routine, and the angle-offset step alone | `#Cal`, `#Calangle`, `#Gripcal` | — |
+
+## Braking in idle
+
+In idle the driver brakes: it keeps both coils shorted through the driver stage, so the motor resists being
+turned. It does so at every power-up, and also with an error, which puts the driver in idle. `#Coast` (or
+Send_Settings over CAN) lets the motor coast instead, with the coils open, until the next power-up: `#Save` does
+not keep it. `#Brake` brakes again.
+
+!!! warning "The braking current is not limited"
+    A motor that is turned while it brakes drives its own back-EMF current through the shorted coils, and the
+    current loop does not limit that current. Do not let a load drive a braking motor fast; send `#Coast` first
+    when the shaft must turn freely.
 
 ## Units
 
@@ -95,10 +107,7 @@ None of these settings is saved.
 
 ## Positive rotation
 
-<figure markdown="span">
-  ![Positive rotation](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_ORIENTATION.webp){ width="700" }
-  <figcaption>Figure 16: Positive rotation is counter-clockwise looking at the encoder magnet. A positive current turns the motor that way, a positive speed too, and the position grows.</figcaption>
-</figure>
+![Positive rotation is counter-clockwise looking at the encoder magnet. A positive current turns the motor that way, a positive speed too, and the position grows.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_ORIENTATION.webp){ width="700" }
 
 ## Which mode am I in?
 

@@ -3,10 +3,7 @@
 The encoder reads a diametrically magnetised magnet on the rear end of the motor shaft. The magnet must sit
 centred on the shaft's axis, parallel to the board, about **1 mm** above the encoder chip, and it must not move.
 
-<figure markdown="span">
-  ![Magnet distance to the encoder](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_MAGNET.png){ width="700" }
-  <figcaption>Figure 6: About 1 mm between the magnet and the encoder chip in the middle of the board.</figcaption>
-</figure>
+![About 1 mm between the magnet and the encoder chip in the middle of the board.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_MAGNET.png){ width="700" }
 
 ## The magnet
 

@@ -15,7 +15,15 @@ The project is linked for the bootloader: `VECT_TAB_OFFSET=0x3000`, the linker s
 the upload offset `0x08003000` and a maximum size of 118784 bytes, in `platformio.ini`. A build that exceeds the
 size fails to link.
 
+!!! success "Check"
+    PlatformIO ends the build with `SUCCESS`, and `.pio/build/genericSTM32F103CB/firmware.bin` is there. If it
+    fails, the first error above the summary names the cause.
+
 ## Uploading
+
+PlatformIO runs on Windows, Linux and macOS alike. On Linux, an upload with the programming adapter also needs
+PlatformIO's udev rules (`99-platformio-udev.rules`, in the PlatformIO documentation), and a serial port the
+`dialout` group.
 
 - **Through the bootloader**: flash the built `firmware.bin` with `bl_flash.py` or Motor GUI as in
   [Updating through the bootloader](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/update/). This is how a release is installed, and works on any driver with
@@ -32,10 +40,7 @@ size fails to link.
     once more through the bootloader to recover. Once the bootloader is on the board, install every firmware
     through it.
 
-<figure markdown="span">
-  ![Upload in VS Code](https://docs.source-robotics.com/STEPFOC-docs/108/assets/VSUPLOAD.png){ width="700" }
-  <figcaption>Figure 19: Build, upload and the serial monitor in PlatformIO's status bar.</figcaption>
-</figure>
+![Build, upload and the serial monitor in PlatformIO's status bar.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/VSUPLOAD.png){ width="700" }
 
 ## Where things are
 

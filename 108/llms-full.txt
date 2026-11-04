@@ -128,12 +128,20 @@ a calibration that "succeeds" and a motor that then runs badly.
 
 Read in more detail: [The encoder magnet](https://docs.source-robotics.com/STEPFOC-docs/108/04-mounting/magnet/).
 
+!!! success "Check"
+    The magnet sits centred on the shaft, and once the glue has set it does not move when you push it with a
+    finger. If it does: [The encoder magnet](https://docs.source-robotics.com/STEPFOC-docs/108/04-mounting/magnet/).
+
 ## 3. Mount the board
 
 Remove the motor's four rear screws, put the spacer on, the board on the spacer with the encoder chip towards the
 magnet, and the longer screws in. Check the gap: 1 mm, not touching.
 
 Read in more detail: [Mounting on the motor](https://docs.source-robotics.com/STEPFOC-docs/108/04-mounting/mounting/).
+
+!!! success "Check"
+    The board sits parallel to the back of the motor, about 1 mm above the magnet, and the shaft turns by hand
+    without the magnet touching the chip. If not: [Mounting on the motor](https://docs.source-robotics.com/STEPFOC-docs/108/04-mounting/mounting/).
 
 ## 4. Wire the motor
 
@@ -142,6 +150,10 @@ nothing). Solder one coil to **A+ and A−**, the other to **B+ and B−**. Whic
 does not matter: calibration detects it.
 
 Read in more detail: [Wiring the stepper](https://docs.source-robotics.com/STEPFOC-docs/108/04-mounting/wiring/).
+
+!!! success "Check"
+    With the driver unpowered, a multimeter shows the coil's resistance, a few ohms, between A+ and A− and
+    between B+ and B−, and no strand bridges two pads. If not: [Wiring the stepper](https://docs.source-robotics.com/STEPFOC-docs/108/04-mounting/wiring/).
 
 ## 5. Connect power and the PC
 
@@ -170,8 +182,9 @@ Read in more detail: [Wiring the stepper](https://docs.source-robotics.com/STEPF
 Read in more detail: [Power and the CAN daisy chain](https://docs.source-robotics.com/STEPFOC-docs/108/04-mounting/power-and-can/) ·
 [Connectors and pinout](https://docs.source-robotics.com/STEPFOC-docs/108/03-technical-data/connectors/).
 
-**Check:** the driver's identity and live state appear before you change settings. A missing connection
-is covered in [Motor GUI](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/motor-gui/#opening-the-port) or [Troubleshooting](https://docs.source-robotics.com/STEPFOC-docs/108/08-troubleshooting/).
+!!! success "Check"
+    The driver's identity and live state appear before you change settings. A missing connection is covered in
+    [Motor GUI](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/motor-gui/#opening-the-port) or [Troubleshooting](https://docs.source-robotics.com/STEPFOC-docs/108/08-troubleshooting/).
 
 ## 6. Restore the defaults and enter the motor parameters
 
@@ -194,6 +207,10 @@ fails on a value left at 0.
     ```
 
 Read in more detail: [Motor parameters and calibration](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/calibration/).
+
+!!! success "Check"
+    `#Info` prints the values you entered as `Number of pole pairs`, `Single phase resistance` and `Single
+    phase Inductance` (Motor GUI shows them in the motor settings). None of them may be 0.
 
 ## 7. Calibrate
 
@@ -223,8 +240,10 @@ that the magnet does not slip.
 Read in more detail: [Motor parameters and calibration](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/calibration/), with the whole log and every
 message.
 
-**Check:** the calibration log ends with `Calibration success!`. If it does not, use the failed step in
-[Calibration troubleshooting](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/calibration/#troubleshooting); do not treat a stopped motor as success.
+!!! success "Check"
+    The calibration log ends with `Calibration success!`. If it does not, use the failed step in
+    [Calibration troubleshooting](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/calibration/#troubleshooting); do not treat a stopped motor as
+    success.
 
 ## 8. Set the current limit and save
 
@@ -246,8 +265,9 @@ pause: normal operation.
 Read in more detail: [Current limit and loop tuning](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/tuning/) ·
 [Saving the configuration](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/saving/).
 
-**Check:** after **Save**, Motor GUI no longer marks unsaved changes. [Saving](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/saving/) explains
-which settings are kept.
+!!! success "Check"
+    After **Save**, Motor GUI no longer marks unsaved changes, and after a power cycle `#Info` prints
+    `Calibrated`. [Saving](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/saving/) explains which settings are kept.
 
 ## 9. Move it
 
@@ -270,8 +290,9 @@ or whines, lower the current limit or tune the loops.
 
 Read in more detail: [Control modes](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/modes/) · [Current limit and loop tuning](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/tuning/).
 
-**Check:** the position/speed feedback follows the request, and **Idle** stops driving the motor. A motor
-that does not follow needs [Troubleshooting](https://docs.source-robotics.com/STEPFOC-docs/108/08-troubleshooting/) before a load is attached.
+!!! success "Check"
+    The position and speed feedback follow the request, and **Idle** stops driving the motor. A motor that
+    does not follow needs [Troubleshooting](https://docs.source-robotics.com/STEPFOC-docs/108/08-troubleshooting/) before a load is attached.
 
 ## 10. Where to go next
 
@@ -385,10 +406,7 @@ servo drive does, instead of the fixed step currents of a conventional stepper d
 runs quietly and efficiently, never loses steps, reports its position, and can be commanded in position, speed,
 current (torque) or impedance.
 
-<figure markdown="span">
-  ![The STEPFOC driver](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC.webp){ width="520" }
-  <figcaption>Figure 1: The STEPFOC driver, 39 × 39 mm, with the encoder chip in the middle of the board.</figcaption>
-</figure>
+![The STEPFOC driver, 39 × 39 mm, with the encoder chip in the middle of the board.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC.webp){ width="520" }
 
 ## What is on the board
 
@@ -575,6 +593,10 @@ connect anything; the few rules here are the ones that destroy a driver, a motor
     Never unplug a motor, or a power cable in the daisy chain, while the driver is powered. The inductive kick of
     the coils and the arcing at the connector damage the driver stage.
 
+!!! warning "Static electricity"
+    Static electricity damages the microcontroller, the encoder chip and the driver stage. Unplug the supply and
+    touch earthed metal before you handle the board, and hold it by its edges, away from the chips and the pads.
+
 ## Mechanical
 
 !!! danger "Moving parts"
@@ -582,13 +604,22 @@ connect anything; the few rules here are the ones that destroy a driver, a motor
     pushes back hard against a hand. Keep fingers, hair and cables away from the shaft and whatever is mounted on
     it, fix the motor to the bench before the first test, and test without a load on the shaft.
 
+!!! danger "A powered motor can move with nobody at it"
+    The driver moves its motor whenever a command arrives, over UART or from any host on the CAN bus, and keeps
+    following the last one. A speed command goes on turning the motor after the program that sent it has crashed
+    or its cable has come out, unless the watchdog is set ([Stopping the motor](#stopping-the-motor)). Before you
+    reach for the motor or the mechanism it drives, put the driver in idle (`#Idle`, Send_Idle) or switch the
+    supply off.
+
 !!! warning "The encoder magnet"
     The magnet sits about 1 mm above the encoder chip. A magnet that touches the chip, or sits far too close, can
     damage the microcontroller; a magnet too far away gives a wrong position. Mount it as described in
     [The encoder magnet](https://docs.source-robotics.com/STEPFOC-docs/108/04-mounting/magnet/).
 
 !!! warning "Hot motor and driver"
-    A stepper running at its rated current gets hot enough to burn. Set the current limit for your motor
+    A stepper running at its rated current gets hot enough to burn, and so do the driver's chips and the board
+    around them. Switch off and let both cool for a few minutes before you touch them. Set the current limit for
+    your motor
     ([Current limit and loop tuning](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/tuning/)), use the thermistor, and give the driver airflow when it
     runs near 2.8 A. `#Ilim` is clamped to 2800 mA, but the current limit of Send_Limits over CAN and the current
     of a gripper move are used as sent: a host must keep them within the motor's rating and 2800 mA.
@@ -696,10 +727,7 @@ The defaults of every setting are listed in the [Defaults](https://docs.source-r
 
 # Connectors and pinout
 
-<figure markdown="span">
-  ![The connectors of the STEPFOC driver](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_CONN.webp){ width="900" }
-  <figcaption>Figure 2: The connectors. The motor coils go to A+, A−, B+, B−; the supply to DC+ and DC−.</figcaption>
-</figure>
+![The connectors. The motor coils go to A+, A−, B+, B−; the supply to DC+ and DC−.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_CONN.webp){ width="900" }
 
 | Connector | Pins | Type | Cable |
 |---|---|---|---|
@@ -741,15 +769,10 @@ on the motor shaft's axis.
   <p class="gripper-viewer__hint">Drag to turn the board, scroll to zoom. The model is the board's STEP file from the <a href="https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/main/STEP%20files">repository</a>, the PCB and everything mounted on it.</p>
 </div>
 
-<figure markdown="span">
-  ![Dimensions of the board](https://docs.source-robotics.com/STEPFOC-docs/108/assets/micro_dimensions.webp){ width="600" }
-  <figcaption>Figure 3: Board dimensions and hole pattern. The drawing is of the Spectral Micro, which has the same outline and hole pattern.</figcaption>
-</figure>
+![Board dimensions and hole pattern. The drawing is of the Spectral Micro, which has the same outline and hole pattern.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/micro_dimensions.webp){ width="600" }
+![Board dimensions and hole pattern. The drawing is of the Spectral Micro, which has the same outline and hole pattern.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/micro_dimensions_dark.webp){ width="600" }
 
-<figure markdown="span">
-  ![The STEP model of the driver](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_STEP.webp){ width="520" }
-  <figcaption>Figure 4: The STEP model.</figcaption>
-</figure>
+![The STEP model.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_STEP.webp){ width="520" }
 
 The STEP files of the board, the magnet spacers for different motor lengths and the tool for pressing the magnet
 onto the shaft are in the firmware repository:
@@ -759,7 +782,7 @@ onto the shaft are in the firmware repository:
   magnet spacers, NEMA 17 spacers for different motor lengths, NEMA 23 spacers
 - [Tools](https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/main/STEP%20files/Tools): the magnet tool
 
-[CAD and downloads](https://docs.source-robotics.com/STEPFOC-docs/108/cad-files/) lists everything that can be downloaded.
+[Downloads and files](https://docs.source-robotics.com/STEPFOC-docs/108/cad-files/) lists everything that can be downloaded.
 
 
 ---
@@ -802,7 +825,7 @@ pages in order; the magnet first, because it is the one thing you cannot check f
 
 <figure markdown="span">
   ![Hardware setup video](https://img.youtube.com/vi/60UMc95H8iE/hqdefault.jpg){ width="480" }
-  <figcaption>Figure 5: <a href="https://youtu.be/60UMc95H8iE">The motor hardware setup video</a> shows the whole procedure on a NEMA 17 motor.</figcaption>
+  <figcaption><a href="https://youtu.be/60UMc95H8iE">The motor hardware setup video</a> shows the whole procedure on a NEMA 17 motor.</figcaption>
 </figure>
 
 ## In this chapter
@@ -825,10 +848,7 @@ When all of it is done, continue with [First setup](https://docs.source-robotics
 The encoder reads a diametrically magnetised magnet on the rear end of the motor shaft. The magnet must sit
 centred on the shaft's axis, parallel to the board, about **1 mm** above the encoder chip, and it must not move.
 
-<figure markdown="span">
-  ![Magnet distance to the encoder](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_MAGNET.png){ width="700" }
-  <figcaption>Figure 6: About 1 mm between the magnet and the encoder chip in the middle of the board.</figcaption>
-</figure>
+![About 1 mm between the magnet and the encoder chip in the middle of the board.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_MAGNET.png){ width="700" }
 
 ## The magnet
 
@@ -892,7 +912,8 @@ plate you make yourself: the repository has none.
 
 !!! warning "The board is bare"
     Nothing on the back of the board may touch the motor's housing. Make sure the spacer keeps the board clear of
-    the end cap, and keep metal swarf and screws away from the board while you work.
+    the end cap, and keep metal swarf and screws away from the board while you work. Touch earthed metal before you pick the
+    board up and hold it by its edges: static electricity damages its chips.
 
 
 ---
@@ -905,10 +926,7 @@ A bipolar stepper has two coils and four wires. One coil goes to the terminals *
 and B−**. Which coil is A and which is B does not matter, and neither does the polarity of each coil: firmware 105
 and newer finds the wiring during calibration and compensates it.
 
-<figure markdown="span">
-  ![Motor terminals and connectors](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_CONN.webp){ width="900" }
-  <figcaption>Figure 7: The motor terminals A+, A−, B+, B− and the other connectors.</figcaption>
-</figure>
+![The motor terminals A+, A−, B+, B− and the other connectors.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_CONN.webp){ width="900" }
 
 ## Finding the two coils
 
@@ -959,10 +977,7 @@ and the position, speed and current you read back in your host program.
 Each driver has two power connectors (JST XH) and two CAN connectors (JST ZH). The second connector of each pair
 feeds the next driver, so a chain of drivers hangs on one supply cable and one CAN cable.
 
-<figure markdown="span">
-  ![A daisy chain of drivers](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Daisy_chain-Photoroom.webp){ width="700" }
-  <figcaption>Figure 8: Power and CAN pass from driver to driver. The first and the last node on the bus have their termination switch on.</figcaption>
-</figure>
+![Power and CAN pass from driver to driver. The first and the last node on the bus have their termination switch on.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Daisy_chain-Photoroom.webp){ width="700" }
 
 ## Power
 
@@ -982,10 +997,7 @@ feeds the next driver, so a chain of drivers hangs on one supply cable and one C
     ways, and the wrong way puts DC+ on DC−. Every cable must run as in the picture below, the same way at both
     ends. A wrong cable destroys the driver at the moment it is powered.
 
-<figure markdown="span">
-  ![Cable orientation](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Orientation.webp){ width="600" }
-  <figcaption>Figure 9: The orientation of the daisy-chain cables. The picture shows a generic 4-pin cable; the rule is the same for the 2-pin CAN and power cables.</figcaption>
-</figure>
+![The orientation of the daisy-chain cables. The picture shows a generic 4-pin cable; the rule is the same for the 2-pin CAN and power cables.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Orientation.webp){ width="600" }
 
 The cables from the shop are made this way: [CAN cable](https://source-robotics.com/products/spectral-micro-can-cable),
 [power cable](https://source-robotics.com/products/spectral-micro-power-cable), and all of them under
@@ -1004,10 +1016,7 @@ The cables from the shop are made this way: [CAN cable](https://source-robotics.
 - A PC joins the bus with the [CANvas adapter](https://source-robotics.com/products/canvas-usb-to-can-adapter),
   which has its own termination.
 
-<figure markdown="span">
-  ![The CAN termination switch](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_CAN.webp){ width="520" }
-  <figcaption>Figure 10: The termination switch, ON for the first and the last node.</figcaption>
-</figure>
+![The termination switch, ON for the first and the last node.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_CAN.webp){ width="520" }
 
 
 ---
@@ -1025,10 +1034,7 @@ default; use it on any motor that runs near its rated current for long.
     overheat and burn its windings without any warning. With the thermistor fitted and enabled, the driver stops
     first. The starter kit includes one.
 
-<figure markdown="span">
-  ![The thermistor connector](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_THERMISTOR-Photoroom.webp){ width="520" }
-  <figcaption>Figure 11: The thermistor on its 2-pin connector.</figcaption>
-</figure>
+![The thermistor on its 2-pin connector.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_THERMISTOR-Photoroom.webp){ width="520" }
 
 ## Fitting it
 
@@ -1117,8 +1123,29 @@ browsers have: Chrome, Edge, Brave, Opera. Firefox and Safari cannot open serial
    calibrated and activated, and the active errors: what `#Info`, `#SERNUM` and `#Error` print in a terminal.
 
 If the port is not offered, the browser is not Chromium-based, or another program holds the port (a terminal left
-open, PlatformIO's monitor). If the port opens and nothing appears: the driver is unpowered, or TX and RX are
-crossed on an adapter that is not the Source Robotics one.
+open, PlatformIO's monitor), or the operating system does not give the browser the port:
+
+=== "Windows"
+    The adapter is `COM` and a number. Device Manager lists it under **Ports (COM & LPT)**: the entry that
+    disappears when you unplug the adapter is yours. An adapter that shows a warning sign there instead needs the
+    driver of its USB chip (on most 3.3 V adapters a CP210x or a CH340) from the chip maker.
+
+=== "Linux"
+    The serial adapter is `/dev/ttyUSB0` on most adapters, the CANvas adapter `/dev/ttyACM0`;
+    `ls /dev/ttyUSB* /dev/ttyACM*` lists them. To open them without root, join the `dialout` group once, then
+    log out and in again:
+
+    ```
+    sudo usermod -aG dialout $USER
+    ```
+
+=== "macOS"
+    The serial adapter is `/dev/cu.usbserial-` and a few characters on most adapters, the CANvas adapter
+    `/dev/cu.usbmodem` and a number; `ls /dev/cu.*` lists them. Use the `cu.` name, not the `tty.` one, in a
+    terminal or a script.
+
+The browser's port picker lists the same adapters. If the port opens and nothing appears: the driver is
+unpowered, or TX and RX are crossed on an adapter that is not the Source Robotics one.
 
 ## What is on the screen
 
@@ -1166,7 +1193,9 @@ crossed on an adapter that is not the Source Robotics one.
 <figcaption markdown="1">**1. Connection and node:** confirm the intended driver. **2. State:** calibration, activation and faults. **3. Command mode:** setpoints and jog controls. **4. Live telemetry:** measured position, speed and current. This screenshot uses **Mock CAN (demo)**, not physical hardware.</figcaption>
 </figure>
 
-**Check:** after connecting real hardware, the state and identity belong to your driver. If they do not appear, check the transport, selected port, supply and TX/RX wiring before trying to move.
+!!! success "Check"
+    After connecting real hardware, the state and identity belong to your driver. If they do not appear, check
+    the transport, the selected port, the supply and the TX/RX wiring before trying to move.
 
 ## Try it without hardware
 
@@ -1192,10 +1221,7 @@ the terminal shows the driver's answers exactly as it prints them, which is usef
 The driver talks on its UART connector at 256000 baud, 8N1, 3.3 V. Any terminal that sends a line ending in
 CR+LF works.
 
-<figure markdown="span">
-  ![The UART connector and the adapter](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_UART.webp){ width="900" }
-  <figcaption>Figure 12: The UART connector. TX of the driver goes to RX of the adapter and RX to TX.</figcaption>
-</figure>
+![The UART connector. TX of the driver goes to RX of the adapter and RX to TX.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_UART.webp){ width="900" }
 
 ## Connecting
 
@@ -1205,7 +1231,26 @@ CR+LF works.
 2. Connect the motor supply. The adapter's 3.3 V powers the driver's logic, so the driver answers over UART with
    only the adapter plugged in, but it reports a Vbus error and refuses calibration and every motion command
    until the 12 to 29 V supply is on.
-3. Find the adapter's port: `COM…` on Windows, `/dev/ttyUSB…` or `/dev/ttyACM…` on Linux and macOS.
+3. Find the adapter's port:
+
+=== "Windows"
+    The adapter is `COM` and a number. Device Manager lists it under **Ports (COM & LPT)**: the entry that
+    disappears when you unplug the adapter is yours. An adapter that shows a warning sign there instead needs the
+    driver of its USB chip (on most 3.3 V adapters a CP210x or a CH340) from the chip maker.
+
+=== "Linux"
+    The serial adapter is `/dev/ttyUSB0` on most adapters, the CANvas adapter `/dev/ttyACM0`;
+    `ls /dev/ttyUSB* /dev/ttyACM*` lists them. To open them without root, join the `dialout` group once, then
+    log out and in again:
+
+    ```
+    sudo usermod -aG dialout $USER
+    ```
+
+=== "macOS"
+    The serial adapter is `/dev/cu.usbserial-` and a few characters on most adapters, the CANvas adapter
+    `/dev/cu.usbmodem` and a number; `ls /dev/cu.*` lists them. Use the `cu.` name, not the `tty.` one, in a
+    terminal or a script.
 
 !!! danger
     5 V on the UART pins destroys the board.
@@ -1235,7 +1280,7 @@ CR+LF works.
     Select the adapter's port under *Tools*, any board (the monitor does not care), open the serial monitor, set
     256000 baud and *Both NL & CR* as the line ending.
 
-    ![Arduino serial monitor](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Arduino3.PNG){ width="420" }
+    ![The Arduino serial monitor at 256000 baud, with Both NL & CR as the line ending](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Arduino3.PNG){ width="420" }
 
 ## The first commands
 
@@ -1246,6 +1291,11 @@ CR+LF works.
 prints the driver's identity and state: the hardware and firmware version, the CAN ID, the calibration state and
 the motor parameters. `#Help` (firmware 106 and newer) prints a short command reference, `#Error` the active
 errors, `#Param` the gains and limits.
+
+!!! success "Check"
+    `#Info` answers with the driver's identity, the hardware and firmware version first. If nothing comes back:
+    the baud rate, the CR+LF line ending, TX and RX, see
+    [The driver does not answer](https://docs.source-robotics.com/STEPFOC-docs/108/08-troubleshooting/#the-driver-does-not-answer).
 
 Every command starts with `#`, and a Set/Get command takes one number after a space: `#P 16384` moves to position
 16384; `#P` alone prints the position. Names are case-sensitive. The whole set is in the
@@ -1307,10 +1357,7 @@ value left at 0, and accepts only 50, 75, 100 or 125 pole pairs.
     #L 0.0026       phase inductance in henries (2.6 mH)
     ```
 
-<figure markdown="span">
-  ![An example datasheet](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Motor_specs.webp){ width="900" }
-  <figcaption>Figure 13: The three values on a typical datasheet, here for the 17HS16-2004S1: 1.8°, 1.1 Ω, 2.6 mH.</figcaption>
-</figure>
+![The three values on a typical datasheet, here for the 17HS16-2004S1: 1.8°, 1.1 Ω, 2.6 mH.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/Motor_specs.webp){ width="900" }
 
 The current loop bandwidth (`#Cbw`, 500 Hz by default) decides the gains calibration computes from R and L;
 leave it for now, [Current limit and loop tuning](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/tuning/) comes back to it. It is not saved: after a power
@@ -1401,6 +1448,10 @@ operation; the state shows *Calibrated* and the constants.
     Set it for your motor with `#Ilim` before the motor runs, and save again
     ([Current limit and loop tuning](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/tuning/)).
 
+!!! success "Check"
+    After a power cycle `#Info` prints `Calibrated` and the constants calibration found, and Motor GUI shows
+    *Calibrated*. `Not calibrated` means the save did not happen: calibrate and save again.
+
 ## When to calibrate again
 
 - After changing the motor, the magnet or the wiring.
@@ -1464,10 +1515,7 @@ Crunching and whining sounds at speed usually mean the current limit, or the cur
 
 ## The loops
 
-<figure markdown="span">
-  ![The cascaded loops](https://docs.source-robotics.com/STEPFOC-docs/108/assets/cascadeloop.webp){ width="800" }
-  <figcaption>Figure 14: The position loop commands the velocity loop, which commands the current loop.</figcaption>
-</figure>
+![The position loop commands the velocity loop, which commands the current loop.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/cascadeloop.webp){ width="800" }
 
 Tune from the inside out: the current loop first, then velocity, then position. Before you start:
 
@@ -1518,10 +1566,7 @@ Run the motor over the whole range of speeds and loads it will see, with a load 
 
 ## Impedance (PD) mode
 
-<figure markdown="span">
-  ![The PD loop](https://docs.source-robotics.com/STEPFOC-docs/108/assets/PDloop.webp){ width="800" }
-  <figcaption>Figure 15: The impedance loop: a spring (KP) and a damper (KD) around the position setpoint, plus a current feedforward.</figcaption>
-</figure>
+![The impedance loop: a spring (KP) and a damper (KD) around the position setpoint, plus a current feedforward.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/PDloop.webp){ width="800" }
 
 In PD mode the motor behaves like a spring and a damper: the torque is `KP × (setpoint − position) + KD × (speed
 setpoint − speed) + feedforward current`. Set `KP` and `KD` (the gains, or `#KP`, `#KD`, or Send_PD_Gains), then
@@ -1658,7 +1703,7 @@ passing through idle; a fault is any of the errors on [Errors and recovery](http
 
 | ControlMode | What the motor does | Entered by | Setpoint unit |
 |---|---|---|---|
-| Idle | nothing: coasts (phases open) or brakes (phases shorted), as set by `#Brake` / `#Coast` or Send_Settings | `#Idle`, Send_Idle, `#Clear`, errors | — |
+| Idle | nothing: brakes (phases shorted), the default, or coasts (phases open), as set by `#Brake` / `#Coast` or Send_Settings; see [Braking in idle](#braking-in-idle) | `#Idle`, Send_Idle, `#Clear`, errors | — |
 | Position | holds and moves to a position with the cascade of position, velocity and current loops | `#P`, Send_data_pack_1 (8 bytes) | encoder ticks |
 | Velocity | turns at a speed with the velocity and current loops | `#V`, Send_data_pack_1 (5 bytes) | encoder ticks/s |
 | Current (torque) | applies a current, so a torque, with the current loop alone | `#Iq`, Send_data_pack_1 (2 bytes) | mA |
@@ -1668,6 +1713,18 @@ passing through idle; a fault is any of the errors on [Errors and recovery](http
 | HALL | spins until a sensor on ADDITIONAL2 triggers, then holds the position reached; with a level trigger only while the pin stays at that level | `#HALL`, Send_data_pack_HALL | encoder ticks/s |
 | Gripper | runs the gripper state machine: move to a jaw position with a speed and a current limit | `#Grippos`, Send_gripper_data_pack (with `#Gripper 1`) | 0 to 255 |
 | Calibration | the calibration routine, and the angle-offset step alone | `#Cal`, `#Calangle`, `#Gripcal` | — |
+
+## Braking in idle
+
+In idle the driver brakes: it keeps both coils shorted through the driver stage, so the motor resists being
+turned. It does so at every power-up, and also with an error, which puts the driver in idle. `#Coast` (or
+Send_Settings over CAN) lets the motor coast instead, with the coils open, until the next power-up: `#Save` does
+not keep it. `#Brake` brakes again.
+
+!!! warning "The braking current is not limited"
+    A motor that is turned while it brakes drives its own back-EMF current through the shorted coils, and the
+    current loop does not limit that current. Do not let a load drive a braking motor fast; send `#Coast` first
+    when the shaft must turn freely.
 
 ## Units
 
@@ -1730,10 +1787,7 @@ None of these settings is saved.
 
 ## Positive rotation
 
-<figure markdown="span">
-  ![Positive rotation](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_ORIENTATION.webp){ width="700" }
-  <figcaption>Figure 16: Positive rotation is counter-clockwise looking at the encoder magnet. A positive current turns the motor that way, a positive speed too, and the position grows.</figcaption>
-</figure>
+![Positive rotation is counter-clockwise looking at the encoder magnet. A positive current turns the motor that way, a positive speed too, and the position grows.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_ORIENTATION.webp){ width="700" }
 
 ## Which mode am I in?
 
@@ -1828,10 +1882,8 @@ one frame back per motor and cycle.
 CAN 2.0 data frames with 11-bit identifiers at 1 Mbit/s. The identifier carries the node, the command and the
 error state:
 
-<figure markdown="span">
-  ![The CAN identifier](https://docs.source-robotics.com/STEPFOC-docs/108/assets/CANID.PNG){ width="600" }
-  <figcaption>Figure 17: Bits 10 to 7 of the identifier are the node ID, bits 6 to 1 the command ID, bit 0 the error bit.</figcaption>
-</figure>
+![Bits 10 to 7 of the identifier are the node ID, bits 6 to 1 the command ID, bit 0 the error bit.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/CANID.PNG){ width="600" }
+![Bits 10 to 7 of the identifier are the node ID, bits 6 to 1 the command ID, bit 0 the error bit.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/CANID_dark.webp){ width="600" }
 
 - **Node ID**, bits 10 to 7: which driver, 0 to 15. A driver acts only on frames with its own node ID and sends
   with it. Set it with `#CANID` or Send_CAN_ID and save; every driver ships as node 0. Use 0 to 13: the
@@ -1907,9 +1959,36 @@ over slcan.
 
 ## Installing
 
-```
-pip install Spectral-BLDC
-```
+In a virtual environment:
+
+=== "Windows"
+    ```
+    py -m venv .venv
+    .venv\Scripts\activate
+    pip install Spectral-BLDC
+    ```
+    The CANvas adapter is `COM` and a number (Device Manager, **Ports (COM & LPT)**): `channel='COM41'`.
+
+=== "Linux"
+    ```
+    python3 -m venv .venv
+    source .venv/bin/activate
+    pip install Spectral-BLDC
+    sudo usermod -aG dialout $USER     # access to the serial port; log out and in again once
+    ```
+    The CANvas adapter is `/dev/ttyACM0` (`ls /dev/ttyACM*` lists it): `channel='/dev/ttyACM0'`.
+
+=== "macOS"
+    ```
+    python3 -m venv .venv
+    source .venv/bin/activate
+    pip install Spectral-BLDC
+    ```
+    The CANvas adapter is `/dev/cu.usbmodem` and a number (`ls /dev/cu.usbmodem*` lists it):
+    `channel='/dev/cu.usbmodem1101'`, with your number.
+
+!!! success "Check"
+    `python -c "import Spectral_BLDC"` returns without an error message.
 
 The source and the examples are in [Spectral-BLDC-Python](https://github.com/Source-Robotics/Spectral-BLDC-Python).
 For joints with a gear ratio and an offset, the [Source Robotics Toolbox](https://github.com/Source-Robotics/Source-Robotics-Toolbox)
@@ -1960,6 +2039,11 @@ error bit of the identifier; `UnpackData` decodes the message into the attribute
 setpoint at 50 Hz for five seconds, prints only matching motion feedback, and puts the motor in idle when it
 ends. Idle releases torque: support any attached mechanism before running it. A missing reply is reported
 without claiming that a move finished. Configure and calibrate the driver first ([Quick start](https://docs.source-robotics.com/STEPFOC-docs/108/quick-start/)).
+
+!!! success "Check"
+    The program prints a line of position, speed, current and error bit for each cycle, the position moves to
+    16384 and the error bit stays 0. `No motion feedback in this cycle` means no answer came back: the port, the
+    node ID and the bus, see [Over CAN](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/can/).
 
 ## What is where
 
@@ -2067,7 +2151,9 @@ the GUI's telemetry stream uses over serial, so do not start it by hand while th
 <figcaption markdown="1">**1. Errors state:** a fault is active. **2. Errors tab:** inspect individual flags. **3. E-stop error:** 1 identifies the latched fault in this simulation. **4. Clear errors:** clear it after removing its cause; a persistent cause returns on the next update. Screenshot captured from **Mock CAN (demo)**.</figcaption>
 </figure>
 
-**Check:** after recovery the fault flag returns to 0 and the state shows No errors. If it returns, stop and follow [Errors and recovery](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/errors/).
+!!! success "Check"
+    After recovery the fault flag returns to 0 and the state shows *No errors*. If it returns, stop and follow
+    [Errors and recovery](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/errors/).
 
 
 ---
@@ -2157,6 +2243,11 @@ the gripper stays uncalibrated. Check the result with `#Gripinfo` (`Gripper cali
 `gripper_calibrated` bit of Respond_Gripper_data_pack: a move is carried out only once the gripper is calibrated.
 The motor itself must be calibrated (`#Cal`) and saved before that, once.
 
+While the gripper calibrates, send only empty status polls. A 5-byte Send_gripper_data_pack, Send_Clear_Error
+or `#Clear` stops the calibration without a message, and the next one then starts part way through, where the
+stopped one left off: switch the driver off and on before you calibrate again
+([known issue KI-7](https://docs.source-robotics.com/STEPFOC-docs/108/08-troubleshooting/known-issues/)).
+
 ## Moving
 
 Over UART:
@@ -2178,7 +2269,12 @@ and the object detection:
 | 2 | an object was detected while opening |
 | 3 | the position was reached |
 
-An empty Send_gripper_data_pack (0 bytes) only asks for the state. Send_gripper_data_pack's E-stop bit raises the
+An empty Send_gripper_data_pack (0 bytes) only asks for the state. The answer to a 5-byte command goes out
+before the driver acts on it, so its object detection and error bits are still those of the moment before
+(KI-6); the answers to the next frames show the new move. The action bit in the answer is a copy of the last
+command's action bit and stays 1 after the move ends (KI-8): the object detection tells when it has ended.
+
+Send_gripper_data_pack's E-stop bit raises the
 gripper E-stop error; `#Gripstop 1` does the same over UART. The error stays: while the E-stop bit is 1 the driver
 raises it again on every control cycle, and `#Error` prints only `In error state!`. To recover, clear the bit
 (`#Gripstop 0`, or a Send_gripper_data_pack with the bit 0), then `#Clear` or Send_Clear_Error.
@@ -2201,8 +2297,9 @@ the [UART reference](https://docs.source-robotics.com/STEPFOC-docs/108/reference
 # Firmware
 
 The driver's firmware is open source and released as numbered builds. A driver shipped with firmware 105 or newer
-carries a bootloader and updates itself over UART or CAN; an older driver needs the bootloader installed once with
-a programming adapter.
+carries a bootloader and updates itself over UART or CAN, and so do some drivers shipped before 105, which report
+103 ([Drivers that report 103](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/releases/#drivers-that-report-103) says how to tell). A driver without the
+bootloader needs it installed once with a programming adapter.
 
 ## In this chapter
 
@@ -2236,12 +2333,28 @@ the commit it was built from, and the release notes. The notes are the firmware'
 #Info
 ```
 
-prints `Software version: <number>` among the rest. Over CAN, Send_Respond_Device_Info returns it as the third
-byte. From firmware 105 the number is the build's own version; before that it was read from the EEPROM and could
-be stale after an update until `#Default`. So a driver that reports 103 may still carry the bootloader: the builds
-of the `bootloader-version` branch before 105 read 103 from the EEPROM too. To tell, power the driver up while
-`bl_flash.py list` or Motor GUI's *Scan bootloaders* is polling: a driver with the bootloader answers in its first
-two seconds.
+prints `Software version: <number>` among the rest; Motor GUI shows the same number in the driver's identity, and
+over CAN Send_Respond_Device_Info returns it as the third byte. From firmware 105 the number is the build's own
+version. Before that it was read from the EEPROM, where the last `#Default` wrote it, so it names the firmware
+that last restored the defaults, not necessarily the one running: 101 and 102 write 101, 103 writes 103.
+
+### Drivers that report 103
+
+A driver that reports 103 runs either release 103 from the `main` branch, without a bootloader, or an early build
+of the `bootloader-version` branch, which also writes 103 and runs above the bootloader. Some drivers were shipped
+with the bootloader before release 105. Which image those carry was not recorded: most likely 103, built for
+the bootloader.
+
+To tell whether yours has the bootloader:
+
+- Watch the LED as you switch the driver on: with the bootloader it blinks for about two seconds before the
+  firmware starts.
+- Or power it up while `bl_flash.py list` or Motor GUI's *Scan bootloaders* is polling: a driver with the
+  bootloader answers in its first two seconds.
+
+With the bootloader, update it to the current release as in [Updating through the bootloader](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/update/); the
+release it ran before does not matter then. Without one, install it first:
+[Installing the bootloader on an older board](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/bootloader/).
 
 ## Which release does this site describe?
 
@@ -2355,7 +2468,9 @@ image linked for `0x08000000` (a firmware from the `main` branch) over the firmw
 
 ## Installing it
 
-Boards shipped with firmware 103 or older have no bootloader. [Installing the bootloader on an older board](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/bootloader/)
+Boards that run release 103 or older from the `main` branch have no bootloader; some boards shipped before 105
+have it although they report 103 ([Drivers that report 103](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/releases/#drivers-that-report-103)).
+[Installing the bootloader on an older board](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/bootloader/)
 puts it there once, with a programming adapter at `0x08000000`; from then on the board updates like any other.
 
 
@@ -2387,16 +2502,42 @@ the SHA-256, resets the driver into its bootloader and flashes it. This is the w
 The [bootloader repository](https://github.com/Source-Robotics/stm32f103c-bootloader) has `host_tools/bl_flash.py`,
 which flashes an image over CAN (slcan or candleLight/gs_usb adapters) or over UART:
 
-```
-cd host_tools
-pip install -r requirements.txt
+=== "Windows"
+    ```
+    cd host_tools
+    pip install -r requirements.txt
 
-# over CAN with a CANvas (slcan) adapter on COM6, driver with board ID 0
-python bl_flash.py --transport can --can-interface slcan --channel COM6 flash stepfoc-firmware-V108.bin --board 0 --erase-first
+    # over CAN with a CANvas (slcan) adapter on COM6, driver with board ID 0
+    python bl_flash.py --transport can --can-interface slcan --channel COM6 flash stepfoc-firmware-V108.bin --board 0 --erase-first
 
-# over UART on COM7
-python bl_flash.py --transport uart --port COM7 --baudrate 256000 flash stepfoc-firmware-V108.bin --board 0 --erase-first
-```
+    # over UART on COM7
+    python bl_flash.py --transport uart --port COM7 --baudrate 256000 flash stepfoc-firmware-V108.bin --board 0 --erase-first
+    ```
+
+=== "Linux"
+    ```
+    cd host_tools
+    pip install -r requirements.txt
+
+    # over CAN with a CANvas (slcan) adapter, driver with board ID 0
+    python3 bl_flash.py --transport can --can-interface slcan --channel /dev/ttyACM0 flash stepfoc-firmware-V108.bin --board 0 --erase-first
+
+    # over UART with the serial adapter
+    python3 bl_flash.py --transport uart --port /dev/ttyUSB0 --baudrate 256000 flash stepfoc-firmware-V108.bin --board 0 --erase-first
+    ```
+    Your user needs the `dialout` group for both ports ([Motor GUI: the port](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/motor-gui/#opening-the-port)).
+
+=== "macOS"
+    ```
+    cd host_tools
+    pip install -r requirements.txt
+
+    # over CAN with a CANvas (slcan) adapter, driver with board ID 0; ls /dev/cu.usbmodem* gives the name
+    python3 bl_flash.py --transport can --can-interface slcan --channel /dev/cu.usbmodem1101 flash stepfoc-firmware-V108.bin --board 0 --erase-first
+
+    # over UART with the serial adapter; ls /dev/cu.usbserial* gives the name
+    python3 bl_flash.py --transport uart --port /dev/cu.usbserial-0001 --baudrate 256000 flash stepfoc-firmware-V108.bin --board 0 --erase-first
+    ```
 
 The tool sends the reset command to the running firmware (`#Reset` over UART, Send_Reset over CAN), catches the
 bootloader's two-second window, erases the application pages and streams the image page by page, each page
@@ -2407,6 +2548,11 @@ is the `stepfoc-firmware-V<number>.bin` from the GitHub release.
     The bootloader has its own board ID (0 to 13), kept in its configuration page, separate from the firmware's
     CAN node ID. The firmware keeps the two in step when the configuration is saved (`#Save`, Send_Save_config),
     so a driver's bootloader ID is normally its node ID. After `#CANID`, save before you flash over CAN.
+
+!!! success "Check"
+    After the flash, from Motor GUI or the tool, the driver starts the new firmware: `#Info` prints the release
+    you flashed as `Software version`, and Motor GUI shows it in the driver's identity. If the driver does not
+    answer, see [When it fails](#when-it-fails).
 
 ## From a PAR6 control box
 
@@ -2440,7 +2586,9 @@ The tools validate the image first.
 
 # Installing the bootloader on an older board
 
-A driver running firmware 103 or older has no bootloader: its firmware starts at the beginning of the flash. To
+A driver running release 103 or older from the `main` branch has no bootloader: its firmware starts at the
+beginning of the flash. A driver that reports 103 may have the bootloader all the same; check first, as in
+[Drivers that report 103](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/releases/#drivers-that-report-103). To
 run any release from 105 on, which is linked to start above the bootloader, the bootloader must be installed
 once, with a programming adapter on the JTAG connector. After that, every update goes over UART or CAN.
 
@@ -2459,10 +2607,18 @@ once, with a programming adapter on the JTAG connector. After that, every update
 - The bootloader binary from the [bootloader repository's `bin/` folder](https://github.com/Source-Robotics/stm32f103c-bootloader/tree/main/bin);
   its `README.md` names the current file.
 
-<figure markdown="span">
-  ![The JTAG pads and the adapter](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_JTAG.webp){ width="700" }
-  <figcaption>Figure 18: The JTAG pads, marked 3V3, GND, SWCLK, SWDIO. The adapter is pressed onto them; a little pressure makes the contact.</figcaption>
-</figure>
+=== "Windows"
+    STM32CubeProgrammer or the ST-LINK Utility, and the ST-LINK USB driver (STSW-LINK009) for the adapter.
+
+=== "Linux"
+    STM32CubeProgrammer; the ST-LINK Utility runs on Windows only. The adapter needs no driver, but your user
+    needs access to its USB device: install the udev rules that come with STM32CubeProgrammer, or run it with
+    `sudo`.
+
+=== "macOS"
+    STM32CubeProgrammer; the ST-LINK Utility runs on Windows only. The adapter needs no driver.
+
+![The JTAG pads, marked 3V3, GND, SWCLK, SWDIO. The adapter is pressed onto them; a little pressure makes the contact.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/STEPFOC_JTAG.webp){ width="700" }
 
 ## Steps
 
@@ -2475,6 +2631,11 @@ once, with a programming adapter on the JTAG connector. After that, every update
 6. Flash the firmware release through the bootloader, over UART or CAN, as in
    [Updating through the bootloader](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/update/).
 7. `#Info` shows the new release. `#Default`, enter the motor parameters, calibrate, `#Save`.
+
+!!! success "Check"
+    `#Info` prints the release you flashed, and a driver powered up while `bl_flash.py list` or Motor GUI's
+    *Scan bootloaders* is polling answers in its first two seconds: the bootloader is there. If the firmware does
+    not start, see [Updating through the bootloader: when it fails](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/update/#when-it-fails).
 
 !!! note "Memory layout"
     `0x08000000`–`0x080022FF` bootloader, `0x08002C00` its configuration page (board ID, the application's CRC),
@@ -2515,7 +2676,15 @@ The project is linked for the bootloader: `VECT_TAB_OFFSET=0x3000`, the linker s
 the upload offset `0x08003000` and a maximum size of 118784 bytes, in `platformio.ini`. A build that exceeds the
 size fails to link.
 
+!!! success "Check"
+    PlatformIO ends the build with `SUCCESS`, and `.pio/build/genericSTM32F103CB/firmware.bin` is there. If it
+    fails, the first error above the summary names the cause.
+
 ## Uploading
+
+PlatformIO runs on Windows, Linux and macOS alike. On Linux, an upload with the programming adapter also needs
+PlatformIO's udev rules (`99-platformio-udev.rules`, in the PlatformIO documentation), and a serial port the
+`dialout` group.
 
 - **Through the bootloader**: flash the built `firmware.bin` with `bl_flash.py` or Motor GUI as in
   [Updating through the bootloader](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/update/). This is how a release is installed, and works on any driver with
@@ -2532,10 +2701,7 @@ size fails to link.
     once more through the bootloader to recover. Once the bootloader is on the board, install every firmware
     through it.
 
-<figure markdown="span">
-  ![Upload in VS Code](https://docs.source-robotics.com/STEPFOC-docs/108/assets/VSUPLOAD.png){ width="700" }
-  <figcaption>Figure 19: Build, upload and the serial monitor in PlatformIO's status bar.</figcaption>
-</figure>
+![Build, upload and the serial monitor in PlatformIO's status bar.](https://docs.source-robotics.com/STEPFOC-docs/108/assets/VSUPLOAD.png){ width="700" }
 
 ## Where things are
 
@@ -2570,7 +2736,9 @@ release 103 and is not maintained; install the bootloader instead,
 
 # Troubleshooting
 
-By symptom. The error flags and what clears them are in [Errors and recovery](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/errors/).
+By symptom. The error flags and what clears them are in [Errors and recovery](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/errors/); the
+faults of the firmware that are known and not yet fixed, with what to do until they are, in
+[Known issues](https://docs.source-robotics.com/STEPFOC-docs/108/08-troubleshooting/known-issues/).
 
 ## The motor does not move
 
@@ -2662,6 +2830,45 @@ parameters, `#Cal`, `#Save`. A release note says when an update clears the calib
 ## Getting help
 
 [Support](https://docs.source-robotics.com/STEPFOC-docs/108/support/) says where to ask and what to include; `#Info`'s output is the first thing.
+
+
+---
+
+<!-- https://docs.source-robotics.com/STEPFOC-docs/108/08-troubleshooting/known-issues/ -->
+
+# Known issues
+
+The faults in the STEPFOC firmware that are known and not yet fixed, and what to do until they are. The pages that
+describe each part say the same where it matters; this page collects them in one place. Which releases work
+together is in [Versions and compatibility](https://docs.source-robotics.com/STEPFOC-docs/108/appendix/compatibility/).
+
+### STEPFOC firmware
+
+Seen in: 108.
+
+| | What happens | What to do | More |
+|---|---|---|---|
+| KI-1 | The current limit of Send_Limits over CAN is used as sent, also above the driver's 2800 mA; only `#Ilim` over UART clamps it. | Keep the current limit your host sends within the motor's rating and 2800 mA. | [Send_Limits](https://docs.source-robotics.com/STEPFOC-docs/108/reference/can/gains-and-limits/#send_limits) |
+| KI-2 | Calibration sets the current limit to 1600 mA and leaves it there, whatever it was before; a `#Save` right after calibration stores the 1600 mA. | After every calibration set `#Ilim` for your motor, then `#Save`. | [Calibration: save](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/calibration/#4-save) |
+| KI-3 | The serial number is not read back from the EEPROM at power-up, so `#SERNUM`, Motor GUI and Send_Respond_Device_Info report 1, and every `#Save` writes that 1 over the stored number. | Tell drivers apart by their CAN node ID. To keep a serial number stored, set it with `#SERNUM` before every `#Save`. | [Saving the configuration](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/saving/) |
+| KI-4 | For anyone reading or changing the source, the start values in `common.h` are not the factory defaults (the gripper and calibrated flags start at 1, the pole pairs at 50, `Max_Vbus` at 29500 mV). The EEPROM replaces them at power-up, so a running driver does not show them. | Take the defaults from the Defaults page, which lists what `#Default` writes, or from `Set_Default_config()` in `EEPROM.cpp`. | [Defaults](https://docs.source-robotics.com/STEPFOC-docs/108/reference/defaults/) |
+| KI-5 | While the E-stop bit of the last Send_gripper_data_pack (or `#Gripstop 1`) is 1, the driver raises the gripper E-stop error again on every control cycle, so Send_Clear_Error or `#Clear` alone does not clear it. | Send a gripper frame with the E-stop bit 0 (or `#Gripstop 0`) first, then clear the error. | [Gripper mode: moving](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/gripper-mode/#moving) |
+| KI-6 | The answer to a 5-byte Send_gripper_data_pack goes out before the driver has acted on the command, so its object detection and error bits are those of the moment before, for example 3 (position reached) from the previous move. | Judge the new move by the answers to later frames, or poll with an empty Send_gripper_data_pack. | [Gripper mode: moving](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/gripper-mode/#moving) |
+| KI-7 | A 5-byte Send_gripper_data_pack, Send_Clear_Error or `#Clear` during the gripper calibration stops it without a message and leaves its counters as they were, so the next calibration starts part way through; it may skip the opening or give up early. | Send only empty status polls while the gripper calibrates (up to about 24 s). After an interrupted calibration, switch the driver off and on before you calibrate again. | [Gripper mode: calibrating](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/gripper-mode/#calibrating-the-gripper) |
+| KI-8 | The action bit in Respond_Gripper_data_pack is a copy of the last command's action bit; the driver never clears it, so it stays 1 after the move has ended. | Tell the end of a move by the object detection, 3 position reached, 1 or 2 stopped on an object. | [Respond_Gripper_data_pack](https://docs.source-robotics.com/STEPFOC-docs/108/reference/can/gripper/#respond_gripper_data_pack) |
+| KI-9 | Open loop (`#Openloop`, `#gosteps`) puts `#Openv` on the coils without a current limit; `#Ilim` does not apply. The default 5000 mV drives about 4.5 A through a 1.1 Ω coil. | Set `#Openv` to the motor's rated current times its phase resistance first, and keep open-loop tests short. | [Open-loop stepping](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/modes/#open-loop-stepping) |
+| KI-10 | The velocity error trips only above a fixed 30,000,000 ticks/s, about 1830 revolutions per second and far above any speed a stepper reaches; `#Vlimit` does not change it, so it does not catch a motor that runs away. | Watch the speed in your host and send Send_Idle or Send_ESTOP when it is wrong. | [Errors and recovery](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/errors/) |
+| KI-11 | Only motion frames and answered status requests reset the watchdog. Setting frames (gains, limits, Idle, Clear, Save) and UART commands do not, so a host that only configures the driver, or a terminal session with a saved watchdog, ends in a watchdog error. | While the watchdog runs, send a status request such as Send_Respond_Encoder_data within every watchdog period. Before you work over UART alone, set the watchdog to 0 over CAN and save. | [Over CAN: a control loop](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/can/#a-control-loop) |
+| KI-12 | The driver error flag (`Driver_error`, `Driver error` in `#Error`) is never raised. STEPFOC reads no fault output of its driver stage, so a stage that shuts down for heat or a short only makes the motor lose torque, with no error. | Watch the current and the position in your host; a commanded motor that goes limp points to the driver stage. Lower the current limit and give the board air. | [Troubleshooting: the driver gets hot](https://docs.source-robotics.com/STEPFOC-docs/108/08-troubleshooting/#the-driver-gets-hot-or-shuts-down) |
+| KI-13 | `#Dir` stores a flag that `#Info` prints as `Phase direction`, but the control code does not use it: it does not reverse the motor. | To make the other direction positive, negate the setpoints and the values you read back in your host. | [Wiring: phase order and direction](https://docs.source-robotics.com/STEPFOC-docs/108/04-mounting/wiring/#phase-order-and-direction) |
+| KI-14 | `#Mode` prints `Gripper mode` in voltage-torque mode (`#Uq`), and nothing at all in gripper mode, HALL mode, the angle-offset search and open-loop steps (`#gosteps`). | In those modes go by the command you sent last, not by `#Mode`. | [UART commands: status and utility](https://docs.source-robotics.com/STEPFOC-docs/108/reference/uart/utility/) |
+| KI-15 | In idle the driver brakes, with the coils shorted, at every power-up and also with an error; `#Coast` is not kept by `#Save`. The current a turned motor drives through the shorted coils is not limited. | Send `#Coast` (or Send_Settings) after every power-up if the motor must turn freely in idle, and do not let a load drive a braking motor fast. | [Braking in idle](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/modes/#braking-in-idle) |
+
+## Something that is not here
+
+Check the [symptom tables](https://docs.source-robotics.com/STEPFOC-docs/108/08-troubleshooting/) first. If it is still not explained, [Report a problem](https://docs.source-robotics.com/STEPFOC-docs/108/support/report-a-problem/)
+says what to include so it can be reproduced. A fixed issue stays on this page, under "Fixed", with the release
+that fixes it.
 
 
 ---
@@ -2794,7 +3001,7 @@ Which firmware release works with which bootloader, Python library, PAR6 runtime
 
 | Firmware | Released | Bootloader | Spectral Micro equivalent | Python library (Spectral-BLDC) | PAR6 runtime | STEPFOC PCB | Docs |
 |---|---|---|---|---|---|---|---|
-| 108 | 2026-08-26 | required (installed on boards shipped with 105 or newer) | 107 | 1.20 or newer | 0.9 or newer | v1 | 108 |
+| 108 | 2026-08-26 | required (installed on boards shipped with 105 or newer, and on some shipped before) | 107 | 1.20 or newer | 0.9 or newer | v1 | 108 |
 | 107 | 2026-08-24 | required | 107, without its calibration fix (which came with STEPFOC 108) | 1.20 or newer | 0.9 or newer | v1 | not published |
 | 106 | 2026-07-05 | required | 106 | 1.19 or newer | 0.9 or newer | v1 | not published |
 | 105 | 2026-07-04 | required (the first release that needs it) | 105 | 1.19 or newer | 0.9 or newer | v1 | not published |
@@ -2814,10 +3021,11 @@ it. The board reports its hardware revision in `#Info` (`Hardware version`) and 
 
 | Revision | Since | Changes | Firmware | Manual |
 |---|---|---|---|---|
-| v1 | first production | — | 101 and newer; 105 and newer ship with the bootloader | this manual |
+| v1 | first production | — | 101 and newer; 105 and newer ship with the bootloader, and so did some boards before 105, most likely with 103 | this manual |
 
-Boards shipped with firmware 103 or older have no bootloader; [Installing the bootloader on an older board](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/bootloader/)
-brings them to the current firmware.
+Boards with release 103 or older from the `main` branch have no bootloader;
+[Installing the bootloader on an older board](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/bootloader/) brings them to the current firmware.
+[Drivers that report 103](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/releases/#drivers-that-report-103) says how to tell which kind you have.
 
 
 ---
@@ -2987,7 +3195,8 @@ yields, whatever the loops ask. Set it for the motor's rating, and for the mecha
     writes the CAN node ID into it.
 
 **Bootloader**
-:   The program in the first 12 KB of the driver's flash on boards shipped with firmware 105 or newer. It starts the
+:   The program in the first 12 KB of the driver's flash on boards shipped with firmware 105 or newer, and on some
+    shipped before. It starts the
     firmware, and loads a new firmware over UART or CAN. See [The bootloader](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/the-bootloader/).
 
 **Calibration**
@@ -3130,20 +3339,48 @@ yields, whatever the loops ask. Set it for the motor's rating, and for the mecha
 
 <!-- https://docs.source-robotics.com/STEPFOC-docs/108/cad-files/ -->
 
-# CAD and downloads
+# Downloads and files
+
+Everything to download for STEPFOC, at the versions these pages describe. The versions come from one file,
+`versions.yml`, so this page changes with them; which versions work together is in
+[Versions and compatibility](https://docs.source-robotics.com/STEPFOC-docs/108/appendix/compatibility/).
+
+## Firmware and software
+
+| What | Version | Download | How to install |
+|---|---|---|---|
+| Firmware image (`stepfoc-firmware-V<number>.bin`), its manifest `firmware.json` and the release notes | [108](https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/V108) (2026-08-26) | [the GitHub release](https://github.com/Source-Robotics/STEPFOC-stepper-controller/releases/tag/V108) | [Updating through the bootloader](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/update/) |
+| Firmware source, a PlatformIO project | the same release | [the firmware folder at the tag](https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/V108/STEPFOC%20firmware) | [Building from source](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/building/) |
+| The bootloader binary, for a board without one | [0.1](https://github.com/Source-Robotics/stm32f103c-bootloader/tree/V0.1) (2026-06-05) | [bin](https://github.com/Source-Robotics/stm32f103c-bootloader/tree/V0.1/bin) | [Installing the bootloader on an older board](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/bootloader/) |
+| The bootloader's host tool `bl_flash.py` | the same release | [host_tools](https://github.com/Source-Robotics/stm32f103c-bootloader/tree/V0.1/host_tools) | [Updating through the bootloader](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/update/) |
+| Python library (`Spectral-BLDC`) | [1.20](https://github.com/Source-Robotics/Spectral-BLDC-Python/tree/ef30bbe4fdd1e9a93544f7f356bbaeedeaa3b459) (2026-06-19) | `pip install Spectral-BLDC`; the source and examples on GitHub, [at that version](https://github.com/Source-Robotics/Spectral-BLDC-Python/tree/ef30bbe4fdd1e9a93544f7f356bbaeedeaa3b459) | [With Python](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/python/) |
+| Motor GUI | runs in the browser, always the latest | [motorgui.com](https://motorgui.com/) | [Motor GUI](https://docs.source-robotics.com/STEPFOC-docs/108/05-setup/motor-gui/) |
+| CAN definitions for this release: JSON, and DBC files for the motion layouts | this site's release | [CAN frame tool and downloads](https://docs.source-robotics.com/STEPFOC-docs/108/reference/can-tools/) | |
+| ST-LINK USB driver, for the programming adapter on Windows | | [STSW-LINK009](https://www.st.com/en/development-tools/stsw-link009.html) | [Installing the bootloader on an older board](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/bootloader/) |
+| STM32CubeProgrammer, for the programming adapter | | [STM32CubeProgrammer](https://www.st.com/en/development-tools/stm32cubeprog.html) | [Installing the bootloader on an older board](https://docs.source-robotics.com/STEPFOC-docs/108/07-firmware/bootloader/) |
+
+The version links open the files at exactly that release; the dates are those of the releases on GitHub, and on
+PyPI for the Python library.
+Motor GUI has no versions to choose: the page is always the current one. Known faults of the firmware are on
+[Known issues](https://docs.source-robotics.com/STEPFOC-docs/108/08-troubleshooting/known-issues/).
+
+## CAD and hardware files
+
+The latest files, on the main branch of the [firmware repository](https://github.com/Source-Robotics/STEPFOC-stepper-controller).
 
 | What | Where |
 |---|---|
-| STEP model of the board | [STEP files](https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/main/STEP%20files) in the firmware repository |
+| STEP model of the board | [STEP files](https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/main/STEP%20files) |
 | Magnet spacers, NEMA 17 and NEMA 23 spacers | [Stepper motor accessories](https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/main/STEP%20files/Stepper%20motor%20accessories) |
 | The magnet tool | [Tools](https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/main/STEP%20files/Tools) |
-| Firmware source | [STEPFOC-stepper-controller](https://github.com/Source-Robotics/STEPFOC-stepper-controller), branch `bootloader-version` |
-| Firmware releases (image, manifest, notes) | [Releases](https://github.com/Source-Robotics/STEPFOC-stepper-controller/releases) |
-| The bootloader, its binary and its host tools | [stm32f103c-bootloader](https://github.com/Source-Robotics/stm32f103c-bootloader) |
-| Python library | [Spectral-BLDC-Python](https://github.com/Source-Robotics/Spectral-BLDC-Python), `pip install Spectral-BLDC` |
+
+## More
+
+| What | Where |
+|---|---|
 | Source Robotics Toolbox (joints from encoder ticks) | [Source-Robotics-Toolbox](https://github.com/Source-Robotics/Source-Robotics-Toolbox) |
-| Motor GUI | [motorgui.com](https://motorgui.com/) |
 | CANvas USB-to-CAN adapter | [CANvas-adapter](https://github.com/Source-Robotics/CANvas-adapter) |
+| All firmware releases | [Releases](https://github.com/Source-Robotics/STEPFOC-stepper-controller/releases) |
 | This documentation | [STEPFOC-docs](https://github.com/Source-Robotics/STEPFOC-docs) |
 | Shop | [source-robotics.com](https://source-robotics.com/products/STEPFOC-stepper-controller) |
 
@@ -3251,8 +3488,9 @@ one of its documented forms. To inspect a reply, enter its identifier and data b
   <noscript>Enable JavaScript for the frame tool, or use the reference tables and downloads above.</noscript>
 </div>
 
-**Check:** the example decodes to the values above. Change the identifier to `0x1FA` to see the same command
-addressed to node 3. An invalid length or out-of-range field produces an explanation instead of a frame.
+!!! success "Check"
+    The example decodes to the values above. Change the identifier to `0x1FA` to see the same command
+    addressed to node 3. An invalid length or out-of-range field produces an explanation instead of a frame.
 
 For wiring, termination, host timing and recovery, use [Over CAN](https://docs.source-robotics.com/STEPFOC-docs/108/06-operation/can/). To look up a
 message's purpose and accepted lengths, use the [CAN reference](https://docs.source-robotics.com/STEPFOC-docs/108/reference/can/).
@@ -3967,7 +4205,7 @@ The driver's answer to Send_gripper_data_pack: position, measured current, and t
 | 0 |  | gripper_position | unsigned 8-bit | 0 fully open, 255 fully closed |
 | 1-2 |  | gripper_current | signed 16-bit | measured current in mA |
 | 3 | 7 | gripper_activated | bit | 1 activated |
-| 3 | 6 | gripper_action_status | bit | 1 going to the position, 0 idle, auto-release or calibrating |
+| 3 | 6 | gripper_action_status | bit | the action bit of the last Send_gripper_data_pack (1 after #Grippos); the driver never clears it, so it stays 1 after the move ends: the object detection tells when the move has ended |
 | 3 | 5-4 | gripper_object_detection | 2 bits | bit 5 is the low bit, bit 4 the high bit: 0 moving, 1 object detected while closing, 2 object detected while opening, 3 at the position |
 | 3 | 3 | gripper_temperature_error | bit | a copy of the thermistor temperature error |
 | 3 | 2 | gripper_timeout_error | bit | a copy of the CAN watchdog error (Send_Watchdog), not a move timeout |
