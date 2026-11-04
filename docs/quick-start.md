@@ -89,7 +89,7 @@ Read in more detail: [Power and the CAN daisy chain](04-mounting/power-and-can.m
 
 !!! success "Check"
     The driver's identity and live state appear before you change settings. A missing connection is covered in
-    [Motor GUI](05-setup/motor-gui.md#opening-the-port) or [Troubleshooting](08-troubleshooting.md).
+    [Motor GUI](05-setup/motor-gui.md#opening-the-port) or [Troubleshooting](08-troubleshooting/index.md).
 
 ## 6. Restore the defaults and enter the motor parameters
 
@@ -197,7 +197,7 @@ Read in more detail: [Control modes](06-operation/modes.md) · [Current limit an
 
 !!! success "Check"
     The position and speed feedback follow the request, and **Idle** stops driving the motor. A motor that
-    does not follow needs [Troubleshooting](08-troubleshooting.md) before a load is attached.
+    does not follow needs [Troubleshooting](08-troubleshooting/index.md) before a load is attached.
 
 ## 10. Where to go next
 
@@ -209,4 +209,4 @@ Read in more detail: [Control modes](06-operation/modes.md) · [Current limit an
 | protect the motor from overheating | [Thermistor](04-mounting/thermistor.md) |
 | update the firmware | [Firmware](07-firmware/index.md) |
 | look up a message or a command | [API reference](reference/index.md) |
-| understand why it does not work | [Errors and recovery](06-operation/errors.md), [Troubleshooting](08-troubleshooting.md) |
+| understand why it does not work | [Errors and recovery](06-operation/errors.md), [Troubleshooting](08-troubleshooting/index.md) |

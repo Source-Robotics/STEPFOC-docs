@@ -48,4 +48,4 @@ calibrated, `#Calibrated 1`). A gripper E-stop comes back on every control cycle
 - `#Info` shows `-1` or nonsense: with firmware 106 and newer this should not happen, because the driver replaces a
   damaged configuration block with the defaults at power-up. If it does, `#Default`, then calibrate again.
 
-[Troubleshooting](../08-troubleshooting.md) goes through the symptoms one by one.
+[Troubleshooting](../08-troubleshooting/index.md) goes through the symptoms one by one.

@@ -1,6 +1,8 @@
 # Troubleshooting
 
-By symptom. The error flags and what clears them are in [Errors and recovery](06-operation/errors.md).
+By symptom. The error flags and what clears them are in [Errors and recovery](../06-operation/errors.md); the
+faults of the firmware that are known and not yet fixed, with what to do until they are, in
+[Known issues](known-issues.md).
 
 ## The motor does not move
 
@@ -25,7 +27,7 @@ flowchart TD
 | LED on, nothing on the terminal | 256000 baud; TX to RX and RX to TX; the adapter's port; 3.3 V adapter; the line ending CR+LF |
 | LED on, nothing on CAN | the node ID; 1 Mbit/s on the adapter; termination (about 60 Ω across CAN H and CAN L with everything unpowered); the CAN cable's orientation |
 | `Unknown command` | the name's spelling and case: `#Kpiq`, not `#kpiq` |
-| the LED keeps blinking and nothing answers after a firmware update | the bootloader has no valid firmware, or its CRC does not match after an upload with the programming adapter: flash again through the bootloader, see [Updating through the bootloader](07-firmware/update.md) |
+| the LED keeps blinking and nothing answers after a firmware update | the bootloader has no valid firmware, or its CRC does not match after an upload with the programming adapter: flash again through the bootloader, see [Updating through the bootloader](../07-firmware/update.md) |
 
 ## Motor GUI
 
@@ -37,11 +39,11 @@ flowchart TD
 | *No connection* on CAN | the CANvas adapter's port; the bus termination; the node ID of the driver; 1 Mbit/s |
 | the calibration does not start | calibration runs over the serial connection only, not over CAN |
 | *Unsaved changes* after a power cycle | the settings were not saved to the driver; Save writes them |
-| the firmware update finds no bootloader | power-cycle the driver while the GUI scans, to catch the bootloader's 2 s window. A driver with firmware 103 or older from the `main` branch has no bootloader: [Installing the bootloader on an older board](07-firmware/bootloader.md) |
+| the firmware update finds no bootloader | power-cycle the driver while the GUI scans, to catch the bootloader's 2 s window. A driver with firmware 103 or older from the `main` branch has no bootloader: [Installing the bootloader on an older board](../07-firmware/bootloader.md) |
 
 ## Calibration
 
-The messages and their causes are in [Motor parameters and calibration](05-setup/calibration.md). The ones that
+The messages and their causes are in [Motor parameters and calibration](../05-setup/calibration.md). The ones that
 come back most:
 
 | Symptom | Cause |
@@ -58,7 +60,7 @@ come back most:
 | Symptom | Cause |
 |---|---|
 | crunching or whining at speed | the current limit or the current loop gains too high; lower `#Ilim`, lower `#Cbw` and calibrate again, or lower `#Kpiq` |
-| humming, oscillating at rest | `#Kpv` or `#Kpp` too high; see [Current limit and loop tuning](05-setup/tuning.md) |
+| humming, oscillating at rest | `#Kpv` or `#Kpp` too high; see [Current limit and loop tuning](../05-setup/tuning.md) |
 | weak torque | `#Ilim` low; the supply's current limit; the wrong `#R`/`#L` (the computed current gains are off) |
 | the motor is hot | normal for a stepper at its rated current; lower `#Ilim`, enable the thermistor |
 | it stops with a Vbus error when decelerating | the supply cannot absorb the returned energy; a different supply, or a brake resistor |
@@ -69,7 +71,7 @@ come back most:
 ## Low-quality motors
 
 Motors with visibly bad windings, an uneven back-EMF or a resistance that differs between the two coils calibrate
-poorly and run rough. The [tested motors](03-technical-data/tested-motors.md) are known good.
+poorly and run rough. The [tested motors](../03-technical-data/tested-motors.md) are known good.
 
 ## The magnet and the encoder
 
@@ -91,4 +93,4 @@ parameters, `#Cal`, `#Save`. A release note says when an update clears the calib
 
 ## Getting help
 
-[Support](support/index.md) says where to ask and what to include; `#Info`'s output is the first thing.
+[Support](../support/index.md) says where to ask and what to include; `#Info`'s output is the first thing.
