@@ -25,4 +25,4 @@ onto the shaft are in the firmware repository:
   magnet spacers, NEMA 17 spacers for different motor lengths, NEMA 23 spacers
 - [Tools](https://github.com/Source-Robotics/STEPFOC-stepper-controller/tree/main/STEP%20files/Tools): the magnet tool
 
-[CAD and downloads](../cad-files.md) lists everything that can be downloaded.
+[Downloads and files](../cad-files.md) lists everything that can be downloaded.
