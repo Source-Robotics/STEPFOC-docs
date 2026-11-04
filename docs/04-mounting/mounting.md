@@ -18,4 +18,5 @@ plate you make yourself: the repository has none.
 
 !!! warning "The board is bare"
     Nothing on the back of the board may touch the motor's housing. Make sure the spacer keeps the board clear of
-    the end cap, and keep metal swarf and screws away from the board while you work.
+    the end cap, and keep metal swarf and screws away from the board while you work. Touch earthed metal before you pick the
+    board up and hold it by its edges: static electricity damages its chips.
