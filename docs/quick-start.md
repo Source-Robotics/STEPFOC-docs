@@ -33,12 +33,20 @@ a calibration that "succeeds" and a motor that then runs badly.
 
 Read in more detail: [The encoder magnet](04-mounting/magnet.md).
 
+!!! success "Check"
+    The magnet sits centred on the shaft, and once the glue has set it does not move when you push it with a
+    finger. If it does: [The encoder magnet](04-mounting/magnet.md).
+
 ## 3. Mount the board
 
 Remove the motor's four rear screws, put the spacer on, the board on the spacer with the encoder chip towards the
 magnet, and the longer screws in. Check the gap: 1 mm, not touching.
 
 Read in more detail: [Mounting on the motor](04-mounting/mounting.md).
+
+!!! success "Check"
+    The board sits parallel to the back of the motor, about 1 mm above the magnet, and the shaft turns by hand
+    without the magnet touching the chip. If not: [Mounting on the motor](04-mounting/mounting.md).
 
 ## 4. Wire the motor
 
@@ -47,6 +55,10 @@ nothing). Solder one coil to **A+ and A−**, the other to **B+ and B−**. Whic
 does not matter: calibration detects it.
 
 Read in more detail: [Wiring the stepper](04-mounting/wiring.md).
+
+!!! success "Check"
+    With the driver unpowered, a multimeter shows the coil's resistance, a few ohms, between A+ and A− and
+    between B+ and B−, and no strand bridges two pads. If not: [Wiring the stepper](04-mounting/wiring.md).
 
 ## 5. Connect power and the PC
 
@@ -75,8 +87,9 @@ Read in more detail: [Wiring the stepper](04-mounting/wiring.md).
 Read in more detail: [Power and the CAN daisy chain](04-mounting/power-and-can.md) ·
 [Connectors and pinout](03-technical-data/connectors.md).
 
-**Check:** the driver's identity and live state appear before you change settings. A missing connection
-is covered in [Motor GUI](05-setup/motor-gui.md#opening-the-port) or [Troubleshooting](08-troubleshooting.md).
+!!! success "Check"
+    The driver's identity and live state appear before you change settings. A missing connection is covered in
+    [Motor GUI](05-setup/motor-gui.md#opening-the-port) or [Troubleshooting](08-troubleshooting.md).
 
 ## 6. Restore the defaults and enter the motor parameters
 
@@ -99,6 +112,10 @@ fails on a value left at 0.
     ```
 
 Read in more detail: [Motor parameters and calibration](05-setup/calibration.md).
+
+!!! success "Check"
+    `#Info` prints the values you entered as `Number of pole pairs`, `Single phase resistance` and `Single
+    phase Inductance` (Motor GUI shows them in the motor settings). None of them may be 0.
 
 ## 7. Calibrate
 
@@ -128,8 +145,10 @@ that the magnet does not slip.
 Read in more detail: [Motor parameters and calibration](05-setup/calibration.md), with the whole log and every
 message.
 
-**Check:** the calibration log ends with `Calibration success!`. If it does not, use the failed step in
-[Calibration troubleshooting](05-setup/calibration.md#troubleshooting); do not treat a stopped motor as success.
+!!! success "Check"
+    The calibration log ends with `Calibration success!`. If it does not, use the failed step in
+    [Calibration troubleshooting](05-setup/calibration.md#troubleshooting); do not treat a stopped motor as
+    success.
 
 ## 8. Set the current limit and save
 
@@ -151,8 +170,9 @@ pause: normal operation.
 Read in more detail: [Current limit and loop tuning](05-setup/tuning.md) ·
 [Saving the configuration](05-setup/saving.md).
 
-**Check:** after **Save**, Motor GUI no longer marks unsaved changes. [Saving](05-setup/saving.md) explains
-which settings are kept.
+!!! success "Check"
+    After **Save**, Motor GUI no longer marks unsaved changes, and after a power cycle `#Info` prints
+    `Calibrated`. [Saving](05-setup/saving.md) explains which settings are kept.
 
 ## 9. Move it
 
@@ -175,8 +195,9 @@ or whines, lower the current limit or tune the loops.
 
 Read in more detail: [Control modes](06-operation/modes.md) · [Current limit and loop tuning](05-setup/tuning.md).
 
-**Check:** the position/speed feedback follows the request, and **Idle** stops driving the motor. A motor
-that does not follow needs [Troubleshooting](08-troubleshooting.md) before a load is attached.
+!!! success "Check"
+    The position and speed feedback follow the request, and **Idle** stops driving the motor. A motor that
+    does not follow needs [Troubleshooting](08-troubleshooting.md) before a load is attached.
 
 ## 10. Where to go next
 

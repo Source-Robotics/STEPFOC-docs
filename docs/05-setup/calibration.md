@@ -139,6 +139,10 @@ operation; the state shows *Calibrated* and the constants.
     Set it for your motor with `#Ilim` before the motor runs, and save again
     ([Current limit and loop tuning](tuning.md)).
 
+!!! success "Check"
+    After a power cycle `#Info` prints `Calibrated` and the constants calibration found, and Motor GUI shows
+    *Calibrated*. `Not calibrated` means the save did not happen: calibrate and save again.
+
 ## When to calibrate again
 
 - After changing the motor, the magnet or the wiring.
