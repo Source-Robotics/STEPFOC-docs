@@ -7,10 +7,12 @@ every step also gives the terminal command, for a terminal or for the console in
 2. [The serial terminal](terminal.md): the alternative — PuTTY, the PlatformIO monitor or the Arduino monitor,
    and the `#` commands.
 3. [Motor parameters and calibration](calibration.md): the factory defaults, the motor's resistance, inductance and pole pairs,
-   then the calibration run.
-4. [Current limit and loop tuning](tuning.md): the current limit for the motor, and the loop gains if the
-   defaults do not suit it.
-5. [Saving the configuration](saving.md): nothing survives a power cycle until it is saved.
+   then the calibration run and what follows it.
+4. [Encoder table and anti-cogging](anti-cogging.md): the two corrections the driver measures on itself after a
+   calibration, how to run them again and how to check them.
+5. [Current limit and loop tuning](tuning.md): the current limit for the motor, the loop gains if the defaults do
+   not suit it, the speed estimate and the delay compensation.
+6. [Saving the configuration](saving.md): nothing survives a power cycle until it is saved; where it is kept.
 
 A driver that has been through these pages is ready for [Operation](../06-operation/index.md). The
 [Quick start](../quick-start.md) is the same path on one page.

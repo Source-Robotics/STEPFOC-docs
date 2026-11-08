@@ -3,7 +3,9 @@
 Calibration teaches the driver its motor: it checks the magnet and the supply, takes the motor's resistance,
 inductance and pole pairs from you, computes the current loop gains, spins the motor in open loop to learn the
 direction of the wiring, finds the angle offset between the encoder and the motor's electrical zero, and measures
-the motor constants Kt, KV and the flux linkage. It runs once per motor; the result is kept by saving.
+the motor constants Kt, KV and the flux linkage. From firmware 109 two more runs follow by themselves, the
+[encoder table and the anti-cogging](anti-cogging.md), and then the driver saves everything. It runs once per
+motor; the result is kept by saving.
 
 !!! danger "The motor turns"
     Calibration spins the motor in both directions, fast at times. Fix the motor to the bench and take everything
@@ -27,9 +29,10 @@ replaces a damaged one with the defaults; if `#Info` still shows `-1` somewhere,
     #Default
     ```
 
-This also sets the CAN node ID to 0 and resets the serial number, hardware version and batch date stored in the
-EEPROM; note the hardware version and batch date `#Info` prints if you need them.
-[Saving the configuration](saving.md) says what else it does.
+This also resets the serial number, hardware version and batch date stored in the EEPROM, and clears an
+encoder table and an anti-cogging set from another motor; note the hardware version and batch date `#Info`
+prints if you need them. From firmware 109 the CAN node ID is kept. [Saving the configuration](saving.md) says
+what else it does.
 
 ## 2. Enter the motor parameters
 
@@ -48,11 +51,17 @@ value left at 0, and accepts only 50, 75, 100 or 125 pole pairs.
     #L 0.0026       phase inductance in henries (2.6 mH)
     ```
 
+=== "CAN"
+    Parameters 78 (pole pairs), 76 (resistance in mΩ) and 77 (inductance in µH) hold the same values, for a
+    host that sets a drive up over the bus: Send_Parameter(78, 50), Send_Parameter(76, 1100),
+    Send_Parameter(77, 2600). The calibration itself runs over the serial port.
+
 ![The three values on a typical datasheet, here for the 17HS16-2004S1: 1.8°, 1.1 Ω, 2.6 mH.](../assets/Motor_specs.webp){ width="900" }
 
-The current loop bandwidth (`#Cbw`, 500 Hz by default) decides the gains calibration computes from R and L;
-leave it for now, [Current limit and loop tuning](tuning.md) comes back to it. It is not saved: after a power
-cycle it is 500 Hz again.
+Calibration computes the current loop gains from R, L and the current loop bandwidth, 160 Hz by default:
+Kp = ω·L and Ki = ω·R, with ω = 2π × the bandwidth. Leave the bandwidth for now;
+[Current limit and loop tuning](tuning.md) comes back to it. (Firmware 108 and older divided both gains by 7,
+which gave a loop of about 70 Hz.)
 
 ## 3. Run it
 
@@ -88,10 +97,12 @@ Kt is: ...
 Flux linkage is: ...
 ----------------
 Calibration success!
-Save config with #Save
+Next, by itself: the encoder table, then anti-cogging (about a minute; keep the shaft free). Everything is saved when they finish (#Encal state, #Cogcal state)
 Going to idle!
 ----------------
 ```
+
+`#Calonly` runs the same calibration without the runs after it; it ends with `Save config with #Save` instead.
 
 What the steps are:
 
@@ -108,6 +119,32 @@ What the steps are:
 A whole run takes up to about a minute, most of it in the angle-offset search. When a step fails, the log ends
 with `Calibration failed!`, the driver goes to idle, the motor counts as not calibrated and the LED stays on
 steadily. Nothing is saved; fix the cause and run `#Cal` again.
+
+## What follows the calibration
+
+Half a second after `Calibration success!` the driver starts what parameter 56 names, on its own:
+
+| Parameter 56 | What follows | Then |
+|---|---|---|
+| 2, the default on a driver with no encoder table saved | the encoder table (about 20 s), then the anti-cogging identification with the current-sense zero trim (about 25 to 70 s) | everything is saved |
+| 1 | the anti-cogging identification with the trim | everything is saved |
+| 0 | nothing | save with `#Save` |
+
+The motor turns slowly, one turn forward and one back for each run, so keep the shaft free for about a minute
+more; `#Info` shows `running: …` under `In force:` while they go. A command from a host (a motion command,
+`#Idle`) stops them; then nothing is saved, and the calibration is kept only if you `#Save` it.
+[Encoder table and anti-cogging](anti-cogging.md) explains both and how to check them. `#Calonly` skips them
+once; over CAN, Send_Parameter(56, 0) switches them off until it is set to 1 or 2 again.
+
+!!! warning "The encoder table's current on a small motor"
+    The encoder table turns the field with a current of 80 % of the current limit, and calibration leaves the
+    limit at 1600 mA: about 1.3 A in the coils for 20 s. On a motor rated under 1.3 A set parameter 56 to 0
+    before `#Cal`, then set `#Ilim` for the motor, `#Save`, and run `#Encal all` (known issue KI-19).
+
+!!! note "Not yet tested on the bench"
+    The runs after a calibration, `#Calonly`, parameters 76 to 79 and `#Par` came last in firmware 109 and had
+    not been tested on the bench when this page was written. In the build this page describes, the serial parser
+    does not accept `#Calonly` and `#Par` (known issue KI-16).
 
 !!! note "The 'Switch motor phases' message"
     It is left over from firmware 103, which needed the coils wired a particular way. Since firmware 105 the
@@ -131,8 +168,9 @@ steadily. Nothing is saved; fix the cause and run `#Cal` again.
     #Save
     ```
 
-Without it the calibration is gone at the next power cycle. The driver goes to idle and the LED shows normal
-operation; the state shows *Calibrated* and the constants.
+With the runs after the calibration (parameter 56 not 0) the driver saves by itself when they succeed; save
+anyway once they are done, or after `#Calonly`. Without a save the calibration is gone at the next power cycle.
+The driver goes to idle and the LED shows normal operation; the state shows *Calibrated* and the constants.
 
 !!! warning "Set the current limit next"
     Calibration leaves the current limit at 1600 mA, whatever it was before: more than a small motor's rating.
@@ -164,7 +202,8 @@ shaft between calibration and use: fix the magnet and calibrate again.
 | success, but the LED stays on and no error is reported | should not happen with firmware 106 and newer, which replaces a damaged configuration block with the defaults at power-up. If `#Info` shows `-1` somewhere, restore the defaults, enter the parameters and calibrate again |
 
 `#Calangle` runs an angle-offset search on its own, with an older routine than the one `#Cal` uses: it gives up
-after about two minutes and keeps the offset it reached. After a change of motor, magnet or wiring, run the whole
-`#Cal` instead.
+after about two minutes and keeps the offset it reached. From firmware 109, when parameter 56 is not 0, the
+anti-cogging is identified again afterwards and everything is saved, because the anti-cogging depends on the
+offset. After a change of motor, magnet or wiring, run the whole `#Cal` instead.
 
 Calibration runs over the serial connection only: a terminal, or Motor GUI over the serial adapter, not over CAN.

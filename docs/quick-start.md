@@ -94,8 +94,9 @@ Read in more detail: [Power and the CAN daisy chain](04-mounting/power-and-can.m
 ## 6. Restore the defaults and enter the motor parameters
 
 First the factory defaults, so that calibration does not start from another motor's values or from junk in the
-EEPROM: *Default* in the Motor GUI settings, or `#Default` in the terminal. (It also sets the CAN node ID to 0,
-and resets the serial number, hardware version and batch date stored in the EEPROM.) Then the parameters:
+EEPROM: *Default* in the Motor GUI settings, or `#Default` in the terminal. (It also resets the serial number,
+hardware version and batch date stored in the EEPROM; from firmware 109 it keeps the CAN node ID.) Then the
+parameters:
 
 From the motor's datasheet, for **one coil**: the pole pairs (50 for a 1.8° motor, 100 for 0.9°), the phase
 resistance in ohms, the phase inductance in henries (2.6 mH = 0.0026). STEPFOC does not measure these; calibration

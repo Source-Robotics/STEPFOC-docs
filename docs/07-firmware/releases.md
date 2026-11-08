@@ -13,7 +13,8 @@ the commit it was built from, and the release notes. The notes are the firmware'
 ```
 
 prints `Software version: <number>` among the rest; Motor GUI shows the same number in the driver's identity, and
-over CAN Send_Respond_Device_Info returns it as the third byte. From firmware 105 the number is the build's own
+over CAN Send_Respond_Device_Info returns it as the third byte. From firmware 109 Send_Respond_Identity returns it
+too, as a 16-bit number, with the product it was built for. From firmware 105 the number is the build's own
 version. Before that it was read from the EEPROM, where the last `#Default` wrote it, so it names the firmware
 that last restored the defaults, not necessarily the one running: 101 and 102 write 101, 103 writes 103.
 
@@ -45,7 +46,8 @@ which bootloader, Python library and PAR6 runtime.
 ## The Spectral Micro counterpart
 
 A change that applies to both drivers comes to the Spectral Micro too, but not always in a release with the same
-number: STEPFOC 108 matches Spectral Micro 107. The compatibility table lists the pairs.
+number: STEPFOC 108 matches Spectral Micro 107, and STEPFOC 109 matches Spectral Micro 108. The compatibility table
+lists the pairs.
 
 ## The two branches
 

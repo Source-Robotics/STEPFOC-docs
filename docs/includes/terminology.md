@@ -12,6 +12,11 @@
 :   The angle between the encoder's zero and the motor's electrical zero, found by calibration and stored. The
     driver needs it to place the current vector relative to the rotor.
 
+**Anti-cogging**
+:   A current added to the current setpoint, a function of the electrical angle, that cancels the motor's own
+    torque ripple (its pull towards the detents and the ripple of current-sensing errors). Identified on the driver
+    (`#Cogcal`, parameter 43).
+
 **Back-EMF**
 :   The voltage a turning motor generates in its own coils, proportional to speed. It opposes the supply, limits the
     top speed at a given voltage. Calibration estimates KV from the speed the motor reaches per volt.
@@ -47,20 +52,28 @@
 :   Placing the stator current so that it produces torque at the rotor's present angle. FOC does it continuously
     from the encoder angle and the angle offset; a conventional stepper driver does it blindly, step by step.
 
+**Commutation delay compensation** (parameter 64)
+:   Turning the output voltage forward by the angle the rotor covers between the angle reading and the moment the
+    voltage reaches the motor. 166 µs on STEPFOC by default.
+
 **Control mode**
 :   What the driver is doing with the motor: idle, position, velocity, current, PD (impedance), voltage torque, open
     loop, HALL, gripper, or calibration. A command that carries a setpoint puts the driver in the matching mode.
 
-**Current loop bandwidth** (`#Cbw`)
-:   How fast the current loop follows a change of its setpoint, in Hz. Calibration computes the current loop gains
-    from it and the motor's resistance and inductance; 500 Hz by default.
+**Current loop bandwidth** (`#Cbw`, parameter 49)
+:   How fast the current loop follows a change of its setpoint, in Hz. The current loop gains follow from it and
+    the motor's resistance and inductance: Kp = ω·L, Ki = ω·R. 160 Hz by default from firmware 109.
 
-**Daisy chain**
-:   Several drivers on one CAN bus and one supply, each driver's second CAN and power connector feeding the next.
+**Current-sense zero**
+:   The reading of a current sensor with no current flowing. From firmware 109 the driver measures it at every
+    start-up and subtracts it; the anti-cogging identification can trim it further.
 
 **d-q frame**
 :   The rotating frame of reference FOC works in: the q axis is at right angles to the rotor field and the current on
     it (Iq) produces torque; the d axis is along the field and its current (Id) produces none, so it is held at 0.
+
+**Daisy chain**
+:   Several drivers on one CAN bus and one supply, each driver's second CAN and power connector feeding the next.
 
 **Diametrical magnet**
 :   A disc magnet whose poles are across its diameter, so the field turns with the shaft. The encoder needs this
@@ -69,6 +82,10 @@
 **EEPROM**
 :   The non-volatile memory on the driver that holds the configuration and the calibration. `#Save` writes it,
     `#Default` restores the factory values.
+
+**Encoder table**
+:   A correction of the encoder's small angle error around the turn, measured on the driver (`#Encal`, parameter
+    52) and saved with the configuration.
 
 **Encoder ticks**
 :   The unit of position: the 14-bit magnetic encoder gives 16384 ticks per revolution of the motor shaft, counted
@@ -106,13 +123,13 @@
 **Heartbeat**
 :   A frame (Respond_Heartbeat) the driver sends at a set interval so the host knows it is alive. Off by default.
 
-**Iq, Id**
-:   The two components of the motor current in the d-q frame: Iq produces torque, Id is normally held at 0. The
-    current mode's setpoint and limit are Iq values.
-
 **Impedance (PD) mode**
 :   The control mode in which the driver behaves like a spring and a damper around a position setpoint, with the
     stiffness `KP` and the damping `KD`, plus a current feedforward.
+
+**Iq, Id**
+:   The two components of the motor current in the d-q frame: Iq produces torque, Id is normally held at 0. The
+    current mode's setpoint and limit are Iq values.
 
 **Kt, KV**
 :   The motor's torque constant (torque per ampere) and velocity constant (speed per volt), found by calibration.
@@ -129,13 +146,25 @@
 :   Driving the motor as a plain stepper, without the encoder in the loop: `#Openloop`, `#gosteps`, and the
     open-loop spin of the calibration.
 
+**Parameter**
+:   A setting reached by its number through Send_Parameter and Send_Get_Parameter (CAN 36 to 38) or `#Par`
+    (firmware 109 and newer). The numbers are permanent.
+
 **Phase order**
 :   How the stepper's two coils are connected to A+/A− and B+/B−. Firmware 105 and newer learns the wiring during
     calibration and compensates it; firmware 103 asks for the wires to be swapped when it is reversed.
 
+**PLL (speed estimate)**
+:   A phase-locked loop that follows the encoder count and gives the speed with less lag than a moving average.
+    The default speed estimate of STEPFOC from firmware 109 (parameter 50).
+
 **Pole pairs**
 :   The number of electrical cycles per mechanical revolution: 50 for a 1.8° stepper, 100 for a 0.9° stepper. Set
     with `#PP` before calibration.
+
+**Product lock**
+:   The stamp in the EEPROM of the product that calibrated a board. A firmware that finds the other product's
+    stamp drives nothing (firmware 109 and newer).
 
 **Remote frame**
 :   A CAN frame with the RTR bit set and no data: a request. The host asks for data with a remote frame under a
@@ -152,10 +181,14 @@
 **Termination**
 :   The 120 Ω resistor the first and the last node of a CAN bus need. The switch on the driver turns it on.
 
+**Tool id** (`#Tool`, parameter 1)
+:   What a drive is built into: 0 none, 1 SSG-48, 11 to 33 an MSG, 200 to 254 a customer's tool.
+
 **Vbus**
 :   The supply voltage at the driver, measured and printed in mV. Outside the limits the driver raises a Vbus
     error.
 
 **Watchdog**
 :   A timer the driver resets with every motion frame and every status request it answers. When it is set
-    (Send_Watchdog) and runs out, the driver reports a watchdog error and stops.
+    (Send_Watchdog) and runs out, the driver reports a watchdog error and stops; from firmware 109 it holds,
+    brakes, coasts or descends as the watchdog's action says.

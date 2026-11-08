@@ -26,7 +26,8 @@ flowchart TD
 | No LED | the supply, DC+ and DC−, the power cable's orientation. If the cable was the wrong way round the driver is destroyed |
 | LED on, nothing on the terminal | 256000 baud; TX to RX and RX to TX; the adapter's port; 3.3 V adapter; the line ending CR+LF |
 | LED on, nothing on CAN | the node ID; 1 Mbit/s on the adapter; termination (about 60 Ω across CAN H and CAN L with everything unpowered); the CAN cable's orientation |
-| `Unknown command` | the name's spelling and case: `#Kpiq`, not `#kpiq` |
+| `Unknown command` | the name's spelling and case: `#Kpiq`, not `#kpiq`; an argument with a space in it (`#WdFb 2000,0,1000,2`, not `#WdFb 2000, 0, 1000, 2`). `#Calonly` and `#Par` are refused in this build (known issue KI-16) |
+| `Wrong firmware for this board (product lock)`, the LED on steadily | the other product's firmware was flashed: a Spectral Micro image on a STEPFOC. Flash the STEPFOC firmware; the configuration was not touched ([The product lock](../06-operation/diagnostics.md#the-product-lock)) |
 | the LED keeps blinking and nothing answers after a firmware update | the bootloader has no valid firmware, or its CRC does not match after an upload with the programming adapter: flash again through the bootloader, see [Updating through the bootloader](../07-firmware/update.md) |
 
 ## Motor GUI
@@ -53,6 +54,9 @@ come back most:
 | the motor does not move in the open-loop step | a coil open or not soldered; calibration then fails at the next step with `Phase order is wrong!` |
 | `Phase order is wrong!` | the motor did not respond to the commutation check; wiring, current limit, magnet |
 | calibration succeeds, the motor then runs badly or in the wrong direction | the magnet slipped on the shaft; glue it and calibrate again |
+| after `Calibration success!` the motor turns slowly by itself for about a minute | the encoder table and the anti-cogging that follow a calibration (parameter 56); let them finish, they save everything ([What follows the calibration](../05-setup/calibration.md#what-follows-the-calibration)) |
+| the runs after the calibration stopped: `#Info` shows the encoder table or the anti-cogging not on | a command came in, the shaft was blocked or an error came up; the state is in parameters 52 and 43 ([When a run fails](../05-setup/anti-cogging.md#checking-them)). `#Save` keeps the calibration; `#Encal all` runs both again |
+| the anti-cogging does not switch on (parameter 37 stays 0) | no set is identified for that form; run `#Cogcal save`, or calibrate. After an encoder table measured on its own the set is switched off until it is identified again |
 | calibration succeeds but the LED stays on and `#Error` shows nothing | should not happen with firmware 106 and newer, which replaces a damaged configuration block with the defaults at power-up; if `#Info` shows `-1`: `#Default`, parameters, calibrate again |
 
 ## The motor
@@ -89,7 +93,12 @@ a short. Near 2.8 A the driver needs cooling.
 ## After a firmware update
 
 `#Info` shows the new release. If the values look wrong or the LED stays on: `#Default`, enter the motor
-parameters, `#Cal`, `#Save`. A release note says when an update clears the calibration.
+parameters, `#Cal`, `#Save`. A release note says when an update clears the calibration. After an update to 109,
+[Upgrading from older firmware](../07-firmware/upgrading.md) says what to run: a calibration, then the velocity
+gains.
+
+A Vbus error right after power-up, cleared by `#Clear`, was the supply ramping up; from firmware 109 a low supply is
+not checked in the first 500 ms.
 
 ## Getting help
 

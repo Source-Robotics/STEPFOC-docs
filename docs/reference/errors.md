@@ -25,14 +25,15 @@ Send_Respond_State_of_Errors (bits numbered from the most significant).
 | `Error` | `In error state!` | 0, 7 | any of the flags below is set (also the error bit of every CAN identifier) |
 | `temperature_error` | `Temp error` | 0, 6 | the thermistor reads above `#Tlim` (with `#Term 1`) |
 | `encoder_error` | `Encoder error` | 0, 5 | the encoder reports no magnet (too weak a field) |
-| `Vbus_error` | `Vbus error` | 0, 4 | the supply is below 9 V or above `#Vmax` (29000 mV after `#Default`) |
+| `Vbus_error` | `Vbus error` | 0, 4 | the supply is below 9 V or above `#Vmax` (29000 mV after `#Default`); from firmware 109 a low supply is not checked in the first 500 ms after power-up |
 | `Driver_error` | `Driver error (undervoltage, thermal shutdown, or overcurrent)` | 0, 3 | never in this firmware; reserved (STEPFOC reads no fault output of its driver stage) |
 | `Velocity_error` | `Velocity error` | 0, 2 | the speed exceeds 30,000,000 ticks/s, a fixed threshold (`Velocity_limit_error`), not `#Vlimit` |
 | `Current_error` | `Current error` | 0, 1 | never in this firmware; reserved |
 | `ESTOP_error` | `Received ESTOP command` | 0, 0 | Send_ESTOP was received |
 | `Calibrated` (0) | `Not calibrated` | 1, 7 (1 = calibrated) | the motor has not been calibrated |
 | `Activated` | — | 1, 6 | the activated flag, not an error |
-| `Watchdog_error` | `Watchdog error` | 1, 5 | the watchdog time passed without a motion frame or a status request |
+| `Watchdog_error` | `Watchdog error` | 1, 5 | the watchdog time passed without a motion frame or an answered request |
+| `wrong_product` | `Wrong firmware for this board (product lock)` | 1, 4 | from firmware 109: the firmware found the other product's stamp, or a calibration its product cannot make, at start-up; it drives nothing |
 
 Gripper mode has its own flags in Respond_Gripper_data_pack: a temperature error (a copy of the thermistor error),
 a timeout error (a copy of the CAN watchdog error, not a move timeout) and an E-stop error, which stays while the
@@ -43,4 +44,5 @@ E-stop bit is 1; see the [Gripper](can/gripper.md) reference.
 `#Clear` and Send_Clear_Error clear every flag except `Calibrated` and go to idle; a flag whose cause persists is
 set again at once. The watchdog, E-stop and velocity errors clear and stay clear; the Vbus, encoder and
 temperature errors come back until the cause is gone, and so does a gripper E-stop while its E-stop bit is 1.
-Calibration clears the calibration error.
+Calibration clears the calibration error. A wrong product stays until the right firmware is flashed. Clearing a
+watchdog error also ends a watchdog hold or descend.

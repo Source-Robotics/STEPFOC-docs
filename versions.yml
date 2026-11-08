@@ -7,20 +7,25 @@
 # The documentation version: the STEPFOC firmware release these pages describe. The publishing workflow publishes
 # the site under this name (the version selector in the header) and points "latest" at it. Older firmware releases
 # keep their own version of the site (103 is the last release from the main branch, before the bootloader).
-docs_version: "108"
+docs_version: "109"
 
 # The firmware release the pages describe, and the generated pages come from. Its tag must be V<docs_version>.
 # Releases are cut from the bootloader-version branch (see the firmware repository's release_guide.md).
+# 109 is not released yet (2026-11-08): the generated reference comes from commit 4dc2c08 on the firmware's
+# `hardening` branch (`python tools/sync_firmware.py --prerelease 4dc2c08 --no-network`; the facts say so under
+# "prerelease", and tools/test_tools.py fails until they come from the tag). When V109 is tagged, run
+# `python tools/sync_firmware.py`, set `released`, and the manual's status and publication date below.
 firmware:
   repository: https://github.com/Source-Robotics/STEPFOC-stepper-controller
-  tag: V108
+  tag: V109
   # The firmware's source folder in that repository, and its Controller_mode numbers with their names (for the
   # "enters mode" column of the UART reference). tools/sync_firmware.py reads both.
   src: STEPFOC firmware/src
   modes: {0: idle, 1: position, 2: velocity, 3: current, 4: PD, 5: open loop, 6: voltage torque,
-          7: gripper calibration, 8: HALL, 9: angle-offset calibration, 10: open-loop steps, 11: gripper}
-  # The date of the GitHub release of that tag (the downloads page writes it beside the version).
-  released: 2026-08-26
+          7: gripper calibration, 8: HALL, 9: angle-offset calibration, 10: open-loop steps, 11: gripper,
+          12: encoder table}
+  # The date of the GitHub release of that tag (the downloads page writes it beside the version); null until then.
+  released: null
 
 # The other software the pages describe, at the version they describe. The downloads page links each at its tag
 # (<!-- version-link: software.KEY -->); the compatibility table says which versions work with which firmware.
@@ -46,9 +51,9 @@ manuals:
   stepfoc:
     number: SR-5001
     title: STEPFOC Manual
-    revision: 2026.A
-    status: published
-    published: 2026-11-03
+    revision: 2026.B
+    status: draft
+    published: null
     firmware: true
     applies_to: STEPFOC driver PCB v1
     covers: "the STEPFOC stepper driver: quick start, safety, technical data, mounting, setup with Motor GUI or a terminal, operation, firmware; the API reference; guides"

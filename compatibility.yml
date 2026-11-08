@@ -12,6 +12,14 @@ columns:
   - {key: docs, title: Docs}
 
 rows:
+  - firmware: "109"
+    date: not released yet
+    bootloader: required
+    spectral: "108"
+    python: "1.20 or newer; the calls for the commands added in 109 (parameters, identity, telemetry, buffers, the watchdog's coast and descend) need the library's next release"
+    runtime: 0.9 or newer (it sends watchdog action 0, the legacy response)
+    pcb: v1
+    docs: "109"
   - firmware: "108"
     date: 2026-08-26
     bootloader: required (installed on boards shipped with 105 or newer, and on some shipped before)

@@ -1,9 +1,9 @@
 # Current limit and loop tuning
 
-Calibration leaves the driver with current loop gains computed for your motor and with conservative velocity and
-position gains. Two things remain: the current limit, which you must set for your motor, and the loop gains, which
-you tune if the defaults do not suit it. Motor GUI shows the motor's response on its plots while you change a gain,
-which is what makes tuning quick.
+Calibration leaves the driver with current loop gains computed for your motor and with velocity and position
+gains that suit a bare stepper. Two things remain: the current limit, which you must set for your motor, and the
+loop gains, which you tune if the defaults do not suit it. Motor GUI shows the motor's response on its plots while
+you change a gain, which is what makes tuning quick.
 
 ## The current limit
 
@@ -40,7 +40,9 @@ Tune from the inside out: the current loop first, then velocity, then position. 
 
 === "Motor GUI"
     The gains are in the settings: change one, *Apply gains*, command a move with the jog controls and read the
-    response on the plots. *Apply preset* loads a starting set for a kind of motor. **Save** when you are done.
+    response on the plots. *Apply preset* loads a starting set for a kind of motor, its own current and velocity
+    gains included: apply a preset before you calibrate, so that the calibration computes the current gains, and
+    set the velocity gains after it. **Save** when you are done.
 
 === "Terminal"
     Each gain is a command: `#Kpiq 0.5`, `#Kpv 0.02`, …, then `#Save`. Command a move with `#Iq`, `#V` or `#P`
@@ -48,26 +50,49 @@ Tune from the inside out: the current loop first, then velocity, then position. 
 
 ### The current loop
 
-The current loop is a PI controller that turns a current request into a voltage. Calibration sets its gains
-`Kpiq` and `Kiiq` from the motor's resistance and inductance and the bandwidth (`#Cbw`, 500 Hz by default; set it
-before calibrating). For a stepper these computed gains are a starting point; tune by hand if the motor hums or
-responds slowly:
+The current loop is a PI controller that turns a current request into a voltage. Its gains `Kpiq` and `Kiiq`
+follow from the motor's resistance R, its inductance L and one number, the bandwidth: Kp = ω·L and Ki = ω·R, with
+ω = 2π × the bandwidth. The PI then cancels the coil's own lag, and the current follows a request like a first-order
+filter at that bandwidth. Calibration computes them this way at 160 Hz, the default; so does setting the bandwidth:
 
-1. Raise `Kpiq` until the motor starts to hum or oscillate, then back off 20 %.
-2. Raise `Kiiq` the same way, then back off a little.
-3. Test with a current setpoint of a few hundred mA (*Jog current*, or `#Iq 300`): the motor should push with a
-   steady, quiet torque. Keep the current well under the limit.
+=== "Terminal"
+    ```
+    #Cbw 200          new gains at once from R and L; it prints them
+    #Save             keeps the gains (the bandwidth itself is 160 again after a power cycle)
+    ```
 
-A higher bandwidth responds faster to a disturbance and is louder; 800 Hz and more is common in industry, and
-useful for legged robots.
+=== "CAN"
+    Send_Parameter(49, 200), then Send_Save_config. Reading parameter 49 gives the bandwidth the gains in force
+    amount to with the R and L in force.
+
+The bandwidth can be 10 to 625 Hz (a tenth of the 6250 Hz control loop). A higher one follows a request and
+rejects a disturbance faster, and is louder; on the bench, 160 Hz followed an injected ripple better than the old
+gains and stayed stable. Gains set by hand with `#Kpiq` and `#Kiiq` work too; parameter 49 then tells which
+bandwidth they amount to.
+
+!!! note "Drives calibrated with older firmware"
+    Firmware 108 and older divided both gains by 7, a loop of about 70 Hz. Their saved gains stay as they are
+    after an update to 109: parameter 49 reads about 71 Hz until the drive is calibrated again, or `#Cbw 160` and
+    `#Save` are sent. See [Upgrading from older firmware](../07-firmware/upgrading.md).
+
+Test with a current setpoint of a few hundred mA (*Jog current*, or `#Iq 300`): the motor should push with a
+steady, quiet torque. Keep the current well under the limit.
 
 ### The velocity loop
 
-1. Raise `Kpv` until the motor oscillates at a steady speed command, then back off 20 %.
-2. Raise `Kiv` slowly until it oscillates, then back off a little. `Kiv` is an integrator: too much makes the
-   motor unstable, none leaves a steady-state error.
+The firmware's start values are `Kpv` 0.02 and `Kiv` 0.001, tuned on the bench with a bare NEMA 17 and the speed
+estimate below: it vibrated at `Kpv` 0.056, and 0.02 is about half of that; `Kiv` rang at 0.004, and 0.001 halved
+the speed ripple at 300 to 1500 ticks/s. In this firmware `#Default` and a settings reset still write 0.007 and
+0.0005 (known issue KI-17): after either, set `#Kpv 0.02` and `#Kiv 0.001` and `#Save`. To tune for your motor and
+load:
+
+1. Raise `Kpv` until the motor vibrates at a steady speed command, then take about half of it.
+2. Raise `Kiv` slowly until the speed rings after a change, then back off well below that. `Kiv` is an integrator:
+   too much makes the motor unstable, none leaves a steady-state error.
 3. Test with a speed setpoint (*Jog velocity*, or `#V 20000`; 16384 ticks per second is one revolution per
    second) and with different speeds.
+
+A motor geared into a joint carries more inertia than a bare one and usually takes other gains; tune it in place.
 
 ### The position loop
 
@@ -78,6 +103,49 @@ useful for legged robots.
 ### Testing
 
 Run the motor over the whole range of speeds and loads it will see, with a load if you can, and adjust. Then save.
+
+## The speed estimate
+
+The velocity loop needs the speed, which the driver estimates from the encoder count. Parameter 50 picks how:
+
+| Parameter 50 | Estimate | How it behaves |
+|---|---|---|
+| 0 | moving average of the last 20 count differences | about 1.5 ms late, in steps of 312 ticks/s: the old estimate |
+| 1 | PLL, the speed is its integrator | smooth, a little late |
+| 2 (default) | direct PLL, integrator plus the proportional term | almost no lag, a little more noise |
+
+Both PLLs are critically damped at the natural frequency of parameter 51, 60 Hz by default (10 to 312 Hz). The
+lag of the moving average was what limited the velocity gain: on the bench the direct PLL at 60 Hz allowed 40 %
+more `Kpv` before the motor vibrated, and the speed ripple was 23 to 50 % lower at 1500 to 24000 ticks/s; its
+extra noise did not reach the current. Calibration and the gripper's stop detection always use the moving
+average, which they were tuned with. Both parameters are not kept by Save: every power-up starts with the direct
+PLL at 60 Hz. The speed in Respond_data_pack_1 and Send_Respond_Encoder_data, the watchdog descend and the capture
+is the picked estimate.
+
+## Commutation delay compensation
+
+The voltage a control loop sets reaches the motor later than the angle it was computed from was read: the rest of
+the loop, the wait for the PWM update and half a control period. By then the rotor has turned on, and the voltage
+lands a little behind the angle it was meant for. Parameter 64 turns the output voltage forward by the angle the
+rotor covers in that delay, in the closed-loop modes above 100 ticks/s. 166 µs is the default, measured on the
+bench drive: the d-axis voltage against the cross-coupling the motor's inductance makes, at 12000 to 48000
+ticks/s, fitted over 15 points. 0 switches it off; 1 to 500 µs are accepted. It is not kept by Save, so 166 µs is in
+force after every power-up.
+
+## The finer points of the velocity loop
+
+Two settings for special cases, both off by default and not kept by Save:
+
+- **Position input filter**, parameter 74 (Hz, 0 to 250). A host that sends positions at a fixed rate sends a
+  staircase; without the speed the steps are all the loops see. The filter turns the staircase into a smooth path
+  and makes its own speed from it, in position and PD modes. Use it only for a host that sends positions
+  **without** the speed feedforward, at about the host's rate ÷ 12 (8 Hz for 100 Hz). On the bench it cut the
+  tracking error of such a host from 1023 to 260 ticks at 12 Hz; with a host that sends the speed it made the
+  tracking worse, so leave it off then.
+- **Velocity-integral deadband**, parameter 75 (ticks, 0 to 2000). In position mode the velocity integral sees the
+  position error less this band, so a holding motor stops pushing against a small error it cannot correct. It
+  trades accuracy for holding current: on the bench 5 ticks took the holding current from 16 to 3.4 mA, and the
+  mean error grew from 1.5 to 6.4 ticks.
 
 ## Impedance (PD) mode
 
