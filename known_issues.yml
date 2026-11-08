@@ -15,7 +15,7 @@
 #
 # Seeded 2026-11-04 from the final docs review (2026-11-03), each checked against the firmware at tag V108
 # (bootloader-version branch). The Spectral Micro has most of them too: Spectral-BLDC-docs' known_issues.yml.
-# 2026-11-08: KI-1 to KI-15 checked again against firmware 109 (commit 85c6497 of the hardening branch): KI-2 is
+# 2026-11-08: KI-1 to KI-15 checked again against firmware 109 (commit 572a4ad of the hardening branch): KI-2 is
 # fixed in 109, the others are still there. KI-19 is new in 109. KI-16, KI-17 and KI-18 were given to three
 # faults found and fixed before 109 was released (the serial parser refused #Calonly and #Par; #Default wrote the
 # old velocity gains; #Cogcal state left out the harmonics after state 11); no release had them, so they are not
