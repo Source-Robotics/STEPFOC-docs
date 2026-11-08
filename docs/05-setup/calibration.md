@@ -120,6 +120,18 @@ A whole run takes up to about a minute, most of it in the angle-offset search. W
 with `Calibration failed!`, the driver goes to idle, the motor counts as not calibrated and the LED stays on
 steadily. Nothing is saved; fix the cause and run `#Cal` again.
 
+!!! note "The 'Switch motor phases' message"
+    It is left over from firmware 103, which needed the coils wired a particular way. Since firmware 105 the
+    wiring is detected and compensated, so `Phase order is wrong!` / `Switch motor phases and try again!` means the
+    motor did not turn or did not respond: a coil not connected or shorted, a supply too weak, or a magnet that
+    slips. Swapping wires does not fix it. (`Open loop: Failed` with the same advice cannot appear in this
+    release.)
+
+!!! note "The measured values are estimates"
+    KV, Kt and the flux linkage come from one short spin and differ a little from one run to the next, more on
+    motors with uneven windings. For the loops this does not matter; for a torque estimate in newton-metres,
+    measure Kt yourself.
+
 ## What follows the calibration
 
 Half a second after `Calibration success!` the driver starts what parameter 56 names, on its own:
@@ -145,18 +157,6 @@ once; over CAN, Send_Parameter(56, 0) switches them off until it is set to 1 or 
     The runs after a calibration, `#Calonly`, parameters 76 to 79 and `#Par` came last in firmware 109 and had
     not been tested on the bench when this page was written. In the build this page describes, the serial parser
     does not accept `#Calonly` and `#Par` (known issue KI-16).
-
-!!! note "The 'Switch motor phases' message"
-    It is left over from firmware 103, which needed the coils wired a particular way. Since firmware 105 the
-    wiring is detected and compensated, so `Phase order is wrong!` / `Switch motor phases and try again!` means the
-    motor did not turn or did not respond: a coil not connected or shorted, a supply too weak, or a magnet that
-    slips. Swapping wires does not fix it. (`Open loop: Failed` with the same advice cannot appear in this
-    release.)
-
-!!! note "The measured values are estimates"
-    KV, Kt and the flux linkage come from one short spin and differ a little from one run to the next, more on
-    motors with uneven windings. For the loops this does not matter; for a torque estimate in newton-metres,
-    measure Kt yourself.
 
 ## 4. Save
 
