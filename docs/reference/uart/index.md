@@ -12,12 +12,12 @@ hand. [Over UART](../../06-operation/uart.md) explains the protocol.
 
 - A **Set/Get** command sets the value when a number follows and prints the current value either way.
 - A **Get** command only prints.
-- An **Action** command does something; a number after it is ignored. The exceptions are `#Idle` and `#PWM`:
-  with a number they are answered `Unknown command`.
+- An **Action** command does something; a number after it is ignored. (In firmware 108 and older `#Idle` and
+  `#PWM` with a number were answered `Unknown command`.)
 - Names are case-sensitive, at most 19 characters; the argument is one word of at most 19 characters, without
   spaces, so a list is written with commas (`#WdFb 2000,0,1000,2`, `#Par 56,0`); the line ends with LF (CR before
   it is fine). Firmware 108 and older allowed 20 characters for name and number together. 256000 baud, 8N1, 3.3 V.
-- A name the parser does not know is answered `Unknown command`.
+- A name the firmware does not know is answered `Unknown command`.
 
 ## Every command
 

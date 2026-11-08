@@ -68,7 +68,7 @@ commands:
   PP: {group: calibration, argument: pole pairs, description: "The motor's pole pairs: 50 for a 1.8° stepper, 75 for 1.2°, 100 for 0.9°, 125 for 0.72°. Calibration accepts only these values. Also parameter 78.", response: the current value}
   Kt: {group: calibration, argument: Nm/A, description: "The torque constant, found by calibration.", response: the current value}
   KV: {group: calibration, argument: rpm/V, description: "The velocity constant, found by calibration.", response: the current value}
-  Flux: {group: calibration, argument: Wb, description: "The flux linkage, found by calibration. The parser accepts only the lowercase `#flux`, which has no handler, so neither spelling works.", response: the current value}
+  Flux: {group: calibration, argument: Wb, description: "The flux linkage, found by calibration. Works over UART from firmware 109; the parser of 108 and older accepted only the lowercase `#flux`, which had no handler.", response: the current value}
   Offset: {group: calibration, argument: angle in rad, description: "The angle offset between encoder zero and electrical zero, found by calibration.", response: the current value}
   Iqoffset: {group: calibration, argument: current in mA, description: The current used by the angle-offset search., response: the current value}
   Magnet: {group: calibration, description: Reads the encoder's magnet status., response: "`Magnet Good` or `Magnet Bad`"}

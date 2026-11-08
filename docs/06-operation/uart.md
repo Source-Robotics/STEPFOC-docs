@@ -22,8 +22,9 @@ and a line ending:
 - A **Set/Get** command with a number sets the value and prints it; without a number it only prints it. `#P 16384`
   moves to position 16384 and prints the position; `#P` prints the position.
 - An **action** command takes no number: `#Cal`, `#Save`, `#Idle`.
-- A command the parser does not know is answered with `Unknown command` (firmware 106 and newer). A few names the parser
-  accepts have no handler and are answered with nothing; the [UART reference](../reference/uart/index.md) lists them.
+- A name the driver does not know is answered with `Unknown command` (firmware 106 and newer). In firmware 108
+  and older a few names the parser accepted had no handler and got no answer; from 109 a name is either a command
+  or answered `Unknown command`.
 - 256000 baud, 8N1, 3.3 V.
 
 ## The driver only answers
