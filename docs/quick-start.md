@@ -153,8 +153,9 @@ message.
 
 ## 8. Set the current limit and save
 
-The current limit is the motor's rated phase current in mA. It is 1700 mA after `#Default`, and calibration leaves
-it at 1600 mA: both are more than a small motor's rating, so set it now, after calibrating.
+The current limit is the motor's rated phase current in mA. It is 1700 mA after `#Default`, more than a small
+motor's rating. Calibration uses its own 1600 mA for its steps and puts the limit back when it ends, and the encoder
+table after it runs at 80 % of the limit, so on a small motor set it before step 7; set it now in any case.
 
 === "Motor GUI"
     Set the current limit in the limits, then **Save** (the GUI warns about unsaved changes until you do).

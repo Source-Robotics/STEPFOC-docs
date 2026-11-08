@@ -39,7 +39,8 @@ These need no measurement and are on from the first start of 109:
 - the **watchdog actions**: the action byte the host already sends is acted on. Byte 0, what the Python library and
   the PAR6 runtime send, gives the legacy response, so an unchanged host sees no difference;
 - `#Default` and a settings reset **keep the CAN ID**;
-- the new CAN commands and parameters, the identity frame, telemetry, the capture, `#Info`'s `In force:`.
+- the new CAN commands and parameters, the identity frame, telemetry, the capture, `#Info`'s `In force:`, and
+  [sound through the motor](../06-operation/sound.md).
 
 ## What has to be run
 
@@ -66,11 +67,11 @@ so does `#Encal all` without a calibration.
 
 1. Flash 109 ([Updating through the bootloader](update.md)). `#Info` prints `Software version: 109` and ends with
    `In force:`.
-2. Calibrate, with the shaft free: `#Cal`. The encoder table, the anti-cogging and the trim follow, and everything
-   is saved (about two minutes in all). On a motor rated under 1.3 A, see the warning in
-   [What follows the calibration](../05-setup/calibration.md#what-follows-the-calibration) first.
-3. Set the current limit for your motor (`#Ilim`, calibration leaves it at 1600 mA) and the velocity gains, for
-   example `#Kpv 0.02` and `#Kiv 0.001`, then `#Save`.
+2. Check that the current limit suits the motor (`#Ilim`), then calibrate, with the shaft free: `#Cal`. The
+   encoder table (at 80 % of the current limit), the anti-cogging and the trim follow, and everything is saved
+   (about two minutes in all).
+3. Set the velocity gains, for example `#Kpv 0.02` and `#Kiv 0.001`, then `#Save`. (Calibration puts the
+   current limit that was in force back when it ends; set `#Ilim` for your motor before step 2 if it is not.)
 4. Check `#Info`: `encoder table: on`, `anti-cogging: on (harmonics), saved`.
 
 With Motor GUI's presets: apply the preset first, then calibrate, then set the velocity gains. A preset writes its

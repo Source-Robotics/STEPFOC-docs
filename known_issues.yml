@@ -15,8 +15,10 @@
 #
 # Seeded 2026-11-04 from the final docs review (2026-11-03), each checked against the firmware at tag V108
 # (bootloader-version branch). The Spectral Micro has most of them too: Spectral-BLDC-docs' known_issues.yml.
-# 2026-11-08: KI-1 to KI-15 checked again against firmware 109 (commit 4dc2c08 of the hardening branch): all still
-# there. KI-16 to KI-19 are new in 109.
+# 2026-11-08: KI-1 to KI-15 checked again against firmware 109 (commit 5085348 of the hardening branch): KI-2 is
+# fixed in 109, the others are still there. KI-18 and KI-19 are new in 109. KI-16 and KI-17 were given to two
+# faults found and fixed before 109 was released (the serial parser refused #Calonly and #Par; #Default wrote the
+# old velocity gains); no release had them, so they are not listed, and the two ids are never used again.
 
 components:
   firmware: {name: STEPFOC firmware, version: "109"}
@@ -39,7 +41,8 @@ issues:
     workaround: After every calibration set `#Ilim` for your motor, then `#Save`.
     page: 05-setup/calibration.md#4-save
     title: "Calibration: save"
-    status: open
+    status: fixed
+    fixed_in: "109: calibration puts back the current limit that was in force when it started"
     since: 2026-11-04
 
   - id: KI-3
@@ -184,34 +187,12 @@ issues:
     status: open
     since: 2026-11-04
 
-  - id: KI-16
-    component: firmware
-    summary: "`#Calonly` and `#Par` answer `Unknown command`: the firmware has their handlers, but its serial parser
-      does not list the two names, so it drops them before a handler sees them."
-    workaround: Over CAN, set parameter 56 to 0 with Send_Parameter before `#Cal` instead of `#Calonly`, and read or
-      set parameters with Send_Get_Parameter and Send_Parameter instead of `#Par`. `#Info` shows what is in force.
-    page: reference/uart/index.md
-    title: UART commands
-    status: open
-    since: 2026-11-08
-
-  - id: KI-17
-    component: firmware
-    summary: "`#Default` and a settings reset write the velocity gains Kpv 0.007 and Kiv 0.0005, not 0.02 and 0.001,
-      the start values firmware 109 was tuned with."
-    workaround: After `#Default`, and after an upgrade, set `#Kpv 0.02` and `#Kiv 0.001` (or the gains you tuned),
-      then `#Save`.
-    page: 05-setup/tuning.md#the-velocity-loop
-    title: "Tuning: the velocity loop"
-    status: open
-    since: 2026-11-08
-
   - id: KI-18
     component: firmware
-    summary: "`#Cogcal` prints `idle` for the anti-cogging states 7 to 11 (the combined run's encoder table, its
-      failure, switched off, done without the trim), and lists the harmonics only after state 3."
-    workaround: Read parameter 43 over CAN for the state, and `#Info` (`In force:`) for whether the anti-cogging is
-      on and saved.
+    summary: "`#Cogcal state` lists the identified harmonics only after state 3 (done with the trim), not after
+      state 11 (done without the trim), although a set is identified and on then too."
+    workaround: Read the harmonics with Send_Buffer_Read, kind 2, and `#Info` (`In force:`) for whether the
+      anti-cogging is on and saved.
     page: 05-setup/anti-cogging.md#checking-them
     title: "Encoder table and anti-cogging: checking them"
     status: open
@@ -220,10 +201,10 @@ issues:
   - id: KI-19
     component: firmware
     summary: The encoder-table run that follows a calibration (parameter 56 = 2, the default) holds a field current
-      of 80 % of the current limit for about 20 s, and calibration leaves the limit at 1600 mA (KI-2), so the coils
-      carry about 1.3 A, more than the rating of a smaller stepper such as a 1.0 A one.
-    workaround: On a motor rated under 1.3 A, set parameter 56 to 0 over CAN after `#Default` and before `#Cal`, so
-      nothing follows the calibration; then set `#Ilim` for the motor, `#Save`, and run `#Encal all`.
+      of 80 % of the current limit for about 20 s. After `#Default` the limit is 1700 mA, so the coils then carry
+      about 1.4 A, more than a smaller stepper is rated for.
+    workaround: Set `#Ilim` for the motor before `#Cal` (a Motor GUI preset sets it). Calibration uses its own limit
+      for its steps and puts yours back before the encoder table runs.
     page: 05-setup/calibration.md#what-follows-the-calibration
     title: "Calibration: what follows it"
     status: open

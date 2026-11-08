@@ -11,7 +11,7 @@
 #   description  what it is
 #
 # Every fact here was checked against the firmware source (constants.h, communication_CAN.cpp Param_get/Param_set,
-# scope.cpp, encal.cpp, cogcal.cpp, EEPROM.cpp) at commit 4dc2c08, the code of release 109.
+# scope.cpp, encal.cpp, cogcal.cpp, sound.cpp, EEPROM.cpp) at commit 5085348, the code of release 109.
 
 groups:
   watchdog:
@@ -51,6 +51,10 @@ groups:
       None of these settings is saved.
   loop:
     title: Loop time
+  sound:
+    title: Sound
+    intro: >
+      None of the sound settings is saved; see [Sound](../../06-operation/sound.md).
   status:
     title: Status
 
@@ -578,6 +582,28 @@ params:
     value: "1 on, 0 off. Default 1"
     saved: "no: on at every start-up"
     description: The PWM compare registers written directly; about 4 µs less per loop.
+
+  # ------------------------------------------------------------ sound
+  PARAM_SOUND_STATE:
+    group: sound
+    access: r
+    value: "bits 0-7 events queued, 8-18 samples buffered, 24 a tone sounds, 25 the queue plays, 26 samples play, 27 the samples ran dry"
+    saved: "—"
+    description: What the sound is doing; a host that refills the queue or the sample buffer reads it.
+  PARAM_SOUND_LIMIT_MV:
+    group: sound
+    access: rw
+    value: "mV, 0-6000 (outside: refused). Default 2000; 0 refuses sound and stops what plays"
+    saved: "no: 2000 at every start-up"
+    description: The sound's voltage at most, all tones and samples together.
+  PARAM_SOUND_AXIS:
+    group: sound
+    access: rw
+    value: "1 the q axis (default), 0 the d axis (outside: refused)"
+    saved: "no: 1 at every start-up"
+    description: >
+      Which axis carries the sound. The q axis makes torque, a small ripple at the tone's pitch, and was much
+      louder on the bench; the d axis makes no torque and is quieter.
 
   # ------------------------------------------------------------ status
   PARAM_FEATURES:

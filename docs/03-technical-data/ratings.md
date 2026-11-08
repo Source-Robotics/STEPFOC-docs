@@ -8,7 +8,7 @@
 | Vbus error limits (firmware) | below 9 V or above 29 V (`#Vmax`, 29000 mV after `#Default`) |
 | Phase current, continuous | 1.5 A typical |
 | Phase current, maximum | 2.8 A; needs good cooling and short bursts. `#Ilim` is clamped to 2800 mA; Send_Limits over CAN is not clamped |
-| Current limit, default | 1700 mA after `#Default`; calibration leaves it at 1600 mA |
+| Current limit, default | 1700 mA after `#Default`; calibration uses 1600 mA for its steps and, from firmware 109, puts the limit back |
 | Power, maximum | 80 W |
 | Power, idle | 0.3 W |
 | PWM frequency | 25 kHz |

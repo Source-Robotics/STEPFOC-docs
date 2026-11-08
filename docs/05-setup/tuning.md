@@ -8,8 +8,10 @@ you change a gain, which is what makes tuning quick.
 ## The current limit
 
 Set the current limit to the rated phase current of your motor in mA (the datasheet value; the tested motors'
-ratings are in [Tested motors](../03-technical-data/tested-motors.md)). It is 1700 mA after `#Default`, and
-calibration leaves it at 1600 mA, whatever it was before. `#Ilim` clamps the limit to the driver's 2800 mA. The
+ratings are in [Tested motors](../03-technical-data/tested-motors.md)). It is 1700 mA after `#Default`;
+calibration uses its own 1600 mA for its steps and, from firmware 109, puts your limit back when it ends. Set it
+before you calibrate: the encoder table that follows a calibration runs at 80 % of it. `#Ilim` clamps the limit to
+the driver's 2800 mA. The
 firmware does not trip on phase current by itself and does not monitor the driver stage. A limit above the motor's
 rating overheats the motor.
 
@@ -82,9 +84,9 @@ steady, quiet torque. Keep the current well under the limit.
 
 The firmware's start values are `Kpv` 0.02 and `Kiv` 0.001, tuned on the bench with a bare NEMA 17 and the speed
 estimate below: it vibrated at `Kpv` 0.056, and 0.02 is about half of that; `Kiv` rang at 0.004, and 0.001 halved
-the speed ripple at 300 to 1500 ticks/s. In this firmware `#Default` and a settings reset still write 0.007 and
-0.0005 (known issue KI-17): after either, set `#Kpv 0.02` and `#Kiv 0.001` and `#Save`. To tune for your motor and
-load:
+the speed ripple at 300 to 1500 ticks/s. `#Default` and a settings reset write the same values. A drive saved
+with older firmware keeps its saved gains after an update (typically 0.007 and 0.0005): set `#Kpv 0.02` and
+`#Kiv 0.001` and `#Save`. To tune for your motor and load:
 
 1. Raise `Kpv` until the motor vibrates at a steady speed command, then take about half of it.
 2. Raise `Kiv` slowly until the speed rings after a change, then back off well below that. `Kiv` is an integrator:

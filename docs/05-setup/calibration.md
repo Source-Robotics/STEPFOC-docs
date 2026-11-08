@@ -148,15 +148,15 @@ more; `#Info` shows `running: …` under `In force:` while they go. A command fr
 [Encoder table and anti-cogging](anti-cogging.md) explains both and how to check them. `#Calonly` skips them
 once; over CAN, Send_Parameter(56, 0) switches them off until it is set to 1 or 2 again.
 
-!!! warning "The encoder table's current on a small motor"
-    The encoder table turns the field with a current of 80 % of the current limit, and calibration leaves the
-    limit at 1600 mA: about 1.3 A in the coils for 20 s. On a motor rated under 1.3 A set parameter 56 to 0
-    before `#Cal`, then set `#Ilim` for the motor, `#Save`, and run `#Encal all` (known issue KI-19).
+!!! warning "Set the current limit before you calibrate"
+    The encoder table turns the field with a current of 80 % of the current limit, for about 20 s. Calibration uses
+    its own 1600 mA for its steps and puts the limit that was in force back when it ends, before the encoder table
+    runs; after `#Default` that is 1700 mA, about 1.4 A in the coils, more than a small motor is rated for. So set
+    `#Ilim` for the motor before `#Cal` (a Motor GUI preset does; known issue KI-19).
 
 !!! note "Not yet tested on the bench"
     The runs after a calibration, `#Calonly`, parameters 76 to 79 and `#Par` came last in firmware 109 and had
-    not been tested on the bench when this page was written. In the build this page describes, the serial parser
-    does not accept `#Calonly` and `#Par` (known issue KI-16).
+    not been tested on the bench when this page was written.
 
 ## 4. Save
 
@@ -172,9 +172,10 @@ With the runs after the calibration (parameter 56 not 0) the driver saves by its
 anyway once they are done, or after `#Calonly`. Without a save the calibration is gone at the next power cycle.
 The driver goes to idle and the LED shows normal operation; the state shows *Calibrated* and the constants.
 
-!!! warning "Set the current limit next"
-    Calibration leaves the current limit at 1600 mA, whatever it was before: more than a small motor's rating.
-    Set it for your motor with `#Ilim` before the motor runs, and save again
+!!! warning "The current limit"
+    Calibration uses its own 1600 mA for its steps. From firmware 109 it puts the limit that was in force back when
+    it ends, so a save stores your limit; firmware 108 and older left 1600 mA in force (known issue KI-2). If the
+    limit is still the 1700 mA of `#Default`, set it for your motor with `#Ilim` and save again
     ([Current limit and loop tuning](tuning.md)).
 
 !!! success "Check"

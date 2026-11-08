@@ -169,6 +169,20 @@
    "IN_SETTINGS": {
     "empty": false,
     "lengths": [],
+    "min_length": 2,
+    "responds": []
+   },
+   "IN_SOUND": {
+    "empty": false,
+    "lengths": [
+     8
+    ],
+    "responds": []
+   },
+   "IN_SOUND_SAMPLES": {
+    "empty": false,
+    "lengths": [],
+    "min_length": 1,
     "responds": []
    },
    "IN_VLIM": {
@@ -435,6 +449,21 @@
     "lengths": [],
     "responds": []
    },
+   "PARAM_SOUND_AXIS": {
+    "empty": false,
+    "lengths": [],
+    "responds": []
+   },
+   "PARAM_SOUND_LIMIT_MV": {
+    "empty": false,
+    "lengths": [],
+    "responds": []
+   },
+   "PARAM_SOUND_STATE": {
+    "empty": false,
+    "lengths": [],
+    "responds": []
+   },
    "PARAM_SPEED_ESTIMATOR": {
     "empty": false,
     "lengths": [],
@@ -691,6 +720,16 @@
     "comment": "",
     "id": 43,
     "name": "IN_BUFFER_WRITE"
+   },
+   {
+    "comment": "",
+    "id": 44,
+    "name": "IN_SOUND"
+   },
+   {
+    "comment": "",
+    "id": 45,
+    "name": "IN_SOUND_SAMPLES"
    },
    {
     "comment": "",
@@ -1105,6 +1144,21 @@
     "name": "PARAM_FEATURES"
    },
    {
+    "comment": "R bits 0-7 queued events, 8-18 buffered samples, 24 tones, 25 queue, 26 samples, 27 the samples ran dry",
+    "id": 80,
+    "name": "PARAM_SOUND_STATE"
+   },
+   {
+    "comment": "the sound's voltage at most, mV (0 refuses sound; default SOUND_LIMIT_DEFAULT_MV)",
+    "id": 81,
+    "name": "PARAM_SOUND_LIMIT_MV"
+   },
+   {
+    "comment": "1: on the q axis (a small torque ripple; the default, much louder), 0: the d axis",
+    "id": 82,
+    "name": "PARAM_SOUND_AXIS"
+   },
+   {
     "comment": "write 1: identify the anti-cogging on the drive, 2: and save, 0: abort; read: COGCAL_*",
     "id": 43,
     "name": "PARAM_COGCAL"
@@ -1200,7 +1254,7 @@
    }
   }
  },
- "commit": "4dc2c0848731",
+ "commit": "5085348de5b1",
  "defaults": [
   {
    "after_default": "111 in the EEPROM, not read back",
@@ -1609,6 +1663,22 @@
    "saved": "no",
    "setting": true,
    "value": "0"
+  },
+  {
+   "after_default": "\u2014",
+   "comment": "parameter 81: the sound's voltage at most (batch 22)",
+   "name": "sound_limit_mv",
+   "saved": "no",
+   "setting": true,
+   "value": "2000 (SOUND_LIMIT_DEFAULT_MV)"
+  },
+  {
+   "after_default": "\u2014",
+   "comment": "parameter 82: 1 the q axis (default: much louder on the bench), 0 the d axis",
+   "name": "sound_axis",
+   "saved": "no",
+   "setting": true,
+   "value": "1"
   },
   {
    "after_default": "\u2014",
@@ -2227,6 +2297,22 @@
    "value": "0.0f"
   },
   {
+   "after_default": "\u2014",
+   "comment": "the sound added to the output this loop, mV (batch 22)",
+   "name": "sound_d",
+   "saved": "no",
+   "setting": false,
+   "value": "0.0f"
+  },
+  {
+   "after_default": "\u2014",
+   "comment": "",
+   "name": "sound_q",
+   "saved": "no",
+   "setting": false,
+   "value": "0.0f"
+  },
+  {
    "after_default": "6000",
    "comment": "Voltage limit for Ud and Uq voltages. If 0 value of controller.VBUS_mV will be used",
    "name": "Voltage_limit",
@@ -2267,7 +2353,7 @@
    "value": "0"
   },
   {
-   "after_default": "0.007",
+   "after_default": "0.02",
    "comment": "bench 2026-11-08: a bare NEMA 17 vibrates at 0.056 (speed PLL) or 0.04",
    "name": "Kp_v",
    "saved": "yes",
@@ -2275,7 +2361,7 @@
    "value": "0.02"
   },
   {
-   "after_default": "0.0005",
+   "after_default": "0.001",
    "comment": "bench 2026-11-08 (kiv_sweep.py, KPV 0.02): rings at 0.004; 0.001 halves the",
    "name": "Ki_v",
    "saved": "yes",
@@ -2612,9 +2698,9 @@
   }
  ],
  "prerelease": {
-  "commit": "4dc2c0848731",
+  "commit": "5085348de5b1",
   "firmware_version_in_source": "108",
-  "ref": "4dc2c08"
+  "ref": "5085348"
  },
  "tag": "V109",
  "uart": {
@@ -2689,6 +2775,9 @@
    "Product",
    "Encal",
    "Cogcal",
+   "Par",
+   "Calonly",
+   "Tone",
    "Gripcal",
    "Grippos",
    "Gripvel",
@@ -3234,8 +3323,16 @@
     "response": "Invalid tool id (0-255)"
    },
    {
+    "arg": "",
+    "comment": "The encoder table on the drive (encal.h): #Encal measures it (one shaft turn each way at 2048 ticks/s, about 20 s; the shaft must be free), #Encal save also saves, #Encal all also identifies the anti-cogging and saves both, #Encal stop aborts, #Encal on / off switches the correction, #Encal state shows it. A tone through the motor (batch 22): #Tone f,mA[,ms] (ms left out: 500; 0: until #Tone off); #Tone off. It plays while the drive holds or moves; from idle the drive first holds the position it is at.",
+    "kind": "Set/Get",
+    "mode": "position",
+    "name": "Tone",
+    "response": "Tone off"
+   },
+   {
     "arg": "int",
-    "comment": "The encoder table on the drive (encal.h): #Encal measures it (one shaft turn each way at 2048 ticks/s, about 20 s; the shaft must be free), #Encal save also saves, #Encal all also identifies the anti-cogging and saves both, #Encal stop aborts, #Encal on / off switches the correction, #Encal state shows it. Any CAN parameter by number (batch 20): #Par lists all, #Par n reads one, #Par n,v sets it",
+    "comment": "Any CAN parameter by number (batch 20): #Par lists all, #Par n reads one, #Par n,v sets it",
     "kind": "Set/Get",
     "mode": "",
     "name": "Par",

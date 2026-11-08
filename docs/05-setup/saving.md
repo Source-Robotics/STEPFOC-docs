@@ -51,8 +51,7 @@ gripper flag, the heartbeat rate and the watchdog; from firmware 109 also the to
 anti-cogging set, the encoder table and its zero trims, and sets parameter 56 back to its default. The CAN node ID
 is kept from firmware 109 (it is 0 only when no valid ID is stored); firmware 108 and older set it to 0. Note the
 hardware version and batch date `#Info` prints before you use it. The defaults are listed in the
-[Defaults](../reference/defaults.md) reference; the velocity gains it writes are not the ones firmware 109 was
-tuned with (known issue KI-17, [The velocity loop](tuning.md#the-velocity-loop)).
+[Defaults](../reference/defaults.md) reference.
 
 Use it before the first calibration of a motor, after a firmware update when the driver behaves oddly, and when
 the state shows nonsense values (a `-1` where a number should be). With firmware 106 and newer that should not

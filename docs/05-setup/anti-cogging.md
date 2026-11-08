@@ -112,7 +112,7 @@ In force:
 
 (here with the values the bench drive measured). While a run goes, a line `running: encoder table` or
 `running: anti-cogging identification` follows. `#Encal state` and `#Cogcal state` print one run's state without
-starting it; `#Cogcal` prints `idle` for the states 7 to 11 (known issue KI-18), so read parameter 43 for those.
+starting it. `#Cogcal state` lists the harmonics only after state 3, not after state 11 (known issue KI-18).
 
 Over CAN the same is in the parameters (the [parameter table](../reference/can/parameters.md#every-parameter)):
 

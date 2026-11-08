@@ -170,6 +170,10 @@
 :   A CAN frame with the RTR bit set and no data: a request. The host asks for data with a remote frame under a
     command ID, and the driver answers with a data frame under the same ID.
 
+**Sound** (`#Tone`, CAN 44 and 45)
+:   Tones, a queue of notes and recorded samples the driver adds to its output voltage while it holds or moves, so
+    the motor plays them (firmware 109 and newer).
+
 **Spectral Micro**
 :   Source Robotics' BLDC driver, STEPFOC's sister: similar hardware and firmware and practically the same
     commands, for three-phase brushless motors.

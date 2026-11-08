@@ -11,8 +11,9 @@ coil, which is what you enter with `#R` and `#L` before calibration.
 | ![17HS24-2104S](../assets/17HS24-2104S.webp){ width="90" } | 17HS24-2104S | NEMA 17, 60 mm | 50 | 1.6 Ω | 3.0 mH | 2.1 A | 500 g | [Stepperonline](https://www.omc-stepperonline.com/nema-17-bipolar-1-8deg-65ncm-92oz-in-2-1a-3-36v-42x42x60mm-4-wires-17hs24-2104s) |
 | ![23HM22-2804S](../assets/23HM22-2804S.webp){ width="90" } | 23HM22-2804S | NEMA 23, 56 mm, 0.9° | 100 | 1.16 Ω | 4.2 mH | 2.8 A | 700 g | [Stepperonline](https://www.omc-stepperonline.com/nema-23-bipolar-0-9deg-1-26nm-178-4oz-in-2-8a-2-5v-57x57x56mm-4-wires-23hm22-2804s) |
 
-After calibration, and before the first test, set the current limit to the motor's rated current with `#Ilim`:
-calibration leaves it at 1600 mA (1700 mA after `#Default`), more than the 17HS08's rating. See
+Before calibration, set the current limit to the motor's rated current with `#Ilim`: it is 1700 mA after
+`#Default`, more than the 17HS08's rating, and the encoder table that follows a calibration runs at 80 % of it.
+Calibration uses its own 1600 mA for its steps and puts your limit back when it ends. See
 [Current limit and loop tuning](../05-setup/tuning.md).
 
 !!! tip "Choosing a motor"
