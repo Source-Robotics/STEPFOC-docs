@@ -156,5 +156,5 @@ When a run fails:
 `#Save` keeps the switches with the corrections. `#Default` clears both corrections and the trims.
 
 !!! note "Spectral Micro"
-    The Spectral Micro firmware 108 has the same encoder table and anti-cogging, but runs neither after a
+    The Spectral Micro firmware 109 has the same encoder table and anti-cogging, but runs neither after a
     calibration until they are tested on its bench, and skips the zero trim. Its manual says more.

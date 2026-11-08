@@ -11,8 +11,8 @@ docs_version: "109"
 
 # The firmware release the pages describe, and the generated pages come from. Its tag must be V<docs_version>.
 # Releases are cut from the bootloader-version branch (see the firmware repository's release_guide.md).
-# 109 is not released yet (2026-11-08): the generated reference comes from commit 5085348 on the firmware's
-# `hardening` branch (`python tools/sync_firmware.py --prerelease 5085348 --no-network`; the facts say so under
+# 109 is not released yet (2026-11-08): the generated reference comes from commit baa4d8d on the firmware's
+# `hardening` branch (`python tools/sync_firmware.py --prerelease baa4d8d --no-network`; the facts say so under
 # "prerelease", and tools/test_tools.py fails until they come from the tag). When V109 is tagged, run
 # `python tools/sync_firmware.py`, set `released`, and the manual's status and publication date below.
 firmware:

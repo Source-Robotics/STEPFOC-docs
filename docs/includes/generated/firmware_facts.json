@@ -1254,7 +1254,7 @@
    }
   }
  },
- "commit": "5085348de5b1",
+ "commit": "baa4d8ded875",
  "defaults": [
   {
    "after_default": "111 in the EEPROM, not read back",
@@ -1281,7 +1281,7 @@
    "value": "1"
   },
   {
-   "after_default": "108",
+   "after_default": "109",
    "comment": "Software release",
    "name": "SOFTWARE_VERSION",
    "saved": "no: set by the firmware",
@@ -2698,9 +2698,9 @@
   }
  ],
  "prerelease": {
-  "commit": "5085348de5b1",
-  "firmware_version_in_source": "108",
-  "ref": "5085348"
+  "commit": "baa4d8ded875",
+  "firmware_version_in_source": "109",
+  "ref": "baa4d8d"
  },
  "tag": "V109",
  "uart": {

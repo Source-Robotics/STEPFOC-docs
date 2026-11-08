@@ -11,13 +11,15 @@ What this means in practice:
 - **The commands are practically the same.** The CAN messages and UART commands of the Reference have the same
   IDs, names and layouts on both drivers; STEPFOC adds a few that only make sense on a stepper (homing against a
   sensor, open-loop stepping). A program written for one runs on the other.
-- **The firmware releases go in step.** A change that applies to both drivers comes to both, but not always in
-  releases with the same number: the [compatibility table](../appendix/compatibility.md) lists the pairs. STEPFOC
-  108 matches Spectral Micro 107, STEPFOC 109 Spectral Micro 108.
+- **The firmware releases go in step, and from 109 share their numbers.** A change that applies to both drivers
+  comes to both. From release 109 they are released together under the same version number; the Spectral Micro
+  went from 107 straight to 109, so there is no Spectral Micro 108. Before, the numbers did not always match
+  (STEPFOC 108 went with Spectral Micro 107); the [compatibility table](../appendix/compatibility.md) lists the
+  pairs.
 - **Calibration differs.** A BLDC driver measures the motor's resistance and inductance and finds its pole pairs;
   STEPFOC cannot, so you enter the three values from the motor's datasheet before calibrating. See
   [Motor parameters and calibration](../05-setup/calibration.md). From firmware 109 a STEPFOC calibration is
-  followed by the encoder table and the anti-cogging; on the Spectral Micro 108 they are there but do not run by
+  followed by the encoder table and the anti-cogging; on the Spectral Micro 109 they are there but do not run by
   themselves yet.
 - **Some defaults differ.** The speed estimate, the commutation delay compensation and the velocity gains of
   STEPFOC 109 were tuned on its bench; the Spectral Micro keeps its own until it is measured the same way.

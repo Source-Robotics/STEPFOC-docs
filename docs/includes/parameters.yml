@@ -11,7 +11,7 @@
 #   description  what it is
 #
 # Every fact here was checked against the firmware source (constants.h, communication_CAN.cpp Param_get/Param_set,
-# scope.cpp, encal.cpp, cogcal.cpp, sound.cpp, EEPROM.cpp) at commit 5085348, the code of release 109.
+# scope.cpp, encal.cpp, cogcal.cpp, sound.cpp, EEPROM.cpp) at commit baa4d8d, the code of release 109.
 
 groups:
   watchdog:
