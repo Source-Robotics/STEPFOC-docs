@@ -18,8 +18,8 @@ groups:
     title: Watchdog and tool
     intro: >
       Parameters 1 to 5 live in settings block 2 of the EEPROM, 6 and 7 in the first settings block beside the
-      other settings; Send_Save_config keeps all seven. A value outside a range is clamped or replaced as the
-      Value column says, and the write is still taken.
+      other settings; Send_Save_config keeps all seven. A value outside a range is clamped, replaced or ignored,
+      as the Value column says.
   readback:
     title: Gains, limits and settings, read back
     intro: >
@@ -106,61 +106,61 @@ params:
     group: readback
     access: r
     value: float
-    saved: yes
+    saved: "yes"
     description: Kp of the position loop (Send_Position_Gains, `#Kpp`).
   PARAM_KPV:
     group: readback
     access: r
     value: float
-    saved: yes
+    saved: "yes"
     description: Kp of the velocity loop (Send_Velocity_Gains, `#Kpv`).
   PARAM_KIV:
     group: readback
     access: r
     value: float
-    saved: yes
+    saved: "yes"
     description: Ki of the velocity loop (Send_Velocity_Gains, `#Kiv`).
   PARAM_KPIQ:
     group: readback
     access: r
     value: float
-    saved: yes
+    saved: "yes"
     description: Kp of the current loops (Send_Current_Gains, `#Kpiq`, calibration, parameter 49).
   PARAM_KIIQ:
     group: readback
     access: r
     value: float
-    saved: yes
+    saved: "yes"
     description: Ki of the current loops (Send_Current_Gains, `#Kiiq`, calibration, parameter 49).
   PARAM_KP:
     group: readback
     access: r
     value: float
-    saved: yes
+    saved: "yes"
     description: KP, the stiffness of the impedance (PD) loop (Send_PD_Gains).
   PARAM_KD:
     group: readback
     access: r
     value: float
-    saved: yes
+    saved: "yes"
     description: KD, the damping of the impedance (PD) loop (Send_PD_Gains).
   PARAM_VELOCITY_LIMIT:
     group: readback
     access: r
     value: float, ticks/s
-    saved: yes
+    saved: "yes"
     description: The velocity limit (Send_Limits, `#Vlimit`).
   PARAM_CURRENT_LIMIT:
     group: readback
     access: r
     value: float, mA
-    saved: yes
+    saved: "yes"
     description: The current limit (Send_Limits, `#Ilim`).
   PARAM_VOLTAGE_LIMIT:
     group: readback
     access: r
     value: mV, 0 = the supply voltage
-    saved: yes
+    saved: "yes"
     description: The voltage limit of the current loops (Send_Voltage_Limit, `#Vlim`).
   PARAM_BRAKE_COAST:
     group: readback
@@ -172,13 +172,13 @@ params:
     group: readback
     access: r
     value: ms, 0 = off
-    saved: yes
+    saved: "yes"
     description: The heartbeat interval (Send_Heartbeat_Setup).
   PARAM_KT:
     group: readback
     access: r
     value: float, Nm/A
-    saved: yes
+    saved: "yes"
     description: The torque constant (Send_Kt, `#Kt`, calibration).
   PARAM_BOARD_PRODUCT:
     group: readback
@@ -244,7 +244,7 @@ params:
     group: current
     access: r
     value: "0 not run, 1 measuring, 2 in use, 3 rejected (implausible), 4 interrupted (a command or an error came first), 5 measured, not in use"
-    saved: no
+    saved: "no"
     description: >
       The second zero measurement, made in idle after start-up with the bridge switching at 50 % duty. On the
       bench it made the current ripple worse, so it is measured and kept but not used unless 46 asks for it.
@@ -252,19 +252,19 @@ params:
     group: current
     access: rw
     value: "1 the zero measured with the bridge switching, 0 the bridge-off zero. Default 0"
-    saved: no
+    saved: "no"
     description: Which zero is in use. 1 takes effect only while 42 reads 5 (measured, not in use).
   PARAM_SENSE1_OFFSET_SW:
     group: current
     access: r
     value: counts from 2048
-    saved: no
+    saved: "no"
     description: The zero of channel 1 measured with the bridge switching.
   PARAM_SENSE2_OFFSET_SW:
     group: current
     access: r
     value: counts from 2048
-    saved: no
+    saved: "no"
     description: The zero of channel 2 measured with the bridge switching.
   PARAM_ZERO_TRIM1:
     group: current
@@ -284,13 +284,13 @@ params:
     group: current
     access: r
     value: 0.1 mA
-    saved: no
+    saved: "no"
     description: The 1st harmonic of the anti-cogging set before the last trim, the error the trim corrects.
   PARAM_TRIM_H1_AFTER:
     group: current
     access: r
     value: 0.1 mA
-    saved: no
+    saved: "no"
     description: The 1st harmonic after the last trim. A trim that does not lower it by 30 % is taken back.
   PARAM_CURRENT_BANDWIDTH:
     group: current
@@ -304,7 +304,7 @@ params:
     group: current
     access: rw
     value: "mA, -3000 to 3000 (outside: refused). Default 0"
-    saved: no
+    saved: "no"
     description: The d-axis current setpoint, as `#Id`. It makes no torque, only more current in the coils.
   PARAM_THETA_OFFSET:
     group: current
@@ -324,7 +324,7 @@ params:
     group: current
     access: rw
     value: "1 from the integer sine table, 0 from the float routine. Default 0"
-    saved: no
+    saved: "no"
     description: Where the transforms of every control loop take sin and cos from. The table was not faster on the bench.
 
   # ------------------------------------------------------------ speed estimate and the velocity loop
@@ -346,7 +346,7 @@ params:
     group: speed
     access: rw
     value: "Hz, 0-250 (outside: refused), 0 = off. Default 0"
-    saved: no
+    saved: "no"
     description: >
       The position input filter, position and PD modes: a critically damped filter between the host's position
       setpoints and the loops, which also makes the speed from them. Only for hosts that send positions without
@@ -355,7 +355,7 @@ params:
     group: speed
     access: rw
     value: "ticks, 0-2000 (outside: refused), 0 = off. Default 0"
-    saved: no
+    saved: "no"
     description: >
       Position mode: the velocity integral sees the position error less this band, so a holding motor stops
       pushing against a small error. It trades holding current for accuracy.
@@ -392,13 +392,13 @@ params:
     group: cogging
     access: rw
     value: "ticks/s, 100-20000 (clamped). Default 1500"
-    saved: no
+    saved: "no"
     description: The speed the identification turns at.
   PARAM_COGCAL_RIPPLE:
     group: cogging
     access: r
     value: 0.1 mA rms
-    saved: no
+    saved: "no"
     description: The cogging current the last identification found, rms.
 
   # ------------------------------------------------------------ encoder table
@@ -444,7 +444,7 @@ params:
     group: encoder
     access: r
     value: 0.1° electrical
-    saved: no
+    saved: "no"
     description: How far the last encoder-table run moved the electrical offset.
 
   # ------------------------------------------------------------ capture and histogram
@@ -452,31 +452,31 @@ params:
     group: capture
     access: rw
     value: "signal 0-18 (outside: 0). Default 4, speed"
-    saved: no
+    saved: "no"
     description: The signal of channel A, which is also the trigger channel.
   PARAM_CAPTURE_SOURCE_B:
     group: capture
     access: rw
     value: "signal 0-18 (outside: 0). Default 1, Iq"
-    saved: no
+    saved: "no"
     description: The signal of channel B.
   PARAM_CAPTURE_SOURCE_C:
     group: capture
     access: rw
     value: "signal 0-18 (outside: 0). Default 8, electrical angle"
-    saved: no
+    saved: "no"
     description: The signal of channel C.
   PARAM_CAPTURE_DIVIDER:
     group: capture
     access: rw
     value: "control loops per sample, 1-65535 (clamped). Default 1"
-    saved: no
+    saved: "no"
     description: One sample every N control loops of 160 µs.
   PARAM_CAPTURE_TRIGGER:
     group: capture
     access: rw
     value: "0 stop, 1 now, 2 on an error, 3 channel A rising through the level, 4 falling through it (outside: 0)"
-    saved: no
+    saved: "no"
     description: >
       1 to 4 clear the buffer and arm a capture; 0 stops one and keeps what was recorded. The error trigger fires
       when the error flag rises, a watchdog trip included; an error already present does not fire it.
@@ -484,49 +484,49 @@ params:
     group: capture
     access: rw
     value: "channel A's unit, -32768 to 32767 (saturated). Default 0"
-    saved: no
+    saved: "no"
     description: The level of triggers 3 and 4.
   PARAM_CAPTURE_PRETRIGGER:
     group: capture
     access: rw
     value: "samples, 0-1023 (clamped). Default 0"
-    saved: no
+    saved: "no"
     description: How many samples from before the trigger the capture keeps.
   PARAM_CAPTURE_STATE:
     group: capture
     access: r
     value: 0 idle, 1 armed, 2 recording, 3 done
-    saved: no
+    saved: "no"
     description: Where the capture stands.
   PARAM_CAPTURE_COUNT:
     group: capture
     access: r
     value: samples, 0-1024
-    saved: no
+    saved: "no"
     description: The samples readable with buffer kind 0.
   PARAM_CAPTURE_TRIGGER_INDEX:
     group: capture
     access: r
     value: sample index; -1 before a trigger
-    saved: no
+    saved: "no"
     description: Which sample of the read-out is the trigger sample.
   PARAM_HIST_X:
     group: capture
     access: rw
     value: "0 off, 1 electrical angle, 2 encoder (256 bins each; outside: 0)"
-    saved: no
+    saved: "no"
     description: 1 or 2 clear the histogram and start it; 0 stops it and keeps the data readable.
   PARAM_HIST_Y:
     group: capture
     access: rw
     value: "signal 0-18 (outside: 0). Default 3, Iq setpoint"
-    saved: no
+    saved: "no"
     description: The signal summed per bin. Set it before 34.
   PARAM_HIST_SAMPLES:
     group: capture
     access: r
     value: samples
-    saved: no
+    saved: "no"
     description: Samples summed since the start. The histogram stops by itself when one bin holds 65535.
   PARAM_CAPTURE_LENGTH:
     group: capture

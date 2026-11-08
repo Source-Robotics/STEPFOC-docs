@@ -82,6 +82,8 @@ def check_params(facts: dict, params: dict | None) -> None:
         if p.get("access") not in ACCESS:
             raise PluginError(f"parameters.yml: {name} access {p.get('access')!r} is not one of {sorted(ACCESS)}")
         for key in ("value", "saved", "description"):
+            if isinstance(p.get(key), bool):   # YAML reads a bare yes/no as a boolean: quote it
+                raise PluginError(f"parameters.yml: {name} {key} is a YAML boolean; write it in quotes")
             if not str(p.get(key, "")).strip():
                 raise PluginError(f"parameters.yml: {name} lacks {key}")
 
