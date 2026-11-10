@@ -32,7 +32,8 @@ issues:
     workaround: Keep the current limit your host sends within the motor's rating and 2800 mA.
     page: reference/can/gains-and-limits.md#send_limits
     title: Send_Limits
-    status: open
+    status: fixed
+    fixed_in: "109: Send_Limits stops the current limit at 2800 mA and ignores a negative value"
     since: 2026-11-04
 
   - id: KI-2
@@ -136,7 +137,7 @@ issues:
   - id: KI-11
     component: firmware
     summary: Only motion frames and answered status requests reset the watchdog. Setting frames (gains, limits, Idle,
-      Clear, Save) and UART commands do not, so a host that only configures the driver, or a terminal session with
+      Clear) and UART commands do not, so a host that only configures the driver, or a terminal session with
       a saved watchdog, ends in a watchdog error.
     workaround: While the watchdog runs, send a status request such as Send_Respond_Encoder_data within every watchdog
       period. Before you work over UART alone, set the watchdog to 0 over CAN and save.
@@ -170,7 +171,7 @@ issues:
   - id: KI-14
     component: firmware
     summary: "`#Mode` prints `Gripper mode` in voltage-torque mode (`#Uq`), and nothing at all in gripper mode, HALL
-      mode, the angle-offset search and open-loop steps (`#gosteps`)."
+      mode, the angle-offset search, open-loop steps (`#gosteps`) and the encoder-table run."
     workaround: In those modes go by the command you sent last, not by `#Mode`.
     page: reference/uart/utility.md
     title: "UART commands: status and utility"
@@ -190,7 +191,7 @@ issues:
 
   - id: KI-19
     component: firmware
-    summary: The encoder-table run that follows a calibration (parameter 56 = 2, the default) holds a field current
+    summary: The encoder-table run that follows every `#Cal` holds a field current
       of 80 % of the current limit for about 20 s. After `#Default` the limit is 1700 mA, so the coils then carry
       about 1.4 A, more than a smaller stepper is rated for.
     workaround: Set `#Ilim` for the motor before `#Cal` (a Motor GUI preset sets it). Calibration uses its own limit

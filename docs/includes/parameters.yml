@@ -442,11 +442,12 @@ params:
   PARAM_AFTER_CAL:
     group: encoder
     access: rw
-    value: "0 nothing, 1 anti-cogging, 2 encoder table then anti-cogging (outside: refused). Default 2 on a drive with no encoder block saved"
+    value: "0 nothing, 1 or 2 anti-cogging (outside: refused). Default 2 on a drive with no encoder block saved"
     saved: yes, encoder block
     description: >
-      What runs by itself after a successful calibration; the whole configuration is saved when it succeeds.
-      `#Calonly` skips it once. After `#Calangle`, any value but 0 identifies the anti-cogging again.
+      What follows a `#Calangle`: any value but 0 identifies the anti-cogging again and saves the whole
+      configuration. `#Cal` does not read it: it always runs the encoder table and the anti-cogging, and
+      `#Calonly` never does.
   PARAM_ENCAL_OFFSET:
     group: encoder
     access: r

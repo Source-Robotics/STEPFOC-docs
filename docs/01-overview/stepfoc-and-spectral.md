@@ -18,11 +18,11 @@ What this means in practice:
   pairs.
 - **Calibration differs.** A BLDC driver measures the motor's resistance and inductance and finds its pole pairs;
   STEPFOC cannot, so you enter the three values from the motor's datasheet before calibrating. See
-  [Motor parameters and calibration](../05-setup/calibration.md). From firmware 109 a STEPFOC calibration is
-  followed by the encoder table and the anti-cogging; on the Spectral Micro 109 they are there but do not run by
-  themselves yet.
-- **Some defaults differ.** The speed estimate, the commutation delay compensation and the velocity gains of
-  STEPFOC 109 were tuned on its bench; the Spectral Micro keeps its own until it is measured the same way.
+  [Motor parameters and calibration](../05-setup/calibration.md). From firmware 109 `#Cal` is followed by the
+  encoder table and the anti-cogging on both drivers.
+- **Some defaults differ.** Each driver's were measured on its own bench: the direct PLL speed estimate at 60 Hz
+  and 166 µs delay compensation here, 100 Hz and 234 µs on the Spectral Micro; velocity gains 0.02 / 0.001 here,
+  0.03 / 0.0003 there. STEPFOC brakes in idle by default, the Spectral Micro coasts.
 - **The motor terminals differ.** A+, A−, B+, B− for the two stepper coils instead of U, V, W.
 - **Some images on this site show a Spectral Micro.** Where a photo or a screenshot shows the BLDC board, the
   procedure is the same for STEPFOC.

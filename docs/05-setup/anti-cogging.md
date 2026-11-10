@@ -63,7 +63,8 @@ change of the current or velocity gains, identify it again.
 
 The once-per-electrical-turn part of the anti-cogging is mostly an error of the current-sense zero (on the bench
 1.6 mA of ripple per ADC count of zero error). The identification **with the trim** reads both zero errors from it,
-corrects the zeros, and identifies again on the corrected zeros. If the 1st harmonic did not drop by at least 30 %,
+corrects the zeros, and identifies again on the corrected zeros.
+If the 1st harmonic did not drop by at least 30 % and is still above 2.0 mA,
 the zeros go back and the anti-cogging is identified once more without the trim; the state then reads 11, done
 without the trim. A 1st harmonic under 1.5 mA is left alone, and one run moves a zero by at most 30 counts. The
 trims (parameters 59 and 60, up to ±60 counts) are saved with the encoder table and added to the zero the driver
@@ -73,7 +74,8 @@ measures at every start-up. On the bench drive the trim took the 1st harmonic fr
 
 The driver must be calibrated and without an error. Both runs keep the CAN watchdog fed while they go, end by
 holding the position the shaft reached, and stop at once when a host sends a command (a motion command, Idle) or
-an error comes up; nothing is saved then.
+an error comes up; nothing is saved then. While a run turns the motor a capture is not armed, and during the
+anti-cogging run parameters 34 and 35 refuse a write: the runs use the capture's memory and the histogram.
 
 | What | UART | CAN: Send_Parameter |
 |---|---|---|
@@ -83,7 +85,7 @@ an error comes up; nothing is saved then.
 | the anti-cogging, switched on | `#Cogcal` | 43 = 1 |
 | the anti-cogging, switched on and saved | `#Cogcal save` | 43 = 2 |
 | the anti-cogging with the trim | `#Cogcal trim` | 43 = 4 |
-| the anti-cogging with the trim, saved | — | 43 = 5 |
+| the anti-cogging with the trim, saved | `#Par 43,5` | 43 = 5 |
 | stop a run | `#Encal stop`, `#Cogcal stop` | 52 = 0, 43 = 0 |
 
 A save from a run is the whole configuration, as `#Save` writes it. After a change of the motor, the magnet or
@@ -107,7 +109,7 @@ In force:
   speed estimate: direct PLL, 60 Hz
   fast reading / fast PWM: on / on
   input filter: off; integral deadband: off
-  after a calibration (#Cal; #Calonly skips it): encoder table and anti-cogging, then save
+  after #Calangle (parameter 56): anti-cogging, then save
 ```
 
 (here with the values the bench drive measured). While a run goes, a line `running: encoder table` or
@@ -150,8 +152,8 @@ When a run fails:
 | | UART | CAN: Send_Parameter |
 |---|---|---|
 | the encoder table off / on | `#Encal off`, `#Encal on` | 53 = 0, 53 = 1 |
-| the anti-cogging off, harmonics, table | — | 37 = 0, 1, 2 |
-| how much of the anti-cogging | — | 38 = 0 to 200 (%) |
+| the anti-cogging off, harmonics, table | `#Par 37,0`, `#Par 37,1`, `#Par 37,2` | 37 = 0, 1, 2 |
+| how much of the anti-cogging | `#Par 38,` and the percentage | 38 = 0 to 200 (%) |
 
 `#Save` keeps the switches with the corrections. `#Default` clears both corrections and the trims.
 

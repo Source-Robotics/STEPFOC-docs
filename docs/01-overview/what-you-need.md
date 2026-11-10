@@ -47,8 +47,9 @@ wrong distance.
 
 ## A power supply
 
-12 to 29 V DC, 24 V recommended; see [Ratings and limits](../03-technical-data/ratings.md). Calibrate at 24 V:
-the motor constants come out wrong at a lower voltage. A bench supply with a current limit is the safest way to
+12 to 29 V DC, 24 V recommended; see [Ratings and limits](../03-technical-data/ratings.md). Calibrate at 24 V.
+From firmware 109 the motor constants no longer depend on the supply: the spins that measure them run at their own
+6 V limit. A bench supply with a current limit is the safest way to
 start.
 
 ## Software

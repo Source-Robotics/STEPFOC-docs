@@ -31,9 +31,10 @@ Send_Save_config keeps it, and a kept watchdog runs from power-up: a host that d
 time finds the driver in watchdog error and clears it with Send_Clear_Error.
 
 What starts the timer again: Send_data_pack_1, Send_data_pack_PD, Send_data_pack_HALL, Send_gripper_data_pack, the
-status requests (Send_Respond_…), Send_Get_Parameter and Send_Buffer_Read. What does not: the setting frames
-(gains, limits, Idle, Clear, Save, Settings, Send_Parameter, Send_Watchdog itself) and every UART command
-(known issue KI-11). While the encoder table or the anti-cogging is measured, the driver feeds it itself.
+status requests (Send_Respond_…), Send_Get_Parameter and Send_Buffer_Read. From firmware 109 Send_Watchdog
+(or parameter 6) starts a fresh window, and Send_Save_config starts the timer again too. What does not: the other
+setting frames (gains, limits, Idle, Clear, Settings, Send_Parameter) and every UART command (known issue KI-11).
+While the encoder table or the anti-cogging is measured, the driver feeds it itself.
 
 ## What a trip does
 

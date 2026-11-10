@@ -62,7 +62,8 @@
 
 **Current loop bandwidth** (`#Cbw`, parameter 49)
 :   How fast the current loop follows a change of its setpoint, in Hz. The current loop gains follow from it and
-    the motor's resistance and inductance: Kp = ω·L, Ki = ω·R. 160 Hz by default from firmware 109.
+    the motor's resistance and inductance: Kp = ω·L, Ki = ω·R. The firmware keeps Ki per control loop: `Kiiq` is
+    about ω·R × 160 µs. 160 Hz by default from firmware 109.
 
 **Current-sense zero**
 :   The reading of a current sensor with no current flowing. From firmware 109 the driver measures it at every

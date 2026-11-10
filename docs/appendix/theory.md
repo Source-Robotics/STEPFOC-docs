@@ -36,12 +36,15 @@ not from a count of pulses.
 Calibration supplies the constants this needs. The pole pairs come from the step angle. The current loop gains
 follow from the coil's resistance $R$ and inductance $L$ and the chosen bandwidth $\omega_c = 2\pi f_c$ (`#Cbw`):
 $K_p = L\,\omega_c$ and $K_i = R\,\omega_c$ cancel the coil's electrical time constant and give a first-order
-response at $f_c$. The firmware computes a discrete-time form of these and divides $K_p$ by an empirical factor
-of 7, so its gains are softer than the formula. The angle offset is found by locking the rotor with the stator
+response at $f_c$. The firmware computes a discrete-time form of these. It keeps $K_i$ per control loop: `Kiiq`
+is about $R\,\omega_c$ × 160 µs, so do not enter $R\,\omega_c$ as `#Kiiq`. Firmware 108 and older divided both
+gains by 7, a loop of about 70 Hz; 109 uses the formula at 160 Hz.
+The angle offset is found by locking the rotor with the stator
 field and reading where it settles, then refined by a sweep for the offset at which the motor turns alike in both
 directions. In theory the torque constant follows from the velocity constant: in SI units $K_t = 1/K_V$ (with
 $K_V$ in rpm/V, $K_t \approx 9.55/K_V$ Nm/A). The firmware estimates $K_V$ from the speed the motor reaches at
-500 mA per volt of supply and uses $K_t = 8.27/K_V$; treat both as estimates.
+500 mA per volt of a fixed 6 V limit (the supply voltage, if that is lower) and uses $K_t = 8.27/K_V$; treat
+both as estimates.
 
 ## The cascade of loops
 
@@ -87,6 +90,11 @@ $$
 with the stiffness $K_P$ in Nm/rad, the damping $K_D$ in Nm·s/rad, and a current feedforward $I_{ff}$ for a known
 load such as gravity. The torque is produced by the current loop ($I_q = \tau / K_t$), which is what makes FOC a
 prerequisite: a stepper driven blindly cannot produce a commanded torque.
+
+The firmware's gains are in its own units. `KP` is in mA per encoder tick and `KD` in mA per tick/s (0.14 and
+0.0028 by default). `KP` times the position error in ticks, plus `KD` times the speed error in ticks/s, plus the
+feedforward, is the Iq setpoint in mA. A stiffness $K$ in Nm/rad is `KP` = $K$ × 0.3835 ÷ $K_t$, with $K_t$ in
+Nm/A. A damping in Nm·s/rad converts to `KD` the same way.
 
 Pushed off its setpoint by an external force $F$, the motor yields by $\Delta\theta = \tau_{ext}/K_P$ and pushes
 back with that force; let go, it returns, with the damper settling the motion. A small $K_P$ makes a soft joint,

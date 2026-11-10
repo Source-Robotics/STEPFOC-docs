@@ -25,6 +25,18 @@ The same release adds `Spectral_BLDC.helpers`, blocking functions that send a re
 control loop. The library's `examples` folder shows them at work: `parameters_and_status.py`, `capture.py`,
 `calibration_features.py`, `watchdog.py` and `sound.py`.
 
+The same release is stricter about what it sends and reads:
+
+- `Send_Parameter` takes the value itself. Parameters 8 to 16 and 20 are sent as floats
+  (`Send_Parameter(16, 1500)` is 1500 mA); every other parameter takes a whole number, and anything else raises
+  `ValueError`.
+- A position or a speed that does not fit 24 bits, or a current that does not fit 16 bits, raises `ValueError`;
+  1.20 wrapped it round. `Send_Voltage_Limit` raises `ValueError` outside 0 to 60000 mV.
+- A node ID must be 0 to 15.
+- `UnpackData` ignores frames from other nodes, remote frames and extended frames.
+- Parameters 79, 80 and 84 to 87 read as unsigned numbers.
+- A send that fails returns `False` and is logged once.
+
 ## Receiving
 
 `CanCommunication.receive_can_messages(timeout)` returns `(message, ids)`: the raw `python-can` message and a tuple

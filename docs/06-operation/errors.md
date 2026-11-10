@@ -25,7 +25,7 @@ In error mode the LED does not flash: it stays on, as in the photo on the right.
 | Encoder | `Encoder error` | the encoder reports no magnet: missing, too far away or too weak | magnet distance and type, see [The encoder magnet](../04-mounting/magnet.md) |
 | Driver | `Driver error (undervoltage, thermal shutdown, or overcurrent)` | reserved: this firmware never raises it, because it does not monitor the driver stage | — |
 | Velocity | `Velocity error` | the speed passed 30,000,000 ticks/s, a fixed threshold that `#Vlimit` does not change; in practice only a runaway reaches it | check the magnet and the calibration |
-| Temperature | `Temp error` | the thermistor reads more than `#Tlim` (75 °C by default), with `#Term 1` | let the motor cool; lower the current limit |
+| Temperature | `Temp error` | the thermistor reads more than `#Tlim` (75 °C by default) or less than −20 °C, with `#Term 1`. A thermistor that is not plugged in reads far below −20 °C | let the motor cool; lower the current limit |
 | E-stop | `Received ESTOP command` | Send_ESTOP was received | clear it when it is safe |
 | Watchdog | `Watchdog error` | no motion frame or answered request within the watchdog time (Send_Watchdog); what the motor does then is the watchdog's action, see [The watchdog](watchdog.md) | the host stopped sending; fix the host, then clear |
 | Wrong product | `Wrong firmware for this board (product lock)` | from firmware 109: this board was calibrated by the other product (a Spectral Micro firmware on a STEPFOC, or the other way round), so the firmware drives nothing ([The product lock](diagnostics.md#the-product-lock)) | flash the right firmware; it does not clear otherwise |

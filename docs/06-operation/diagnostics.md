@@ -22,11 +22,16 @@ what to do about each are on [Errors and recovery](errors.md).
 | `speed estimate:` | `moving average`, `PLL, … Hz` or `direct PLL, … Hz` ([The speed estimate](../05-setup/tuning.md#the-speed-estimate)) |
 | `fast reading / fast PWM:` | the two register paths of the control loop, `on` or `off` |
 | `input filter:`, `integral deadband:` | parameters 74 and 75, or `off` |
-| `after a calibration` | what parameter 56 makes follow a `#Cal` |
+| `after #Calangle (parameter 56):` | what follows a `#Calangle`: `anti-cogging, then save` or `nothing` |
 | `running:` | only while one runs: `calibration`, `encoder table`, `anti-cogging identification`, or `the runs after the calibration` |
 
 Before that section `#Info` prints, beside what it printed before:
 
+- `Build:` the git commit the firmware was built from, 7 hex digits. A `+` after it means it was built with
+  uncommitted changes. Parameter 84 holds the same, and parameter 85 the build time in Unix seconds.
+- `Board ID:` the chip's unique number, folded into 8 hex digits. It never changes. Also parameter 86.
+- `Calibration ID:` a new number at every successful `#Cal`, `#Calonly` or `#Calangle`, in 8 hex digits. Save keeps
+  it, and `#Default` sets it back to 0. Also parameter 87.
 - `CAN RX overruns` and `CAN TX dropped`: frames the driver lost because its receive buffer was full, and answers
   it gave up after waiting 1 ms for a free transmit mailbox. Both should stay 0; they count from power-up. From
   firmware 109 the CAN controller passes only the frames addressed to the driver's own node ID, and the driver
@@ -35,6 +40,11 @@ Before that section `#Info` prints, beside what it printed before:
 - `Current sense zero:` the zeros in use, in ADC counts from 2048, measured at start-up with the bridge off (one
   count is about 1.6 mA), and what the second measurement with the bridge switching found. A zero more than 200
   counts from 2048 is not trusted: the driver then uses 2048 and says `not measured or out of range`.
+  The current sensors need the motor supply. If the driver starts without it (USB plugged in before the supply),
+  it waits up to half a second for the supply, then uses 2048 and says
+  `no motor supply at start-up: 2048 used; measured once the supply is there`. When the supply comes, the driver
+  measures the zero by itself at rest, coasting for about 80 ms even if it is set to brake, and the line shows the
+  new zeros. The Vbus error the late supply latched stays until `#Clear`.
 - `Tool ID`, `Watchdog: … ms, action …, fallback …`, `Settings block 2: ok` and `Anti-cogging: …, scale … %` with
   whether it is saved.
 
@@ -100,6 +110,7 @@ The capture records three signals inside the control loop, sample by sample, 102
 loop saw and did, which a host polling over the bus cannot see. Parameters 24 to 33 set it up and report on it,
 Send_Buffer_Read with kind 0 reads it ([Reading the capture](../reference/can/parameters.md#reading-the-capture);
 the signals are listed under [Capture and histogram](../reference/can/parameters.md#capture-and-histogram)).
+While the encoder table or the anti-cogging run turns the motor, a capture is not armed: the runs use its memory.
 
 A step response, 1024 samples of speed, current and position error, one every 2 loops (0.33 s):
 
@@ -150,4 +161,5 @@ The histogram adds one signal into 256 bins over the electrical angle or over on
 until it is stopped or a bin holds 65535 samples (about 45 minutes): the mean per bin shows what repeats with the
 angle, such as the cogging current at a steady speed. Parameter 35 picks the signal, 34 starts it (1 electrical
 angle, 2 motor turn) and stops it (0), 36 counts the samples, and Send_Buffer_Read with kind 1 reads the count and
-the sum of each bin. The anti-cogging identification uses it the same way.
+the sum of each bin. The anti-cogging identification uses it the same way; while it runs, parameters 34 and 35
+refuse a write.

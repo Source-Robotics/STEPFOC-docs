@@ -61,9 +61,9 @@ raises it again on every control cycle, and `#Error` prints only `In error state
 (`#Gripstop 0`, or a Send_gripper_data_pack with the bit 0), then `#Clear` or Send_Clear_Error.
 
 !!! warning "Current"
-    The firmware does not limit the current you give a gripper move. The safe range depends on the gripper's
-    mechanics and motor; the gripper's manual gives it. The driver is rated for 2.8 A, but nothing enforces that
-    here: a gripper move uses the current as sent.
+    From firmware 109 a gripper move uses the magnitude of the current you give it, at most the driver's
+    2800 mA; 108 and older used it as sent. The safe range depends on the gripper's mechanics and motor; the
+    gripper's manual gives it.
 
 ## Where the details are
 

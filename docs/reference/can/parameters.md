@@ -1,6 +1,6 @@
 # Parameters and buffers
 
-From firmware 109 a setting that has no command of its own is a **parameter**: a number from 1 to 79 behind one
+From firmware 109 a setting that has no command of its own is a **parameter**: a number from 1 to 87 behind one
 pair of commands, Send_Parameter (ID 36) to set it and Send_Get_Parameter (ID 37) to read it, answered with
 Respond_Parameter (ID 38). The identifier has room for only 64 command IDs, so new settings no longer use them up.
 Parameter numbers are permanent: a number is never given a new meaning. Number 73 is not used and stays free.
@@ -23,7 +23,7 @@ import Spectral_BLDC as Spectral
 comms = Spectral.CanCommunication(bustype='slcan', channel='COM41', bitrate=1000000)
 motor = Spectral.SpectralCAN(node_id=0, communication=comms)
 
-motor.Send_Parameter(56, 0)                # nothing runs by itself after the next calibration
+motor.Send_Parameter(56, 0)                # nothing runs by itself after the next #Calangle
 motor.Send_Get_Parameter(56)               # read it back
 message, ids = comms.receive_can_messages(timeout=0.1)
 if message is not None:
@@ -33,7 +33,9 @@ motor.Send_Save_config()                   # keep it over a power cycle
 ```
 
 `Send_Parameter`, `Send_Get_Parameter` and the buffer calls come with the release of the Spectral-BLDC library
-after 1.20; with 1.20, send the frames yourself (`python-can`, the layouts below).
+after 1.20; with 1.20, send the frames yourself (`python-can`, the layouts below). `Send_Parameter` takes the
+value itself: a gain or a limit (8 to 16 and 20) is sent as a float, so `motor.Send_Parameter(16, 1500)` sets a
+current limit of 1500 mA; every other parameter takes a whole number.
 
 ## The commands
 
@@ -69,7 +71,7 @@ Bit 0 is the least significant.
 | 13 | sin and cos come from the integer table (parameter 65) |
 | 14 | the position input filter is on (parameter 74 not 0) |
 | 15 | the velocity-integral deadband is on (parameter 75 not 0) |
-| 16-17 | parameter 56: 0 nothing, 1 anti-cogging, 2 encoder table and anti-cogging after a calibration |
+| 16-17 | parameter 56: what follows a `#Calangle`, 0 nothing, 1 or 2 the anti-cogging |
 | 20 | a calibration is running (also `#Calangle`'s search) |
 | 21 | the encoder table is being measured |
 | 22 | the anti-cogging is being identified |

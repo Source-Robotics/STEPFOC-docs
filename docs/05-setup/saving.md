@@ -68,11 +68,12 @@ firmware 106 the configuration is in blocks, each with its own checksum; firmwar
 |---|---|---|---|
 | calibration | 60-188, reserved 212-236 | 208 | pole pairs, R, L, Kt, KV, flux linkage, angle offset, phase order, commutation direction, the current gains |
 | settings 1 | 44-180 | 192 | CAN ID, limits, the other gains, watchdog, heartbeat, thermistor, LED, gripper flag |
-| settings 2 (109) | 260-312 | 256 | tool id, watchdog fallback, the product stamp; reserved slots |
+| settings 2 (109) | 260-312 | 256 | tool id, watchdog fallback, the product stamp, the calibration ID; reserved slots |
 | anti-cogging (109) | 324-879 | 320 | the harmonics, the table, mode and scale |
 | encoder table (109) | 884-1147 | 880 | the table, its on/off switch, parameter 56, the current-sense zero trims |
 
-At power-up a block whose checksum does not match gets its defaults, alone, and the others stay; a settings
+At power-up a block whose checksum does not match is read again, up to three times. If it still does not match,
+it gets its defaults, alone, and the others stay; a settings
 reset keeps a valid CAN ID. A board saved by firmware 101 to 105, from before the checksums, is trusted when the
 first 109 start finds anything it ever saved, and sealed with checksums then. The new blocks need the chip's upper
 banks; on a smaller chip they keep their defaults in RAM and are not saved, which `#Info` says
@@ -84,7 +85,8 @@ to an older firmware is safe: the first two blocks are unchanged, and older firm
 
 The state Motor GUI shows is what is in the EEPROM and what the driver measures. In a terminal it takes three
 commands: `#Info` prints the hardware and firmware version, the CAN ID, the calibration state and the motor
-parameters (pole pairs, resistance, inductance, Kt and KV), and from firmware 109 the tool id, the watchdog, the
-EEPROM blocks and, at its end, what is in force; `#Param` prints the gains and limits; `#Error` the active errors.
+parameters (pole pairs, resistance, inductance, Kt and KV), and from firmware 109 the build, the board ID and the
+calibration ID, the tool id, the watchdog, the EEPROM blocks and, at its end, what is in force;
+`#Param` prints the gains and limits; `#Error` the active errors.
 They are the first thing to look at when something is off, and the thing to copy into a bug report.
 [Status and diagnostics](../06-operation/diagnostics.md) explains the new lines.

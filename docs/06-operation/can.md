@@ -40,7 +40,7 @@ single precision. Flags inside a byte are numbered from the most significant bit
 
 Send Send_data_pack_1 at a fixed rate, 100 Hz to 1 kHz, with the setpoint for this cycle; read Respond_data_pack_1
 for the position, speed and current of the last cycle. Every valid motion frame, and every request the driver
-answers, resets the watchdog; the setting frames (gains, limits, Idle, Clear, Save, Send_Parameter) do not. So with
+answers, resets the watchdog; the setting frames (gains, limits, Idle, Clear, Send_Parameter) do not. So with
 Send_Watchdog set to a few cycle times the motor stops when the host stops; from firmware 109 it can also hold its
 position, brake, coast or let a joint down slowly ([The watchdog](watchdog.md)). A watchdog kept with
 Send_Save_config runs from power-up: a host that does not start its loop within the watchdog time finds the driver

@@ -135,9 +135,12 @@ the supply, the parameters you entered, the open-loop spin, the angle offset, th
 
 ```
 Calibration success!
-Save config with #Save
+Next, by itself: the encoder table, then anti-cogging (about a minute; keep the shaft free). Everything is saved when they finish (#Encal state, #Cogcal state)
 Going to idle!
 ```
+
+Keep the shaft free for about a minute more: the driver goes on to measure the encoder table and the anti-cogging,
+and saves everything when they succeed.
 
 A failed step names itself, and the log ends with `Calibration failed!`. `Magnet test: Failed` is the magnet;
 `Phase order is wrong!` means the motor did not turn or did not respond: check the four wires, the supply, and

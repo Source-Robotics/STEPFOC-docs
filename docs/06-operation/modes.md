@@ -114,4 +114,4 @@ None of these settings is saved.
 `#Mode` prints the mode: `Idle mode`, `Position control`, `Speed control`, `Current control`, `PD control`,
 `Open loop`, `Gripper mode` or `Gripper calib mode`. In this firmware release the voltage-torque mode reads
 `Gripper mode` too (a leftover label), and HALL mode, the angle-offset search (`#Calangle`), open-loop steps
-(`#gosteps`) and gripper mode print nothing. The behaviour of the motor is the reliable check there.
+(`#gosteps`), gripper mode and the encoder-table run print nothing. The behaviour of the motor is the reliable check there.

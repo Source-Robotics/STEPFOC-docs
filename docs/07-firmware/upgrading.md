@@ -70,12 +70,14 @@ so does `#Encal all` without a calibration.
 2. Check that the current limit suits the motor (`#Ilim`), then calibrate, with the shaft free: `#Cal`. The
    encoder table (at 80 % of the current limit), the anti-cogging and the trim follow, and everything is saved
    (about two minutes in all).
-3. Set the velocity gains, for example `#Kpv 0.02` and `#Kiv 0.001`, then `#Save`. (Calibration puts the
+3. Set the velocity gains, for example `#Kpv 0.02` and `#Kiv 0.001` (a 21.5 mm stepper overshot 95 % at these on
+   the bench; its presets use `#Kpv 0.014` and `#Kiv 0.00014`), then `#Save`. (Calibration puts the
    current limit that was in force back when it ends; set `#Ilim` for your motor before step 2 if it is not.)
 4. Check `#Info`: `encoder table: on`, `anti-cogging: on (harmonics), saved`.
 
-With Motor GUI's presets: apply the preset first, then calibrate, then set the velocity gains. A preset writes its
-own current and velocity gains, so a preset applied after the calibration puts the old current gains back.
+With Motor GUI's presets: apply the preset first, then calibrate, then set the velocity gains. On firmware 109 a
+preset writes the current gains of a 160 Hz loop for its own R and L, the same a calibration computes from them,
+and its own velocity gains.
 
 On a robot whose joints cannot turn freely, neither the calibration nor the runs after it can be made in place.
 There skip step 2: the drive keeps the calibration it has, the new speed estimate, the delay compensation and the

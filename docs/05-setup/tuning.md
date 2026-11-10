@@ -11,13 +11,14 @@ Set the current limit to the rated phase current of your motor in mA (the datash
 ratings are in [Tested motors](../03-technical-data/tested-motors.md)). It is 1700 mA after `#Default`;
 calibration uses its own 1600 mA for its steps and, from firmware 109, puts your limit back when it ends. Set it
 before you calibrate: the encoder table that follows a calibration runs at 80 % of it. `#Ilim` clamps the limit to
-the driver's 2800 mA. The
+the driver's 2800 mA and takes the magnitude of a negative number. The
 firmware does not trip on phase current by itself and does not monitor the driver stage. A limit above the motor's
 rating overheats the motor.
 
-!!! warning "Over CAN the limit is not clamped"
-    Send_Limits stores the current limit as sent, without the 2800 mA clamp of `#Ilim`. A host program must keep
-    it within the motor's rating and 2800 mA.
+!!! note "Over CAN"
+    From firmware 109 Send_Limits stops the current limit at 2800 mA, as `#Ilim` does, and ignores a negative
+    value. Firmware 108 and older stored it as sent (known issue KI-1). A host program must still keep it within
+    the motor's rating.
 
 === "Motor GUI"
     In the limits set the current limit, then **Save**.
@@ -42,9 +43,10 @@ Tune from the inside out: the current loop first, then velocity, then position. 
 
 === "Motor GUI"
     The gains are in the settings: change one, *Apply gains*, command a move with the jog controls and read the
-    response on the plots. *Apply preset* loads a starting set for a kind of motor, its own current and velocity
-    gains included: apply a preset before you calibrate, so that the calibration computes the current gains, and
-    set the velocity gains after it. **Save** when you are done.
+    response on the plots. *Apply preset* loads a starting set for a kind of motor: a product preset writes its
+    own current and velocity gains; the *Generic motor* presets set soft limits and velocity gains and leave the
+    current gains to `#Cbw` and the calibration. Apply a preset before you calibrate, so that the calibration
+    computes the current gains, and set the velocity gains after it. **Save** when you are done.
 
 === "Terminal"
     Each gain is a command: `#Kpiq 0.5`, `#Kpv 0.02`, …, then `#Save`. Command a move with `#Iq`, `#V` or `#P`
@@ -54,8 +56,10 @@ Tune from the inside out: the current loop first, then velocity, then position. 
 
 The current loop is a PI controller that turns a current request into a voltage. Its gains `Kpiq` and `Kiiq`
 follow from the motor's resistance R, its inductance L and one number, the bandwidth: Kp = ω·L and Ki = ω·R, with
-ω = 2π × the bandwidth. The PI then cancels the coil's own lag, and the current follows a request like a first-order
-filter at that bandwidth. Calibration computes them this way at 160 Hz, the default; so does setting the bandwidth:
+ω = 2π × the bandwidth. The firmware keeps Ki per control loop: `Kiiq` is about ω·R × 160 µs. For 1.1 Ω, 2.6 mH
+and 160 Hz that gives `Kpiq` 2.70 and `Kiiq` 0.177. Do not enter ω·R as `#Kiiq`. The PI then cancels the coil's
+own lag, and the current follows a request like a first-order filter at that bandwidth. Calibration computes
+them this way at 160 Hz, the default; so does setting the bandwidth:
 
 === "Terminal"
     ```
@@ -86,7 +90,8 @@ The firmware's start values are `Kpv` 0.02 and `Kiv` 0.001, tuned on the bench w
 estimate below: it vibrated at `Kpv` 0.056, and 0.02 is about half of that; `Kiv` rang at 0.004, and 0.001 halved
 the speed ripple at 300 to 1500 ticks/s. `#Default` and a settings reset write the same values. A drive saved
 with older firmware keeps its saved gains after an update (typically 0.007 and 0.0005): set `#Kpv 0.02` and
-`#Kiv 0.001` and `#Save`. To tune for your motor and load:
+`#Kiv 0.001` and `#Save` (a 21.5 mm stepper overshot 95 % at these on the bench; its presets use `#Kpv 0.014`
+and `#Kiv 0.00014`). To tune for your motor and load:
 
 1. Raise `Kpv` until the motor vibrates at a steady speed command, then take about half of it.
 2. Raise `Kiv` slowly until the speed rings after a change, then back off well below that. `Kiv` is an integrator:
@@ -153,8 +158,10 @@ Two settings for special cases, both off by default and not kept by Save:
 
 ![The impedance loop: a spring (KP) and a damper (KD) around the position setpoint, plus a current feedforward.](../assets/PDloop.webp){ width="800" }
 
-In PD mode the motor behaves like a spring and a damper: the torque is `KP × (setpoint − position) + KD × (speed
-setpoint − speed) + feedforward current`. Set `KP` and `KD` (the gains, or `#KP`, `#KD`, or Send_PD_Gains), then
+In PD mode the motor behaves like a spring and a damper: the current setpoint is
+`KP × (setpoint − position) + KD × (speed setpoint − speed) + feedforward current`, in mA, with the position in
+ticks and the speed in ticks/s. So `KP` is in mA per tick and `KD` in mA per tick/s.
+Set `KP` and `KD` (the gains, or `#KP`, `#KD`, or Send_PD_Gains), then
 command with `#PD`, `#PDV` and `#PDI` or Send_data_pack_PD. Start with a small `KP` and `KD` of 0, raise `KP` until
 the motor holds position firmly, then add `KD` until it stops ringing. The [theory corner](../appendix/theory.md)
 explains the loop.
