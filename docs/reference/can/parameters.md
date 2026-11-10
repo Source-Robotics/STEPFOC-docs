@@ -32,10 +32,9 @@ print(motor.parameters.get(56))
 motor.Send_Save_config()                   # keep it over a power cycle
 ```
 
-`Send_Parameter`, `Send_Get_Parameter` and the buffer calls come with the release of the Spectral-BLDC library
-after 1.20; with 1.20, send the frames yourself (`python-can`, the layouts below). `Send_Parameter` takes the
-value itself: a gain or a limit (8 to 16 and 20) is sent as a float, so `motor.Send_Parameter(16, 1500)` sets a
-current limit of 1500 mA; every other parameter takes a whole number.
+`Send_Parameter`, `Send_Get_Parameter` and the buffer calls need the Spectral-BLDC library 1.21 or newer.
+`Send_Parameter` takes the value itself: a gain or a limit (8 to 16 and 20) is sent as a float, so
+`motor.Send_Parameter(16, 1500)` sets a current limit of 1500 mA; every other parameter takes a whole number.
 
 ## The commands
 

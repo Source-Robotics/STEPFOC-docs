@@ -269,12 +269,32 @@
      "Voltage_CAN"
     ]
    },
+   "PARAM_BOARD_ID": {
+    "empty": false,
+    "lengths": [],
+    "responds": []
+   },
    "PARAM_BOARD_PRODUCT": {
     "empty": false,
     "lengths": [],
     "responds": []
    },
    "PARAM_BRAKE_COAST": {
+    "empty": false,
+    "lengths": [],
+    "responds": []
+   },
+   "PARAM_BUILD_COMMIT": {
+    "empty": false,
+    "lengths": [],
+    "responds": []
+   },
+   "PARAM_BUILD_TIME": {
+    "empty": false,
+    "lengths": [],
+    "responds": []
+   },
+   "PARAM_CALIBRATION_ID": {
     "empty": false,
     "lengths": [],
     "responds": []
@@ -525,7 +545,7 @@
     "responds": []
    },
    "PARAM_WD_TIME": {
-    "empty": true,
+    "empty": false,
     "lengths": [],
     "responds": []
    }
@@ -1034,7 +1054,7 @@
     "name": "PARAM_ENCAL_ONCE"
    },
    {
-    "comment": "what runs after a successful calibration: AFTER_CAL_* (saved with the table)",
+    "comment": "what follows a #Calangle: 0 nothing, else the anti-cogging (saved with the table); #Cal does not read it",
     "id": 56,
     "name": "PARAM_AFTER_CAL"
    },
@@ -1169,6 +1189,26 @@
     "name": "PARAM_STACK_UNUSED"
    },
    {
+    "comment": "R the git commit it was built from: 7 hex digits; bit 28 = with uncommitted changes",
+    "id": 84,
+    "name": "PARAM_BUILD_COMMIT"
+   },
+   {
+    "comment": "R when it was built, Unix seconds UTC",
+    "id": 85,
+    "name": "PARAM_BUILD_TIME"
+   },
+   {
+    "comment": "R this board: the chip's unique number folded into 32 bits; never changes",
+    "id": 86,
+    "name": "PARAM_BOARD_ID"
+   },
+   {
+    "comment": "R a new random number at every successful calibration, saved by #Save; 0 none yet",
+    "id": 87,
+    "name": "PARAM_CALIBRATION_ID"
+   },
+   {
     "comment": "write 1: identify the anti-cogging on the drive, 2: and save, 0: abort; read: COGCAL_*",
     "id": 43,
     "name": "PARAM_COGCAL"
@@ -1264,7 +1304,7 @@
    }
   }
  },
- "commit": "22b3c396be23",
+ "commit": "56741ac67678",
  "defaults": [
   {
    "after_default": "111 in the EEPROM, not read back",
@@ -1467,6 +1507,14 @@
    "value": "0"
   },
   {
+   "after_default": "\u2014",
+   "comment": "largest gap between runs of the same direction, % of the mean",
+   "name": "KV_spread_pct",
+   "saved": "no",
+   "setting": false,
+   "value": "0"
+  },
+  {
    "after_default": "75",
    "comment": "Max temperature in degrees",
    "name": "Max_temperature",
@@ -1559,6 +1607,14 @@
    "comment": "after hold/descend: 0 legacy, 2 brake, 3 coast",
    "name": "wd_after_action",
    "saved": "yes",
+   "setting": true,
+   "value": "0"
+  },
+  {
+   "after_default": "0 in the EEPROM, not read back",
+   "comment": "parameter 87: new at every successful calibration",
+   "name": "calibration_id",
+   "saved": "written, not read back",
    "setting": true,
    "value": "0"
   },
@@ -1718,6 +1774,14 @@
    "after_default": "\u2014",
    "comment": "the start-up zero was measured and within SENSE_ZERO_MAX_DEV",
    "name": "sense_zero_ok",
+   "saved": "no",
+   "setting": false,
+   "value": "0"
+  },
+  {
+   "after_default": "\u2014",
+   "comment": "no motor supply at start-up: the zero is measured once it comes",
+   "name": "sense_zero_wait_vbus",
    "saved": "no",
    "setting": false,
    "value": "0"
@@ -2236,6 +2300,46 @@
   },
   {
    "after_default": "\u2014",
+   "comment": "why the last alignment gave up: 0 it did not, 1 timeout, 2 did not turn, 3 wrong way",
+   "name": "Align_fail_reason",
+   "saved": "no",
+   "setting": false,
+   "value": "0"
+  },
+  {
+   "after_default": "\u2014",
+   "comment": "ticks/s the last alignment check measured under +Iq",
+   "name": "Align_verify_speed",
+   "saved": "no",
+   "setting": false,
+   "value": "0"
+  },
+  {
+   "after_default": "\u2014",
+   "comment": "how many times that check flipped the offset by 180 degrees",
+   "name": "Align_flips",
+   "saved": "no",
+   "setting": false,
+   "value": "0"
+  },
+  {
+   "after_default": "\u2014",
+   "comment": "the offsets from the two approaches, radians",
+   "name": "Align_off_a",
+   "saved": "no",
+   "setting": false,
+   "value": "0"
+  },
+  {
+   "after_default": "\u2014",
+   "comment": "",
+   "name": "Align_off_b",
+   "saved": "no",
+   "setting": false,
+   "value": "0"
+  },
+  {
+   "after_default": "\u2014",
    "comment": "",
    "name": "Velocity_bwd",
    "saved": "no",
@@ -2246,6 +2350,14 @@
    "after_default": "\u2014",
    "comment": "",
    "name": "Align_stage",
+   "saved": "no",
+   "setting": false,
+   "value": "0"
+  },
+  {
+   "after_default": "\u2014",
+   "comment": "a calibration was ended from outside (an E-stop): the alignment starts from its first stage next time",
+   "name": "Align_restart",
    "saved": "no",
    "setting": false,
    "value": "0"
@@ -2707,11 +2819,6 @@
    "value": "0"
   }
  ],
- "prerelease": {
-  "commit": "22b3c396be23",
-  "firmware_version_in_source": "109",
-  "ref": "22b3c39"
- },
  "tag": "V109",
  "uart": {
   "accepted": [],
@@ -2951,24 +3058,32 @@
    {
     "arg": "",
     "comment": "Go to idle state",
-    "kind": "Action",
-    "mode": "idle",
+    "kind": "Get",
+    "mode": "",
     "name": "Idle",
-    "response": "Idle"
+    "response": "Cal: not started, the E-stop is latched (#Clear first)"
    },
    {
     "arg": "",
-    "comment": "Enter calibration mode #Cal: the calibration, then what parameter 56 adds (STEPFOC default: the encoder table and the anti-cogging, then save); #Calonly: the calibration alone (batch 20)",
-    "kind": "Action",
+    "comment": "Go to idle state",
+    "kind": "Get",
     "mode": "",
+    "name": "Calonly",
+    "response": "Cal: not started, the E-stop is latched (#Clear first)"
+   },
+   {
+    "arg": "",
+    "comment": "",
+    "kind": "Action",
+    "mode": "idle",
     "name": "Cal",
     "response": ""
    },
    {
     "arg": "",
-    "comment": "Enter calibration mode #Cal: the calibration, then what parameter 56 adds (STEPFOC default: the encoder table and the anti-cogging, then save); #Calonly: the calibration alone (batch 20)",
+    "comment": "",
     "kind": "Action",
-    "mode": "",
+    "mode": "idle",
     "name": "Calonly",
     "response": ""
    },
@@ -2978,7 +3093,7 @@
     "kind": "Action",
     "mode": "angle-offset calibration",
     "name": "Calangle",
-    "response": "Idle"
+    "response": "Calangle: not started, the drive is in error (#Error, #Clear)"
    },
    {
     "arg": "float",
@@ -3255,7 +3370,7 @@
    {
     "arg": "",
     "comment": "",
-    "kind": "Action",
+    "kind": "Set/Get",
     "mode": "",
     "name": "Encal",
     "response": "Encoder table:"
@@ -3263,7 +3378,7 @@
    {
     "arg": "",
     "comment": "On-drive anti-cogging identification (cogcal.h): #Cogcal runs it, #Cogcal save also saves, #Cogcal stop aborts, #Cogcal state shows it. One motor turn each way at the cogcal speed: the shaft must be free to turn.",
-    "kind": "Action",
+    "kind": "Set/Get",
     "mode": "",
     "name": "Cogcal",
     "response": "Anti-cogging identification:"
@@ -3394,7 +3509,7 @@
     "kind": "Set/Get",
     "mode": "",
     "name": "PP",
-    "response": "Pole pairs:"
+    "response": "PP: not taken (1-200, and only while idle)"
    },
    {
     "arg": "",
