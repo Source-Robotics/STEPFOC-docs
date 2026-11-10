@@ -1,0 +1,61 @@
+# What you need
+
+This page lists what a STEPFOC setup is made of, what comes with the driver, and what you buy or make yourself.
+
+## The driver
+
+STEPFOC is sold as a single driver or as a starter kit in the Source Robotics shop:
+
+- [STEPFOC stepper driver](https://source-robotics.com/products/STEPFOC-stepper-controller)
+- [STEPFOC starter kit](https://source-robotics.com/products/STEPFOC-starter-kit), which adds the adapters, the
+  magnet, the cables and a thermistor listed below
+
+Every driver is end-of-line tested and ships with the current firmware release and the bootloader already
+installed, so a driver works out of the box with a serial terminal, the Python library or Motor GUI. The firmware
+can be updated later without a programming adapter; see [Firmware](https://docs.source-robotics.com/STEPFOC-docs/109/07-firmware/).
+
+## A stepper motor
+
+STEPFOC drives bipolar (4-wire) stepper motors. It is made for the NEMA 17 frame, whose mounting holes match the
+board; it also works with NEMA 23 motors on the NEMA 23 spacer, and with other frames on an adapter you make. Look for a motor with a phase resistance
+of 1 to 5 Ω and a rated current of 3 A or less; the [tested motors](https://docs.source-robotics.com/STEPFOC-docs/109/03-technical-data/tested-motors/) are
+known to work.
+
+## The encoder magnet
+
+A diametrically magnetised 6 × 2.5 mm neodymium magnet on the rear of the motor shaft, about 1 mm above the
+encoder chip in the middle of the board: [6 × 2.5 mm diametrical magnet](https://source-robotics.com/products/6x2-5mm-diametrical-neodymium-magnet).
+An axially magnetised magnet, or one that wobbles, makes calibration fail or report bad positions. The 6 × 2.5 mm size is
+the stock one, not a requirement: another thickness is a way to set the 1 mm gap when a shaft or a spacer leaves the
+wrong distance.
+[The encoder magnet](https://docs.source-robotics.com/STEPFOC-docs/109/04-mounting/magnet/) says how to fit it.
+
+## Adapters and cables
+
+| Part | Needed for | Shop |
+|---|---|---|
+| USB-to-serial adapter (3.3 V) | the serial terminal: calibration, tuning, any `#` command | [Serial adapter](https://source-robotics.com/products/usb-to-serial-adapter) |
+| CANvas USB-to-CAN adapter | CAN control from a PC, the Python library, Motor GUI over CAN | [CAN adapter](https://source-robotics.com/products/canvas-usb-to-can-adapter) |
+| CAN cable and power cable | daisy-chaining several drivers | [CAN cable](https://source-robotics.com/products/spectral-micro-can-cable), [power cable](https://source-robotics.com/products/spectral-micro-power-cable) |
+| 100 kΩ NTC thermistor | motor temperature protection (optional but recommended) | [Thermistor](https://source-robotics.com/products/100k-ntc-thermistor) |
+| JTAG programming adapter | only for installing the bootloader on an older board, or for firmware development | [Programming adapter](https://source-robotics.com/products/jtag-programming-adapter-1-27-pitch) |
+
+!!! danger "Cable orientation"
+    The daisy-chain cables for CAN and power are keyed by their orientation, not by their connector. A cable
+    plugged in the wrong way round destroys the driver. Use the cables from the shop or follow
+    [Power and the CAN daisy chain](https://docs.source-robotics.com/STEPFOC-docs/109/04-mounting/power-and-can/) exactly when you make your own.
+
+## A power supply
+
+12 to 29 V DC, 24 V recommended; see [Ratings and limits](https://docs.source-robotics.com/STEPFOC-docs/109/03-technical-data/ratings/). Calibrate at 24 V.
+From firmware 109 the motor constants no longer depend on the supply: the spins that measure them run at their own
+6 V limit. A bench supply with a current limit is the safest way to
+start.
+
+## Software
+
+- [Motor GUI](https://motorgui.com/), in the browser, over the serial adapter or the CAN adapter: the usual tool
+  for setup, calibration, tuning, plots and firmware updates; see [Motor GUI](https://docs.source-robotics.com/STEPFOC-docs/109/05-setup/motor-gui/).
+- Or a serial terminal: PuTTY, the PlatformIO monitor in VS Code, or the Arduino serial monitor; see
+  [The serial terminal](https://docs.source-robotics.com/STEPFOC-docs/109/05-setup/terminal/).
+- The Python library `Spectral-BLDC` for CAN control from your own programs; see [With Python](https://docs.source-robotics.com/STEPFOC-docs/109/06-operation/python/).
