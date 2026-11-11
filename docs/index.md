@@ -10,7 +10,7 @@ comments: false
 
 <!-- doc-meta: stepfoc -->
 
-[Quick start](quick-start.md){ .md-button .md-button--primary } [About this manual](about.md){ .md-button }
+[Quick start](quick-start/index.md){ .md-button .md-button--primary } [About this manual](about.md){ .md-button }
 
 Source Robotics d.o.o. publishes this document for the STEPFOC stepper driver. It is revised as the product and
 its firmware change; the document number, firmware version, revision and date above identify the version you are
@@ -32,7 +32,7 @@ between firmware releases. The text and the images are licensed CC BY-SA 4.0, th
 
     ---
 
-    [One page](quick-start.md) from the box to a calibrated motor that follows commands, through Motor GUI or the
+    [Four short parts](quick-start/index.md) from the box to a calibrated motor that follows commands, through Motor GUI or the
     terminal, with a link into the manual at every step.
 
 -   :material-book-open-variant:{ .lg .middle } **The manual**
