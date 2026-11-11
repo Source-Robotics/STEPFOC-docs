@@ -112,6 +112,9 @@ The driver must be calibrated and without an error. Each run has a UART command 
 | the anti-cogging with the trim, saved | `#Par 43,5` | 43 = 5 |
 | stop a run | `#Encal stop`, `#Cogcal stop` | 52 = 0, 43 = 0 |
 
+`#Encal stop` does not stop the anti-cogging part of a combined run (`#Encal all`). `#Cogcal stop` stops a run
+in either part, and so do 52 = 0 and 43 = 0 over CAN.
+
 1. Make sure the shaft is free: nothing on it and nothing it could drive.
 2. Send the run's command from the table, on the UART or over CAN.
 3. Send nothing else while the motor turns, one revolution forward and one back for each run.
