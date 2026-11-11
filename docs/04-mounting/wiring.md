@@ -4,7 +4,8 @@ A bipolar stepper has two coils and four wires. One coil goes to the terminals *
 and B−**. Which coil is A and which is B does not matter, and neither does the polarity of each coil: firmware 105
 and newer finds the wiring during calibration and compensates it.
 
-![The motor terminals A+, A−, B+, B− and the other connectors.](../assets/STEPFOC_CONN.webp){ width="900" }
+![The motor terminals A+, A−, B+, B− and the other connectors.](../assets/STEPFOC_CONN.webp#only-light){ width="900" }
+![The motor terminals A+, A−, B+, B− and the other connectors.](../assets/STEPFOC_CONN_dark.webp#only-dark){ width="900" }
 
 ## Finding the two coils
 

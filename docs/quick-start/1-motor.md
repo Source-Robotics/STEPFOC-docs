@@ -44,7 +44,8 @@ More: [Mounting on the motor](../04-mounting/mounting.md).
 
 Which coil is which, and which way round, does not matter: calibration detects it.
 
-![The motor terminals A+, A−, B+, B− and the other connectors.](../assets/STEPFOC_CONN.webp){ width="700" }
+![The motor terminals A+, A−, B+, B− and the other connectors.](../assets/STEPFOC_CONN.webp#only-light){ width="700" }
+![The motor terminals A+, A−, B+, B− and the other connectors.](../assets/STEPFOC_CONN_dark.webp#only-dark){ width="700" }
 
 !!! success "Check"
     With the driver unpowered, a multimeter shows the coil's resistance, a few ohms, between A+ and A− and

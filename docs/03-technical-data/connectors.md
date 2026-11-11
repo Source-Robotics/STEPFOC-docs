@@ -1,6 +1,7 @@
 # Connectors and pinout
 
-![The connectors. The motor coils go to A+, A−, B+, B−; the supply to DC+ and DC−.](../assets/STEPFOC_CONN.webp){ width="900" }
+![The connectors. The motor coils go to A+, A−, B+, B−; the supply to DC+ and DC−.](../assets/STEPFOC_CONN.webp#only-light){ width="900" }
+![The connectors. The motor coils go to A+, A−, B+, B−; the supply to DC+ and DC−.](../assets/STEPFOC_CONN_dark.webp#only-dark){ width="900" }
 
 | Connector | Pins | Type | Cable |
 |---|---|---|---|

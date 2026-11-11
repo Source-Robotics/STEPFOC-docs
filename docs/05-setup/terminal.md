@@ -9,7 +9,8 @@ the terminal shows the driver's answers exactly as it prints them, which is usef
 The driver talks on its UART connector at 256000 baud, 8N1, 3.3 V. Any terminal that sends a line ending in
 CR+LF works.
 
-![The UART connector. TX of the driver goes to RX of the adapter and RX to TX.](../assets/STEPFOC_UART.webp){ width="900" }
+![The UART connector. TX of the driver goes to RX of the adapter and RX to TX.](../assets/STEPFOC_UART.webp#only-light){ width="900" }
+![The UART connector. TX of the driver goes to RX of the adapter and RX to TX.](../assets/STEPFOC_UART_dark.webp#only-dark){ width="900" }
 
 ## Connecting
 
