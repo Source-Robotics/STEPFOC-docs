@@ -1,0 +1,10 @@
+harmonic,a_as_measured_mA,b_as_measured_mA,a_zeros_corrected_mA,b_zeros_corrected_mA
+1,-8,4,0,-1
+2,-2,-8,-2,-8
+4,3,4,3,4
+5,0,0,0,1
+6,1,0,1,0
+7,0,0,1,0
+8,-1,-1,-1,-2
+10,0,0,1,0
+12,0,0,0,0
