@@ -20,11 +20,12 @@ how to run them again, and how to check them.
 ## The encoder table
 
 The magnetic encoder reads the shaft angle with a small error that changes slowly around the turn. The magnet is
-never exactly on the axis, and the chip itself is not perfectly linear. On the bench NEMA 17 it was 0.65° peak to
+never exactly on the axis, and the chip itself is not perfectly linear. On the bench NEMA 17 it was 0.61° peak to
 peak.
 
-The commutation multiplies it by the pole pairs. On a 50-pole-pair stepper the field is then up to 32 electrical
-degrees off at places. That costs torque and makes the current uneven around the turn.
+The commutation multiplies it by the pole pairs. On a 50-pole-pair stepper the field is then up to about 18
+electrical degrees off at places: the 0.61° spans about 31° electrical, and the electrical offset sits near its
+middle. That costs torque and makes the current uneven around the turn.
 
 To measure it, the driver turns the field open loop, one shaft revolution forward and one back at 2048 ticks/s
 (about 20 s). A current of 80 % of the current limit holds the rotor to the field.
@@ -94,7 +95,7 @@ A 1st harmonic under 1.5 mA is left alone, and one run moves a zero by at most 3
 
 The trims (parameters 59 and 60, up to ±60 counts) are saved with the encoder table. They are added to the zero
 the driver measures at every start-up. On the bench drive the trim took the 1st harmonic from 8.8 to 0.2 mA in
-one run.
+one run. The plot above shows a correction by hand, 8.9 to 1.0 mA; the drive's own trim did better.
 
 ## Running them
 
@@ -162,7 +163,8 @@ Over CAN the same is in the parameters (the [parameter table](../reference/can/p
 | Parameter | What it tells | On the bench NEMA 17 |
 |---|---|---|
 | 52 | the encoder table's state: 3 done, 4 aborted, 5 error or not calibrated, 6 the rotor did not follow, 7 rejected | 3 |
-| 54, 55 | the table's error peak to peak and its once-per-turn part, 0.01° of the shaft | 61-65 (0.61-0.65°); two runs within 0.021° |
+| 54 | the table's error peak to peak, 0.01° of the shaft | 61-65 (0.61-0.65°); two runs within 0.021° |
+| 55 | the amplitude of its once-per-turn part, 0.01° of the shaft | 19 (0.19°) |
 | 57 | how far the last table moved the electrical offset, 0.1° electrical | −25, then −1 on a second run |
 | 43 | the anti-cogging state: 3 done, 11 done without the trim, 6 the shaft did not turn | 3 |
 | 45 | the cogging current found, 0.1 mA rms | 71 (7.1 mA) |
