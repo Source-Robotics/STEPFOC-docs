@@ -20,7 +20,8 @@ windings as possible: either glued to the side of the housing, or in one of the 
 bottom with the screw removed, which puts it deep in the stack. Thermal cement holds it and conducts the heat.
 
 <figure markdown="span">
-  ![Thermal cement](../assets/Thermal_cement.webp){ width="220" }
+  ![Thermal cement](../assets/Thermal_cement.webp#only-light){ width="220" }
+  ![Thermal cement](../assets/Thermal_cement_dark.webp#only-dark){ width="220" }
   <figcaption>Thermal cement: it sets hard and conducts heat. Thermal paste stays soft and lets the bead move, ordinary glue insulates it. <a href="https://s.click.aliexpress.com/e/_c3dBOwTD" target="_blank" rel="noopener">Where to buy it</a>.</figcaption>
 </figure>
 

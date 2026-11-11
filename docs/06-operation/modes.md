@@ -109,7 +109,8 @@ None of these settings is saved.
 
 ## Positive rotation
 
-![Positive rotation is counter-clockwise looking at the encoder magnet. A positive current turns the motor that way, a positive speed too, and the position grows.](../assets/STEPFOC_ORIENTATION.webp){ width="700" }
+![Positive rotation is counter-clockwise looking at the encoder magnet. A positive current turns the motor that way, a positive speed too, and the position grows.](../assets/STEPFOC_ORIENTATION.webp#only-light){ width="700" }
+![Positive rotation is counter-clockwise looking at the encoder magnet. A positive current turns the motor that way, a positive speed too, and the position grows.](../assets/STEPFOC_ORIENTATION_dark.webp#only-dark){ width="700" }
 
 ## Which mode am I in?
 

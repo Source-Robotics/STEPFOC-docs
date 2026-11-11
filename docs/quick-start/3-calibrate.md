@@ -33,6 +33,12 @@ From the motor's datasheet, for **one coil**:
 
 STEPFOC does not measure these; calibration fails on a value left at 0.
 
+!!! tip "We recommend a Motor GUI preset"
+    In Motor GUI's **Presets** tab, a preset enters these values for you, with safe limits and gains. For a Source
+    Robotics product, pick its preset. For any other stepper, pick *Generic motor* and type the pole pairs, the
+    resistance and the inductance from the datasheet: the preset writes them with a low current limit and soft
+    loops, so the motor calibrates safely. More: [Motor GUI](../05-setup/motor-gui.md).
+
 === "Motor GUI"
 
     Enter *Pole pairs*, *Resistance* and *Inductance* in the motor settings and apply them.

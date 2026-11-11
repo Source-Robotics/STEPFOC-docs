@@ -48,6 +48,12 @@ STEPFOC does not measure the resistance and inductance of a stepper (the Spectra
 enter them from the motor's datasheet, as the values of **one coil**, and the pole pairs. Calibration fails on a
 value left at 0, and accepts only 50, 75, 100 or 125 pole pairs.
 
+!!! tip "We recommend a Motor GUI preset"
+    In Motor GUI's **Presets** tab, a preset enters these values for you, with safe limits and gains. For a Source
+    Robotics product, pick its preset. For any other stepper, pick *Generic motor* and type the pole pairs, the
+    resistance and the inductance from the datasheet: the preset writes them with a low current limit and soft
+    loops, so the motor calibrates safely. More: [Motor GUI](motor-gui.md).
+
 === "Motor GUI"
     In the motor settings enter *Pole pairs* (50 for a 1.8° motor, 75 for 1.2°, 100 for 0.9°, 125 for 0.72°),
     *Resistance* in ohms and *Inductance* in henries, and apply them.

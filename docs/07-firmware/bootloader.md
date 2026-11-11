@@ -34,7 +34,8 @@ once, with a programming adapter on the JTAG connector. After that, every update
 === "macOS"
     STM32CubeProgrammer; the ST-LINK Utility runs on Windows only. The adapter needs no driver.
 
-![The JTAG pads, marked 3V3, GND, SWCLK, SWDIO. The adapter is pressed onto them; a little pressure makes the contact.](../assets/STEPFOC_JTAG.webp){ width="700" }
+![The JTAG pads, marked 3V3, GND, SWCLK, SWDIO. The adapter is pressed onto them; a little pressure makes the contact.](../assets/STEPFOC_JTAG.webp#only-light){ width="700" }
+![The JTAG pads, marked 3V3, GND, SWCLK, SWDIO. The adapter is pressed onto them; a little pressure makes the contact.](../assets/STEPFOC_JTAG_dark.webp#only-dark){ width="700" }
 
 ## Steps
 
