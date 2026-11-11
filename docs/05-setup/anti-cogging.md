@@ -6,7 +6,9 @@ status: new
 
 Firmware 109 measures two corrections on the drive itself, with nothing but the motor on the bench: the
 **encoder table**, which corrects the small error of the encoder's angle reading, and the **anti-cogging**, a
-current that cancels the motor's own torque ripple. After a calibration both run by themselves
+current that cancels the motor's own torque ripple.
+
+After a calibration both run by themselves
 ([What follows the calibration](calibration.md#what-follows-the-calibration)); this page explains what they are,
 how to run them again, and how to check them.
 
@@ -19,14 +21,20 @@ how to run them again, and how to check them.
 
 The magnetic encoder reads the shaft angle with a small error that changes slowly around the turn: the magnet is
 never exactly on the axis, and the chip itself is not perfectly linear. On the bench NEMA 17 it was 0.65° peak to
-peak. The commutation multiplies it by the pole pairs, so on a 50-pole-pair stepper the field is up to 32
+peak.
+
+The commutation multiplies it by the pole pairs, so on a 50-pole-pair stepper the field is up to 32
 electrical degrees off at places, which costs torque and makes the current uneven around the turn.
 
 To measure it, the driver turns the field open loop, one shaft revolution forward and one back at 2048 ticks/s
-(about 20 s), with a current of 80 % of the current limit holding the rotor to the field. At each 1/128 of a turn
+(about 20 s), with a current of 80 % of the current limit holding the rotor to the field.
+
+At each 1/128 of a turn
 it records how far the encoder's angle is from the field's. Forward and backward are averaged, so friction, which
 pulls the rotor behind the field in each direction, cancels; the stepper's own pull towards its detents is left
-out by keeping only the harmonics 1 to 16 per turn. The result is a table of 128 corrections. From then on the
+out by keeping only the harmonics 1 to 16 per turn.
+
+The result is a table of 128 corrections. From then on the
 encoder reading is corrected with it, and the electrical offset is moved by the table's mean error, so the
 commutation stays right.
 
@@ -36,7 +44,9 @@ as implausible: the magnet is loose or far off its place.
 ## Anti-cogging
 
 A stepper pulls towards its detent positions, four times per electrical turn, and errors in the current
-measurement add a ripple once and twice per electrical turn. At low speed both show as a ripple in the speed and
+measurement add a ripple once and twice per electrical turn.
+
+At low speed both show as a ripple in the speed and
 the position. Anti-cogging adds a current to the current setpoint that cancels it: a function of the electrical
 angle, added in velocity and position modes.
 
@@ -64,9 +74,14 @@ change of the current or velocity gains, identify it again.
 The once-per-electrical-turn part of the anti-cogging is mostly an error of the current-sense zero (on the bench
 1.6 mA of ripple per ADC count of zero error). The identification **with the trim** reads both zero errors from it,
 corrects the zeros, and identifies again on the corrected zeros.
+
 If the 1st harmonic did not drop by at least 30 % and is still above 2.0 mA,
 the zeros go back and the anti-cogging is identified once more without the trim; the state then reads 11, done
-without the trim. A 1st harmonic under 1.5 mA is left alone, and one run moves a zero by at most 30 counts. The
+without the trim.
+
+A 1st harmonic under 1.5 mA is left alone, and one run moves a zero by at most 30 counts.
+
+The
 trims (parameters 59 and 60, up to ±60 counts) are saved with the encoder table and added to the zero the driver
 measures at every start-up. On the bench drive the trim took the 1st harmonic from 8.8 to 0.2 mA in one run.
 
@@ -74,7 +89,9 @@ measures at every start-up. On the bench drive the trim took the 1st harmonic fr
 
 The driver must be calibrated and without an error. Both runs keep the CAN watchdog fed while they go, end by
 holding the position the shaft reached, and stop at once when a host sends a command (a motion command, Idle) or
-an error comes up; nothing is saved then. While a run turns the motor a capture is not armed, and during the
+an error comes up; nothing is saved then.
+
+While a run turns the motor a capture is not armed, and during the
 anti-cogging run parameters 34 and 35 refuse a write: the runs use the capture's memory and the histogram.
 
 | What | UART | CAN: Send_Parameter |
@@ -91,10 +108,11 @@ anti-cogging run parameters 34 and 35 refuse a write: the runs use the capture's
 A save from a run is the whole configuration, as `#Save` writes it. After a change of the motor, the magnet or
 its position, run the encoder table and the anti-cogging again, in that order, or calibrate again.
 
-Two guards keep a correction from running on the wrong data: parameter 37 refuses 1 or 2 while no set is stored
-for that form, and an encoder table measured on its own (52 = 1 or 2) switches an anti-cogging set from before
-off, because that set was found on the uncorrected encoder; the anti-cogging state then reads 10 until it is
-identified again.
+Two guards keep a correction from running on the wrong data:
+
+- parameter 37 refuses 1 or 2 while no set is stored for that form;
+- an encoder table measured on its own (52 = 1 or 2) switches an anti-cogging set from before off, because that set
+  was found on the uncorrected encoder; the anti-cogging state then reads 10 until it is identified again.
 
 ## Checking them
 
@@ -130,7 +148,9 @@ Over CAN the same is in the parameters (the [parameter table](../reference/can/p
 | 79 | the bits of what is in force, see [What is in force](../reference/can/parameters.md#what-is-in-force-parameter-79) | |
 
 With the anti-cogging on, the bench motor's speed ripple that repeats with the angle was 1.2 to 2 times smaller
-at 1500 to 6000 ticks/s, and the position ripple 1.9 to 2.5 times smaller. A free motor gains little from the
+at 1500 to 6000 ticks/s, and the position ripple 1.9 to 2.5 times smaller.
+
+A free motor gains little from the
 encoder table in these numbers (its current varied 2.5 to 3 times less around the turn, but a free motor needs
 little current); a loaded one gains more.
 

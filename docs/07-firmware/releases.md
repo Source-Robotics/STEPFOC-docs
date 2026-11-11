@@ -14,7 +14,9 @@ the commit it was built from, and the release notes. The notes are the firmware'
 
 prints `Software version: <number>` among the rest; Motor GUI shows the same number in the driver's identity, and
 over CAN Send_Respond_Device_Info returns it as the third byte. From firmware 109 Send_Respond_Identity returns it
-too, as a 16-bit number, with the product it was built for. From firmware 105 the number is the build's own
+too, as a 16-bit number, with the product it was built for.
+
+From firmware 105 the number is the build's own
 version. Before that it was read from the EEPROM, where the last `#Default` wrote it, so it names the firmware
 that last restored the defaults, not necessarily the one running: 101 and 102 write 101, 103 writes 103.
 
@@ -47,12 +49,16 @@ which bootloader, Python library and PAR6 runtime.
 
 A change that applies to both drivers comes to the Spectral Micro too. From release 109 the two drivers share
 their version numbers and are released together (the Spectral Micro went from 107 straight to 109; there is no
-Spectral Micro 108). Before, the numbers did not always match: STEPFOC 108 went with Spectral Micro 107. The
+Spectral Micro 108).
+
+Before, the numbers did not always match: STEPFOC 108 went with Spectral Micro 107. The
 compatibility table lists the pairs.
 
 ## The two branches
 
 Releases from 105 on are built from the `bootloader-version` branch of the repository, whose firmware is linked
 to run above the bootloader. The `main` branch holds the firmware of release 103 and earlier, linked to run
-without a bootloader, and is not updated. A board running 103 is documented by version `103` of this site; to
+without a bootloader, and is not updated.
+
+A board running 103 is documented by version `103` of this site; to
 move it to a current release, see [Installing the bootloader on an older board](bootloader.md).

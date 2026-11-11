@@ -7,15 +7,21 @@ Nothing here is needed to use the driver; the chapters say what to type.
 
 A hybrid stepper is a two-phase synchronous motor with many pole pairs: 50 for a 1.8° motor, so one mechanical
 revolution is 50 electrical cycles. A conventional stepper driver drives it blindly: it advances the current
-pattern one step at a time and relies on the rotor following. The torque the rotor receives depends on the angle
+pattern one step at a time and relies on the rotor following.
+
+The torque the rotor receives depends on the angle
 between the stator field and the rotor, the *load angle*; it is largest a quarter of an electrical cycle ahead of
-the rotor and zero when the two are aligned. Because the driver does not know where the rotor is, it keeps full
+the rotor and zero when the two are aligned.
+
+Because the driver does not know where the rotor is, it keeps full
 current in the coils at all times, so that even a badly placed field produces enough torque, and it still loses
 steps when the load angle exceeds 90° electrical.
 
 Field-oriented control (FOC) closes that gap with a measurement of the rotor angle. The encoder on the motor shaft
 gives the mechanical angle $\theta$; with the pole pairs $p$ and the angle offset $\theta_0$ found by calibration,
-the electrical angle is $\theta_e = p\,\theta + \theta_0$. The two coil currents $I_A$ and $I_B$ are transformed
+the electrical angle is $\theta_e = p\,\theta + \theta_0$.
+
+The two coil currents $I_A$ and $I_B$ are transformed
 into the rotor's frame of reference (the Park transform):
 
 $$
@@ -24,25 +30,34 @@ I_q = -I_A \sin\theta_e + I_B \cos\theta_e
 $$
 
 $I_q$, the *quadrature* current, is the part of the current that stands at right angles to the rotor field and
-produces torque: $\tau = K_t\, I_q$. $I_d$, the *direct* current, is aligned with the field and produces none. Two
+produces torque: $\tau = K_t\, I_q$. $I_d$, the *direct* current, is aligned with the field and produces none.
+
+Two
 PI controllers regulate $I_q$ to the torque demand and $I_d$ to zero by choosing the voltages $U_q$ and $U_d$;
 the inverse transform turns those into the two coil voltages, applied by PWM at 25 kHz. The loop runs at 6250 Hz.
 
-The consequences are what makes a FOC stepper behave like a servo: the current is only what the torque needs, so
-the motor runs cool and quiet; the field is always placed where it produces the most torque per ampere; and a
-step is never lost, because the controller knows the rotor position at every instant and works from the error,
-not from a count of pulses.
+The consequences are what makes a FOC stepper behave like a servo:
+
+- the current is only what the torque needs, so the motor runs cool and quiet;
+- the field is always placed where it produces the most torque per ampere;
+- a step is never lost, because the controller knows the rotor position at every instant and works from the error,
+  not from a count of pulses.
 
 Calibration supplies the constants this needs. The pole pairs come from the step angle. The current loop gains
 follow from the coil's resistance $R$ and inductance $L$ and the chosen bandwidth $\omega_c = 2\pi f_c$ (`#Cbw`):
 $K_p = L\,\omega_c$ and $K_i = R\,\omega_c$ cancel the coil's electrical time constant and give a first-order
-response at $f_c$. The firmware computes a discrete-time form of these. It keeps $K_i$ per control loop: `Kiiq`
+response at $f_c$.
+
+The firmware computes a discrete-time form of these. It keeps $K_i$ per control loop: `Kiiq`
 is about $R\,\omega_c$ × 160 µs, so do not enter $R\,\omega_c$ as `#Kiiq`. Firmware 108 and older divided both
 gains by 7, a loop of about 70 Hz; 109 uses the formula at 160 Hz.
+
 The angle offset is found by locking the rotor with the stator
 field and reading where it settles, then refined by a sweep for the offset at which the motor turns alike in both
 directions. In theory the torque constant follows from the velocity constant: in SI units $K_t = 1/K_V$ (with
-$K_V$ in rpm/V, $K_t \approx 9.55/K_V$ Nm/A). The firmware estimates $K_V$ from the speed the motor reaches at
+$K_V$ in rpm/V, $K_t \approx 9.55/K_V$ Nm/A).
+
+The firmware estimates $K_V$ from the speed the motor reaches at
 500 mA per volt of a fixed 6 V limit (the supply voltage, if that is lower) and uses $K_t = 8.27/K_V$; treat
 both as estimates.
 
@@ -60,15 +75,23 @@ $$
 
 The position loop is proportional: its output is a speed demand, limited by the velocity limit. The velocity loop
 is a PI controller: its output is a current demand, limited by the current limit; the integral term removes the
-steady-state error a load would otherwise leave. The current loop is the innermost and fastest. Each loop must be
-slower than the one inside it, by a factor of five to ten, for the inner loop to look like an ideal actuator to the
-outer one; that is why the loops are tuned from the inside out, and why a current loop bandwidth of 160 Hz (the
-default from firmware 109) leaves room for a velocity loop of a few tens of hertz and a position loop below that.
+steady-state error a load would otherwise leave. The current loop is the innermost and fastest.
+
+Each loop must be slower than the one inside it, by a factor of five to ten, for the inner loop to look like an
+ideal actuator to the outer one.
+
+That is why the loops are tuned from the inside out, and why a current loop
+bandwidth of 160 Hz (the default from firmware 109) leaves room for a velocity loop of a few tens of hertz and a
+position loop below that.
 
 A command picks where the cascade is entered: a current setpoint uses the current loop alone, a speed setpoint
-the two inner loops, a position setpoint all three. The *feedforward* terms the CAN motion frames carry are added
+the two inner loops, a position setpoint all three.
+
+The *feedforward* terms the CAN motion frames carry are added
 to the demands rather than computed from an error: a speed feedforward is added to the position loop's output, a
-current feedforward to the velocity loop's output. A host that knows the trajectory can command it directly and
+current feedforward to the velocity loop's output.
+
+A host that knows the trajectory can command it directly and
 leave the loops to correct what is left, which gives a faster, smoother response than letting the loops produce
 the whole demand from the error.
 
@@ -93,14 +116,20 @@ prerequisite: a stepper driven blindly cannot produce a commanded torque.
 
 The firmware's gains are in its own units. `KP` is in mA per encoder tick and `KD` in mA per tick/s (0.14 and
 0.0028 by default). `KP` times the position error in ticks, plus `KD` times the speed error in ticks/s, plus the
-feedforward, is the Iq setpoint in mA. A stiffness $K$ in Nm/rad is `KP` = $K$ × 0.3835 ÷ $K_t$, with $K_t$ in
+feedforward, is the Iq setpoint in mA.
+
+A stiffness $K$ in Nm/rad is `KP` = $K$ × 0.3835 ÷ $K_t$, with $K_t$ in
 Nm/A. A damping in Nm·s/rad converts to `KD` the same way.
 
 Pushed off its setpoint by an external force $F$, the motor yields by $\Delta\theta = \tau_{ext}/K_P$ and pushes
 back with that force; let go, it returns, with the damper settling the motion. A small $K_P$ makes a soft joint,
-a large one a stiff joint; $K_D$ without $K_P$ is a pure damper. The setpoint can move, in which case the virtual
+a large one a stiff joint; $K_D$ without $K_P$ is a pure damper.
+
+The setpoint can move, in which case the virtual
 spring drags the rotor along a trajectory with a bounded force — the property legged robots, hand-guided arms and
-anything that touches people or an uncertain environment need. The impedance loop is also what a position loop
+anything that touches people or an uncertain environment need.
+
+The impedance loop is also what a position loop
 is *not*: the position loop's integral action removes any steady-state deflection and so makes the joint as stiff
 as the current limit allows, which is the right thing for a machine tool and the wrong thing for a leg.
 
@@ -117,7 +146,9 @@ $$
 
 on top of a stiff position controller. It is the natural form for a machine that has a force sensor and a position
 loop that cannot be made soft, such as an industrial arm; impedance control is the natural form for a machine whose
-actuator is a torque source, such as a FOC motor. The driver has no force sensor and implements impedance; a host
+actuator is a torque source, such as a FOC motor.
+
+The driver has no force sensor and implements impedance; a host
 that wants admittance behaviour can estimate the external torque from $K_t I_q$ minus the known load and command
 positions accordingly, with the limits of that estimate (friction, cogging, the current loop's accuracy).
 
@@ -125,7 +156,9 @@ positions accordingly, with the limits of that estimate (friction, cogging, the 
 
 Stiffness $K$ is the force per unit of displacement; compliance is its inverse, $C = 1/K$, the displacement per
 unit of force. *Passive* compliance is in the mechanism — a spring, a flexible finger, a belt; *active* compliance
-is in the controller — the impedance loop above. The driver offers three points on that scale: the position mode,
+is in the controller — the impedance loop above.
+
+The driver offers three points on that scale: the position mode,
 stiff up to the current limit; the PD mode, as stiff as $K_P$; and the current mode, which is no stiffness at all,
 a torque source the host shapes as it likes.
 

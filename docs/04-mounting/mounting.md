@@ -13,6 +13,10 @@ rear screws, with a spacer between the motor and the board that sets the magnet 
    NEMA 17). Tighten them evenly; the board must be parallel to the magnet.
 4. Check the gap: about 1 mm, the magnet not touching the chip.
 
+!!! success "Check"
+    The board sits parallel to the back of the motor, about 1 mm above the magnet, and the shaft turns by hand
+    without the magnet touching the chip. If the gap is wrong: [The encoder magnet](magnet.md).
+
 A NEMA 23 motor takes the NEMA 23 spacer from the same folder. A smaller frame, such as NEMA 14, needs an adapter
 plate you make yourself: the repository has none.
 

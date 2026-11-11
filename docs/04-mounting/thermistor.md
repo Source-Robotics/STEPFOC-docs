@@ -13,7 +13,9 @@ default; use it on any motor that runs near its rated current for long.
 
 ## Fitting it
 
-A stepper is sealed: the windings cannot be reached. Place the thermistor on the motor housing, as close to the
+A stepper is sealed: the windings cannot be reached.
+
+Place the thermistor on the motor housing, as close to the
 windings as possible: either glued to the side of the housing, or in one of the four screw holes of the motor's
 bottom with the screw removed, which puts it deep in the stack. Thermal cement holds it and conducts the heat.
 

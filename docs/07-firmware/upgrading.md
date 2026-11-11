@@ -19,6 +19,7 @@ starts with everything it had:
 
 A driver from 101 to 105, saved before the configuration had checksums, is trusted and sealed at its first start
 of 109 when it was ever saved; 108 reset a board saved but never calibrated, CAN ID included, and 109 keeps it.
+
 Release 103 and older from the `main` branch have no bootloader: such a board needs the programming adapter once
 ([Installing the bootloader on an older board](bootloader.md)).
 
@@ -73,13 +74,16 @@ so does `#Encal all` without a calibration.
 3. Set the velocity gains, for example `#Kpv 0.02` and `#Kiv 0.001` (a 21.5 mm stepper overshot 95 % at these on
    the bench; its presets use `#Kpv 0.014` and `#Kiv 0.00014`), then `#Save`. (Calibration puts the
    current limit that was in force back when it ends; set `#Ilim` for your motor before step 2 if it is not.)
-4. Check `#Info`: `encoder table: on`, `anti-cogging: on (harmonics), saved`.
+
+!!! success "Check"
+    `#Info` prints `encoder table: on`, `anti-cogging: on (harmonics), saved`.
 
 With Motor GUI's presets: apply the preset first, then calibrate, then set the velocity gains. On firmware 109 a
 preset writes the current gains of a 160 Hz loop for its own R and L, the same a calibration computes from them,
 and its own velocity gains.
 
 On a robot whose joints cannot turn freely, neither the calibration nor the runs after it can be made in place.
+
 There skip step 2: the drive keeps the calibration it has, the new speed estimate, the delay compensation and the
 current-sense zero work at once, and `#Cbw 160` with `#Save` gives the new current gains. The encoder table and
 the anti-cogging then stay off.

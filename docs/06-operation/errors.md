@@ -36,7 +36,9 @@ In error mode the LED does not flash: it stays on, as in the photo on the right.
 
 `#Clear` or Send_Clear_Error clears the flags and goes to idle. An error whose cause is still present comes
 straight back: a Vbus error at 2 V stays until the supply is right; once the supply is 24 V, one `#Clear` returns
-the driver to normal operation. The calibration error clears only by calibrating (or, for a motor you know is
+the driver to normal operation.
+
+The calibration error clears only by calibrating (or, for a motor you know is
 calibrated, `#Calibrated 1`). A gripper E-stop comes back on every control cycle until its E-stop bit is 0 again:
 `#Gripstop 0`, or a Send_gripper_data_pack with the bit clear; then clear. While it is active, `#Error` prints only
 `In error state!`.

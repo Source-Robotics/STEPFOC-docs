@@ -13,6 +13,7 @@ coil, which is what you enter with `#R` and `#L` before calibration.
 
 Before calibration, set the current limit to the motor's rated current with `#Ilim`: it is 1700 mA after
 `#Default`, more than the 17HS08's rating, and the encoder table that follows a calibration runs at 80 % of it.
+
 Calibration uses its own 1600 mA for its steps and puts your limit back when it ends. See
 [Current limit and loop tuning](../05-setup/tuning.md).
 

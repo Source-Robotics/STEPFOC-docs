@@ -1,16 +1,22 @@
 # Current limit and loop tuning
 
 Calibration leaves the driver with current loop gains computed for your motor and with velocity and position
-gains that suit a bare stepper. Two things remain: the current limit, which you must set for your motor, and the
+gains that suit a bare stepper.
+
+Two things remain: the current limit, which you must set for your motor, and the
 loop gains, which you tune if the defaults do not suit it. Motor GUI shows the motor's response on its plots while
 you change a gain, which is what makes tuning quick.
 
 ## The current limit
 
 Set the current limit to the rated phase current of your motor in mA (the datasheet value; the tested motors'
-ratings are in [Tested motors](../03-technical-data/tested-motors.md)). It is 1700 mA after `#Default`;
+ratings are in [Tested motors](../03-technical-data/tested-motors.md)).
+
+It is 1700 mA after `#Default`;
 calibration uses its own 1600 mA for its steps and, from firmware 109, puts your limit back when it ends. Set it
-before you calibrate: the encoder table that follows a calibration runs at 80 % of it. `#Ilim` clamps the limit to
+before you calibrate: the encoder table that follows a calibration runs at 80 % of it.
+
+`#Ilim` clamps the limit to
 the driver's 2800 mA and takes the magnitude of a negative number. The
 firmware does not trip on phase current by itself and does not monitor the driver stage. A limit above the motor's
 rating overheats the motor.
@@ -56,8 +62,12 @@ Tune from the inside out: the current loop first, then velocity, then position. 
 
 The current loop is a PI controller that turns a current request into a voltage. Its gains `Kpiq` and `Kiiq`
 follow from the motor's resistance R, its inductance L and one number, the bandwidth: Kp = ω·L and Ki = ω·R, with
-ω = 2π × the bandwidth. The firmware keeps Ki per control loop: `Kiiq` is about ω·R × 160 µs. For 1.1 Ω, 2.6 mH
-and 160 Hz that gives `Kpiq` 2.70 and `Kiiq` 0.177. Do not enter ω·R as `#Kiiq`. The PI then cancels the coil's
+ω = 2π × the bandwidth.
+
+The firmware keeps Ki per control loop: `Kiiq` is about ω·R × 160 µs. For 1.1 Ω, 2.6 mH
+and 160 Hz that gives `Kpiq` 2.70 and `Kiiq` 0.177.
+
+Do not enter ω·R as `#Kiiq`. The PI then cancels the coil's
 own lag, and the current follows a request like a first-order filter at that bandwidth. Calibration computes
 them this way at 160 Hz, the default; so does setting the bandwidth:
 
@@ -73,7 +83,9 @@ them this way at 160 Hz, the default; so does setting the bandwidth:
 
 The bandwidth can be 10 to 625 Hz (a tenth of the 6250 Hz control loop). A higher one follows a request and
 rejects a disturbance faster, and is louder; on the bench, 160 Hz followed an injected ripple better than the old
-gains and stayed stable. Gains set by hand with `#Kpiq` and `#Kiiq` work too; parameter 49 then tells which
+gains and stayed stable.
+
+Gains set by hand with `#Kpiq` and `#Kiiq` work too; parameter 49 then tells which
 bandwidth they amount to.
 
 !!! note "Drives calibrated with older firmware"
@@ -88,7 +100,9 @@ steady, quiet torque. Keep the current well under the limit.
 
 The firmware's start values are `Kpv` 0.02 and `Kiv` 0.001, tuned on the bench with a bare NEMA 17 and the speed
 estimate below: it vibrated at `Kpv` 0.056, and 0.02 is about half of that; `Kiv` rang at 0.004, and 0.001 halved
-the speed ripple at 300 to 1500 ticks/s. `#Default` and a settings reset write the same values. A drive saved
+the speed ripple at 300 to 1500 ticks/s. `#Default` and a settings reset write the same values.
+
+A drive saved
 with older firmware keeps its saved gains after an update (typically 0.007 and 0.0005): set `#Kpv 0.02` and
 `#Kiv 0.001` and `#Save` (a 21.5 mm stepper overshot 95 % at these on the bench; its presets use `#Kpv 0.014`
 and `#Kiv 0.00014`). To tune for your motor and load:
@@ -121,10 +135,14 @@ The velocity loop needs the speed, which the driver estimates from the encoder c
 | 1 | PLL, the speed is its integrator | smooth, a little late |
 | 2 (default) | direct PLL, integrator plus the proportional term | almost no lag, a little more noise |
 
-Both PLLs are critically damped at the natural frequency of parameter 51, 60 Hz by default (10 to 312 Hz). The
+Both PLLs are critically damped at the natural frequency of parameter 51, 60 Hz by default (10 to 312 Hz).
+
+The
 lag of the moving average was what limited the velocity gain: on the bench the direct PLL at 60 Hz allowed 40 %
 more `Kpv` before the motor vibrated, and the speed ripple was 23 to 50 % lower at 1500 to 24000 ticks/s; its
-extra noise did not reach the current. Calibration and the gripper's stop detection always use the moving
+extra noise did not reach the current.
+
+Calibration and the gripper's stop detection always use the moving
 average, which they were tuned with. Both parameters are not kept by Save: every power-up starts with the direct
 PLL at 60 Hz. The speed in Respond_data_pack_1 and Send_Respond_Encoder_data, the watchdog descend and the capture
 is the picked estimate.
@@ -132,9 +150,13 @@ is the picked estimate.
 ## Commutation delay compensation
 
 The voltage a control loop sets reaches the motor later than the angle it was computed from was read: the rest of
-the loop, the wait for the PWM update and half a control period. By then the rotor has turned on, and the voltage
+the loop, the wait for the PWM update and half a control period.
+
+By then the rotor has turned on, and the voltage
 lands a little behind the angle it was meant for. Parameter 64 turns the output voltage forward by the angle the
-rotor covers in that delay, in the closed-loop modes above 100 ticks/s. 166 µs is the default, measured on the
+rotor covers in that delay, in the closed-loop modes above 100 ticks/s.
+
+166 µs is the default, measured on the
 bench drive: the d-axis voltage against the cross-coupling the motor's inductance makes, at 12000 to 48000
 ticks/s, fitted over 15 points. 0 switches it off; 1 to 500 µs are accepted. It is not kept by Save, so 166 µs is in
 force after every power-up.
@@ -161,6 +183,7 @@ Two settings for special cases, both off by default and not kept by Save:
 In PD mode the motor behaves like a spring and a damper: the current setpoint is
 `KP × (setpoint − position) + KD × (speed setpoint − speed) + feedforward current`, in mA, with the position in
 ticks and the speed in ticks/s. So `KP` is in mA per tick and `KD` in mA per tick/s.
+
 Set `KP` and `KD` (the gains, or `#KP`, `#KD`, or Send_PD_Gains), then
 command with `#PD`, `#PDV` and `#PDI` or Send_data_pack_PD. Start with a small `KP` and `KD` of 0, raise `KP` until
 the motor holds position firmly, then add `KD` until it stops ringing. The [theory corner](../appendix/theory.md)
