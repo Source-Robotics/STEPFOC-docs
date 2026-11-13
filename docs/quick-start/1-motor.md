@@ -27,8 +27,6 @@ More: [The encoder magnet](../04-mounting/magnet.md).
 4. Put the longer screws in.
 5. Check the gap between the magnet and the encoder chip: 1 mm, not touching.
 
-    ![Picture needed: the board on its spacer on the back of the motor, with the four longer screws](../assets/pilot/s1-board-on-spacer.svg){ width="560" }
-
 !!! success "Check"
     The board sits parallel to the back of the motor, with about 1 mm between the magnet and the encoder chip, and
     the shaft turns by hand without the magnet touching the chip. If not: [Mounting on the motor](../04-mounting/mounting.md).
