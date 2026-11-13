@@ -123,6 +123,13 @@ Going to idle!
 
 `#Calonly` runs the same calibration and nothing after it; it ends with `Save config with #Save` instead.
 
+From firmware 110 `#Estop` or `#Close` stops a running calibration; `#Idle` does not. It ends as a failed
+calibration (`Calibration failed!`): the motor is released, and the driver is not calibrated until it calibrates
+again. After `#Estop`, send `#Clear` first.
+
+On firmware 109 a reset (`#Reset`) was the only clean way over UART: `#Close` switched the mode under the running
+calibration and left it half done.
+
 What the steps are:
 
 | Step | What happens | Fails with |
@@ -219,7 +226,7 @@ shaft between calibration and use: fix the magnet and calibrate again.
 | `Phase order is wrong!` | see the note above: the motor did not turn on the spin check; check the four wires and their solder joints, the supply and its current limit, and the magnet |
 | `Angle alignment gave up:` after `Phase order is wrong!` | the lock or the check after it failed, and the line names the reason; run `#Cal` again, and if it repeats check the motor, its wiring and that the shaft is free |
 | `Cal: not started, the E-stop is latched (#Clear first)`, or `Stopped by an E-stop: #Clear, then calibrate again.` after `Calibration failed!` | an E-stop is latched or ended the calibration: `#Clear`, then `#Cal`; the alignment starts again from its first stage |
-| the routine stops in a step and prints nothing more | reset the driver (`#Reset`) and try again; the angle-offset search prints a progress line every half second, so wait for a minute before you decide |
+| the routine stops in a step and prints nothing more | stop it with `#Close` (firmware 110) or reset the driver (`#Reset`), and try again; the angle-offset search prints a progress line every half second, so wait for a minute before you decide |
 | success, but the LED stays on and no error is reported | should not happen with firmware 106 and newer, which replaces a damaged configuration block with the defaults at power-up. If `#Info` shows `-1` somewhere, restore the defaults, enter the parameters and calibrate again |
 
 `#Calangle` runs an angle-offset search on its own, with an older routine than the one `#Cal` uses: it gives up

@@ -1,9 +1,16 @@
 # Parameters and buffers
 
-From firmware 109 a setting that has no command of its own is a **parameter**: a number from 1 to 87 behind one
-pair of commands, Send_Parameter (ID 36) to set it and Send_Get_Parameter (ID 37) to read it, answered with
-Respond_Parameter (ID 38). The identifier has room for only 64 command IDs, so new settings no longer use them up.
-Parameter numbers are permanent: a number is never given a new meaning. Number 73 is not used and stays free.
+From firmware 109 a setting that has no command of its own is a **parameter**: a number from 1 to 93 (87 in firmware
+109) behind one pair of commands, Send_Parameter (ID 36) to set it and Send_Get_Parameter (ID 37) to read it,
+answered with Respond_Parameter (ID 38). The identifier has room for only 64 command IDs, so new settings no longer
+use them up.
+
+Parameter numbers are permanent: a number is never given a new meaning. Number 73 is not used and stays free; 88 and
+89 are the Spectral Micro's own, and STEPFOC does not have them.
+
+Firmware 110 adds 90 to 93: the three settings that only UART could set before, `#Rstint` (90), `#Term`, the
+thermistor (91) and `#Gripper`, gripper mode (92), and the gripper's stroke (93, read only). The Spectral-BLDC
+library 1.21 sets and reads them by their numbers.
 
 The **buffers** are the larger data a drive holds: a capture of three signals, a histogram, the anti-cogging set
 and the encoder table. Send_Buffer_Read (ID 41) reads them in 8-byte frames, Respond_Buffer_Data (ID 42) carries

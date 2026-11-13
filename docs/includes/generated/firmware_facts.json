@@ -334,6 +334,16 @@
     "lengths": [],
     "responds": []
    },
+   "PARAM_GRIPPER_MODE": {
+    "empty": false,
+    "lengths": [],
+    "responds": []
+   },
+   "PARAM_GRIPPER_STROKE": {
+    "empty": false,
+    "lengths": [],
+    "responds": []
+   },
    "PARAM_HEARTBEAT_MS": {
     "empty": false,
     "lengths": [],
@@ -424,6 +434,11 @@
     "lengths": [],
     "responds": []
    },
+   "PARAM_RSTINT": {
+    "empty": false,
+    "lengths": [],
+    "responds": []
+   },
    "PARAM_R_MOHM": {
     "empty": false,
     "lengths": [],
@@ -495,6 +510,11 @@
     "responds": []
    },
    "PARAM_STACK_UNUSED": {
+    "empty": false,
+    "lengths": [],
+    "responds": []
+   },
+   "PARAM_THERMISTOR": {
     "empty": false,
     "lengths": [],
     "responds": []
@@ -884,7 +904,7 @@
     "name": "PARAM_VOLTAGE_LIMIT"
    },
    {
-    "comment": "idle behaviour, 1 brake, 0 coast (IN_SETTINGS bit 0)",
+    "comment": "idle behaviour, 1 brake, 0 coast (IN_SETTINGS bit 0); saved by #Save since 2026-11",
     "id": 18,
     "name": "PARAM_BRAKE_COAST"
    },
@@ -1209,6 +1229,26 @@
     "name": "PARAM_CALIBRATION_ID"
    },
    {
+    "comment": "RW 0/1: zero the velocity and current integrators on every setpoint command (#Rstint); saved by #Save",
+    "id": 90,
+    "name": "PARAM_RSTINT"
+   },
+   {
+    "comment": "RW 0/1: the thermistor measurement (#Term); saved by #Save",
+    "id": 91,
+    "name": "PARAM_THERMISTOR"
+   },
+   {
+    "comment": "RW 0/1: gripper mode (#Gripper), in force at once; written only while idle; saved by #Save",
+    "id": 92,
+    "name": "PARAM_GRIPPER_MODE"
+   },
+   {
+    "comment": "R the gripper's stroke between positions 0 and 255, ticks; 0 = not calibrated since power-up",
+    "id": 93,
+    "name": "PARAM_GRIPPER_STROKE"
+   },
+   {
     "comment": "write 1: identify the anti-cogging on the drive, 2: and save, 0: abort; read: COGCAL_*",
     "id": 43,
     "name": "PARAM_COGCAL"
@@ -1304,7 +1344,7 @@
    }
   }
  },
- "commit": "56741ac67678",
+ "commit": "a84ead2261ee",
  "defaults": [
   {
    "after_default": "111 in the EEPROM, not read back",
@@ -1331,7 +1371,7 @@
    "value": "1"
   },
   {
-   "after_default": "109",
+   "after_default": "110",
    "comment": "Software release",
    "name": "SOFTWARE_VERSION",
    "saved": "no: set by the firmware",
@@ -2163,10 +2203,10 @@
    "value": "0"
   },
   {
-   "after_default": "\u2014",
+   "after_default": "1 (BRAKE_COAST_DEFAULT)",
    "comment": "1 is brake 0 is coast",
    "name": "brake_coast",
-   "saved": "no",
+   "saved": "yes",
    "setting": true,
    "value": "1"
   },
@@ -2817,9 +2857,22 @@
    "saved": "no",
    "setting": false,
    "value": "0"
+  },
+  {
+   "after_default": "\u2014",
+   "comment": "",
+   "name": "cal_restart",
+   "saved": "no",
+   "setting": false,
+   "value": "0"
   }
  ],
- "tag": "V109",
+ "prerelease": {
+  "commit": "a84ead2261ee",
+  "firmware_version_in_source": "110",
+  "ref": "a84ead2"
+ },
+ "tag": "V110",
  "uart": {
   "accepted": [],
   "handlers": [
@@ -3058,14 +3111,30 @@
    {
     "arg": "",
     "comment": "Go to idle state",
+    "kind": "Action",
+    "mode": "idle",
+    "name": "Idle",
+    "response": "Idle"
+   },
+   {
+    "arg": "",
+    "comment": "E-stop over UART, as the CAN E-stop frame: the E-stop error is latched, the motor is released and a calibration that is running ends (#Idle does not end one). #Clear clears it. Until 2026-11 only CAN could do this; a host on UART had to reset the drive to stop a calibration.",
+    "kind": "Action",
+    "mode": "",
+    "name": "Estop",
+    "response": "E-stop"
+   },
+   {
+    "arg": "",
+    "comment": "Enter calibration mode #Cal: the calibration, then always the encoder table and the anti-cogging, then save; #Calonly: the calibration alone",
     "kind": "Get",
     "mode": "",
-    "name": "Idle",
+    "name": "Cal",
     "response": "Cal: not started, the E-stop is latched (#Clear first)"
    },
    {
     "arg": "",
-    "comment": "Go to idle state",
+    "comment": "Enter calibration mode #Cal: the calibration, then always the encoder table and the anti-cogging, then save; #Calonly: the calibration alone",
     "kind": "Get",
     "mode": "",
     "name": "Calonly",
@@ -3233,7 +3302,15 @@
    },
    {
     "arg": "",
-    "comment": "Enter closed loop mode, idle state",
+    "comment": "Enter closed loop mode, idle state #Close while a calibration runs: end it the way an E-stop or its own failure does (its steps start over next time, the current and voltage limits are put back, the bridge is off). Taking the interrupt away from it, as #Close does below, left it half-done: the next #Cal went on from the old step and the calibration's 1600 mA limit could be saved.",
+    "kind": "Action",
+    "mode": "",
+    "name": "Close",
+    "response": "Close: the calibration is stopped"
+   },
+   {
+    "arg": "",
+    "comment": "",
     "kind": "Action",
     "mode": "idle",
     "name": "Close",
@@ -3553,5 +3630,5 @@
    }
   ]
  },
- "version": "109"
+ "version": "110"
 }

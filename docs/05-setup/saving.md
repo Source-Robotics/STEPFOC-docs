@@ -16,7 +16,7 @@ settings and the gripper flag.
 
 From firmware 109 also the tool id and the watchdog fallback, the anti-cogging set
 with its mode and scale, and the encoder table with its on/off switch, parameter 56 and the current-sense zero
-trims.
+trims. From firmware 110 also the idle behaviour (`#Brake` / `#Coast`, Send_Settings or parameter 18).
 
 Over CAN, Send_Save_config does the same. Save after calibration, after tuning, and after changing the node
 ID. The runs after a calibration save by themselves when they succeed.
@@ -24,7 +24,6 @@ ID. The runs after a calibration save by themselves when they succeed.
 Some settings are not kept and start from their defaults at every power-up:
 
 - the current loop bandwidth (`#Cbw`, 160 Hz; the gains it computed are kept);
-- the idle behaviour (`#Brake` / `#Coast` or Send_Settings: brake);
 - the open-loop and calibration settings (`#Openv`, `#Opens`, `#Vp`, `#Iqoffset`, `#microstep`, `#stepinterval`);
 - the parameters of firmware 109 that tune the loops: the speed estimate (direct PLL at 60 Hz), the commutation
   delay compensation (166 µs), the fast reading and PWM paths (on), the sin/cos table (off), the position input
@@ -59,6 +58,7 @@ gripper flag, the heartbeat rate and the watchdog.
 
 From firmware 109 it also clears the tool id, the watchdog
 fallback, the anti-cogging set, the encoder table and its zero trims, and sets parameter 56 back to its default.
+From firmware 110 it also sets the idle behaviour back to braking.
 
 The CAN node ID is kept from firmware 109 (it is 0 only when no valid ID is stored); firmware 108 and older set it
 to 0. Note the hardware version and batch date `#Info` prints before you use it. The defaults are listed in the
@@ -79,7 +79,7 @@ firmware 106 the configuration is in blocks, each with its own checksum; firmwar
 |---|---|---|---|
 | calibration | 60-188, reserved 212-236 | 208 | pole pairs, R, L, Kt, KV, flux linkage, angle offset, phase order, commutation direction, the current gains |
 | settings 1 | 44-180 | 192 | CAN ID, limits, the other gains, watchdog, heartbeat, thermistor, LED, gripper flag |
-| settings 2 (109) | 260-312 | 256 | tool id, watchdog fallback, the product stamp, the calibration ID; reserved slots |
+| settings 2 (109) | 260-312 | 256 | tool id, watchdog fallback, the product stamp, the calibration ID, from 110 the idle behaviour; reserved slots |
 | anti-cogging (109) | 324-879 | 320 | the harmonics, the table, mode and scale |
 | encoder table (109) | 884-1147 | 880 | the table, its on/off switch, parameter 56, the current-sense zero trims |
 

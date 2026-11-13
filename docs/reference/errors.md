@@ -29,7 +29,7 @@ Send_Respond_State_of_Errors (bits numbered from the most significant).
 | `Driver_error` | `Driver error (undervoltage, thermal shutdown, or overcurrent)` | 0, 3 | never in this firmware; reserved (STEPFOC reads no fault output of its driver stage) |
 | `Velocity_error` | `Velocity error` | 0, 2 | the speed exceeds 30,000,000 ticks/s, a fixed threshold (`Velocity_limit_error`), not `#Vlimit` |
 | `Current_error` | `Current error` | 0, 1 | never in this firmware; reserved |
-| `ESTOP_error` | `Received ESTOP command` | 0, 0 | Send_ESTOP was received |
+| `ESTOP_error` | `Received ESTOP command` | 0, 0 | Send_ESTOP was received, or from firmware 110 `#Estop` over UART |
 | `Calibrated` (0) | `Not calibrated` | 1, 7 (1 = calibrated) | the motor has not been calibrated |
 | `Activated` | — | 1, 6 | the activated flag, not an error |
 | `Watchdog_error` | `Watchdog error` | 1, 5 | the watchdog time passed without a motion frame or an answered request |

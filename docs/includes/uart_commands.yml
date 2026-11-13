@@ -37,9 +37,10 @@ commands:
   microstep: {group: motion, argument: microsteps per electrical cycle, description: "The microsteps gosteps makes per electrical cycle (four full steps), 16 by default.", response: the microstep setting}
   HALL: {group: motion, description: "Homing against the sensor on ADDITIONAL2 at 3000 ticks/s, triggered when the pin is low. It holds while the pin stays low and spins on when the pin goes high again (see Send_data_pack_HALL for the CAN form with a chosen speed and trigger).", response: "`HALL`"}
   Idle: {group: motion, description: Goes to idle; the motor coasts or brakes as set by Brake / Coast., response: "`Idle`"}
-  Brake: {group: motion, description: "Goes to idle with the motor braking (phases shorted); also the idle behaviour from then on. Not kept by Save: the driver brakes at every power-up.", response: "`Brake 1`"}
-  Coast: {group: motion, description: "Goes to idle with the motor coasting (phases open); also the idle behaviour until the next power-up, which brakes again. Not kept by Save.", response: "`Coast 0`"}
-  Close: {group: motion, description: Leaves open loop and goes back to closed-loop idle., response: nothing}
+  Estop: {group: motion, description: "The E-stop, as Send_ESTOP over CAN: it raises the E-stop error, the driver goes to idle (the motor brakes or coasts as set by Brake / Coast), and a calibration, gripper calibration or encoder-table or anti-cogging run that is running ends. The error stays until Clear. Added in firmware 110.", response: "`E-stop`"}
+  Brake: {group: motion, description: "Goes to idle with the motor braking (phases shorted); also the idle behaviour from then on. From firmware 110 Save keeps it; on 109 the driver braked at every power-up. Also parameter 18.", response: "`Brake 1`"}
+  Coast: {group: motion, description: "Goes to idle with the motor coasting (phases open); also the idle behaviour from then on. From firmware 110 Save keeps it; on 109 the next power-up braked again. Also parameter 18.", response: "`Coast 0`"}
+  Close: {group: motion, description: "Leaves open loop and goes back to closed-loop idle. From firmware 110, while a calibration (Cal, Calonly) runs, it stops the calibration instead: it ends as a failed one (`Calibration failed!`), with the motor released and the driver not calibrated until it calibrates again. Firmware 109 switched the mode under the running calibration.", response: "nothing; `Close: the calibration is stopped` during a calibration (firmware 110)"}
 
   # ------------------------------------------------------------ gains and limits
   Kpp: {group: gains, argument: gain, description: Kp of the position loop., response: the current value}
@@ -54,7 +55,7 @@ commands:
   Vlimit: {group: gains, argument: speed in encoder ticks/s, description: "The speed limit: it clamps the speed setpoint of the velocity loop, and in position mode the speed the position loop asks for. The velocity integrator is clamped to the current limit (Ilim), not to this. From firmware 109 a negative number counts as its magnitude.", response: the current limit}
   Ilim: {group: gains, argument: current in mA, description: "The Iq current limit, 1700 mA after #Default. Set it to the rated phase current of your motor; this command clamps it to 2800 mA and takes the magnitude of a negative number (from firmware 109 Send_Limits over CAN stops at 2800 mA too). Calibration uses 1600 mA for its steps and, from firmware 109, puts it back when it ends.", response: the current limit}
   Vlim: {group: gains, argument: voltage in mV, description: "The voltage limit of the current loops (Ud and Uq), 6000 mV by default. It keeps the loops of low-resistance steppers stable, and it also caps the top speed. 0, or a value above the supply voltage, means the supply voltage.", response: the current limit in mV}
-  Rstint: {group: gains, argument: 0 or 1, description: Whether the integral accumulators are reset on every new setpoint., response: the setting}
+  Rstint: {group: gains, argument: 0 or 1, description: "Whether the integral accumulators are reset on every new setpoint. From firmware 110 also parameter 90.", response: the setting}
   Cbw: {group: gains, argument: "bandwidth in Hz, 10 to 625", description: "The current loop bandwidth. From firmware 109 setting it computes Kpiq and Kiiq at once from R and L, the way calibration does, and prints them (the same as parameter 49); a value outside 10-625, or with R or L at 0, changes nothing. Not kept by Save: 160 Hz at every power-up, but the gains it set are kept.", response: "the bandwidth, then `Kp_iq = …, Ki_iq = …`"}
 
   # ------------------------------------------------------------ calibration and motor parameters
@@ -100,7 +101,7 @@ commands:
   Vbus: {group: utility, description: Prints the supply voltage., response: mV}
   Vmax: {group: utility, argument: voltage in mV, description: "The supply voltage above which a Vbus error is raised, 29000 mV after #Default.", response: "`Vmax in mV: N`"}
   Temp: {group: utility, description: Prints the thermistor temperature., response: "°C, or `Temp Off` while the thermistor is disabled"}
-  Term: {group: utility, argument: 0 or 1, description: Enables the thermistor measurement and the temperature error (off by default)., response: the setting}
+  Term: {group: utility, argument: 0 or 1, description: "Enables the thermistor measurement and the temperature error (off by default). From firmware 110 also parameter 91.", response: the setting}
   Tlim: {group: utility, argument: temperature in °C, description: The temperature at which the temperature error is raised; 75 by default., response: "`Temp limit N`"}
   Iabc: {group: utility, description: Prints the phase currents., response: "`Ia`, `Ib` in mA"}
   PWM: {group: utility, description: Prints the PWM duty values., response: the duties}
@@ -112,11 +113,11 @@ commands:
   Cyca: {group: utility, argument: interval in ms (0 = off), description: "Like Cyc, in the Arduino plotter format `Position:x,Speed:y,Iq:z`.", response: "`Cyclic disabled` when turned off"}
 
   # ------------------------------------------------------------ gripper
-  Gripper: {group: gripper, argument: 0 or 1, description: "Whether this driver is a gripper. Save it; `#Default` clears it.", response: the flag}
-  Gripcal: {group: gripper, description: "Starts the gripper calibration: the jaws find their end stops at 500 mA. It prints nothing when it ends; after about 24 s without both end stops it gives up, uncalibrated. Gripinfo shows the result.", response: "`Gripper calibration!`"}
+  Gripper: {group: gripper, argument: 0 or 1, description: "Whether this driver is a gripper. Save it; `#Default` clears it. From firmware 110 also parameter 92, which takes a write only while the driver is idle.", response: the flag}
+  Gripcal: {group: gripper, description: "Starts the gripper calibration: the jaws find their end stops at 500 mA; from firmware 110 each end is then read under a light 100 mA push, and 0 and 255 lie a few ticks inside the two ends. It prints nothing when it ends. After about 24 s without both end stops it gives up, uncalibrated; firmware 110 also gives up when the ends lie less than 1000 ticks apart, and starts again from the first step when Gripcal comes during a calibration. Gripinfo shows the result, and from firmware 110 parameter 93 the stroke in ticks.", response: "`Gripper calibration!`"}
   Grippos: {group: gripper, argument: 0 (open) to 255 (closed), description: "The position setpoint; also activates the gripper, sets the action bit and goes to gripper mode.", response: the current position}
   Gripvel: {group: gripper, argument: 0 to 255, description: "The speed setpoint of gripper moves, 50 at power-up.", response: the setpoint}
-  Gripcur: {group: gripper, argument: current in mA, description: "The current limit of gripper moves, 400 mA at power-up. From firmware 109 a move uses its magnitude, at most the driver's 2800 mA (108 and older used it as sent); see the gripper manual for the safe range.", response: the setpoint}
+  Gripcur: {group: gripper, argument: current in mA, description: "The current limit of gripper moves, 400 mA at power-up. From firmware 109 a move uses its magnitude, at most the driver's 2800 mA (108 and older used it as sent); see the gripper manual for the safe range. From firmware 110 it is the gripper's own limit: the driver's current limit (Ilim) stays as set.", response: the setpoint}
   Gripact: {group: gripper, argument: 0 or 1, description: The activate bit., response: the bit}
   Gripstop: {group: gripper, argument: 0 or 1, description: "The gripper E-stop bit. While it is 1 the driver raises the gripper E-stop error on every control cycle: set it to 0, then Clear.", response: the bit}
   Gripinfo: {group: gripper, description: "Prints the gripper state: calibrated, activated, end stops, position, current.", response: the report}

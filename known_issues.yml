@@ -20,9 +20,13 @@
 # faults found and fixed before 109 was released (the serial parser refused #Calonly and #Par; #Default wrote the
 # old velocity gains; #Cogcal state left out the harmonics after state 11); no release had them, so they are not
 # listed, and the three ids are never used again.
+# 2026-11-13: checked against firmware 110 (commit a84ead2 of the gripper-110 branch, before V110 was tagged): KI-7
+# is fixed in 110, and KI-15 lost its first half (`#Save` keeps `#Coast` from 110), so its text now says what is left;
+# the others are still there (110 changed only the gripper, the watchdog while idle, brake or coast saved, `#Estop`,
+# `#Close` during a calibration and parameters 90-93).
 
 components:
-  firmware: {name: STEPFOC firmware, version: "109"}
+  firmware: {name: STEPFOC firmware, version: "110"}
 
 issues:
   - id: KI-1
@@ -100,7 +104,9 @@ issues:
       calibration, switch the driver off and on before you calibrate again.
     page: 06-operation/gripper-mode.md#calibrating-the-gripper
     title: "Gripper mode: calibrating"
-    status: open
+    status: fixed
+    fixed_in: "110: a new gripper calibration starts from its first step, also after one that was stopped (a command
+      during the calibration still stops it)"
     since: 2026-11-04
 
   - id: KI-8
@@ -180,10 +186,11 @@ issues:
 
   - id: KI-15
     component: firmware
-    summary: In idle the driver brakes, with the coils shorted, at every power-up and also with an error; `#Coast` is
-      not kept by `#Save`. The current a turned motor drives through the shorted coils is not limited.
-    workaround: Send `#Coast` (or Send_Settings) after every power-up if the motor must turn freely in idle, and do not
-      let a load drive a braking motor fast.
+    summary: In idle the driver brakes, with the coils shorted, by default and also with an error, and the current a
+      turned motor drives through the shorted coils is not limited. (Until firmware 110 `#Save` did not keep
+      `#Coast` either, so the driver braked again at every power-up.)
+    workaround: Do not let a load drive a braking motor fast. If the motor must turn freely in idle, send `#Coast` (or
+      Send_Settings) and `#Save` it.
     page: 06-operation/modes.md#braking-in-idle
     title: Braking in idle
     status: open

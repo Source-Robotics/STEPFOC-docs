@@ -36,12 +36,12 @@ passing through idle; a fault is any of the errors on [Errors and recovery](erro
 
 ## Braking in idle
 
-In idle the driver brakes: it keeps both coils shorted through the driver stage, so the motor resists being
-turned. It does so at every power-up, and also with an error, which puts the driver in idle.
+In idle the driver brakes by default: it keeps both coils shorted through the driver stage, so the motor resists
+being turned. It does so also with an error, which puts the driver in idle.
 
 `#Coast` (or
-Send_Settings over CAN) lets the motor coast instead, with the coils open, until the next power-up: `#Save` does
-not keep it. `#Brake` brakes again.
+Send_Settings or parameter 18 over CAN) lets the motor coast instead, with the coils open. `#Brake` brakes again.
+From firmware 110 `#Save` keeps the choice; on 109 it was lost at every power-up, which braked again.
 
 !!! warning "The braking current is not limited"
     A motor that is turned while it brakes drives its own back-EMF current through the shorted coils, and the
