@@ -1344,7 +1344,7 @@
    }
   }
  },
- "commit": "a84ead2261ee",
+ "commit": "9c9165c08e29",
  "defaults": [
   {
    "after_default": "111 in the EEPROM, not read back",
@@ -2867,11 +2867,6 @@
    "value": "0"
   }
  ],
- "prerelease": {
-  "commit": "a84ead2261ee",
-  "firmware_version_in_source": "110",
-  "ref": "a84ead2"
- },
  "tag": "V110",
  "uart": {
   "accepted": [],
