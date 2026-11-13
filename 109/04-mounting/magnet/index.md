@@ -32,6 +32,10 @@ magnet test may even pass, and the position is wrong.
 4. Check the height after the board is mounted: with the spacer for your motor length, the gap is 1 mm. A magnet
    that touches the chip can destroy the microcontroller; a magnet 2 mm away or more gives a weak signal.
 
+!!! success "Check"
+    The magnet sits centred on the shaft, and once the glue has set it does not move when you push it with a
+    finger.
+
 ## Checking it
 
 With the driver powered and the serial terminal open, `#Magnet` answers `Magnet Good` when the chip sees enough

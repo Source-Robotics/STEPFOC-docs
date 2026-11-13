@@ -1,6 +1,8 @@
 # The bootloader
 
-Every driver shipped with firmware 105 or newer carries a small bootloader in the first 12 KB of its flash. It
+Every driver shipped with firmware 105 or newer carries a small bootloader in the first 12 KB of its flash.
+
+It
 starts the firmware on a normal boot, and it loads a new firmware over UART or CAN when a host asks, so a driver is
 updated without a programming adapter and without opening anything. The bootloader is open source:
 [stm32f103c-bootloader](https://github.com/Source-Robotics/stm32f103c-bootloader), shared with the Spectral Micro.
@@ -42,10 +44,16 @@ first `0x3000` bytes belong to the bootloader and the firmware never touches the
 
 The bootloader has a board ID of its own, 0 to 13, stored in its configuration page. 14 and 15 do not exist
 for it: its command frame, identifier `0x700`, decodes as node 14 in the firmware's identifier scheme, so those
-two node IDs are reserved. **Give drivers node IDs 0 to 13.** The firmware accepts `#CANID 14` and `15`, but the
-bootloader then keeps its old board ID and a firmware update over CAN cannot reach the driver. The firmware keeps
+two node IDs are reserved.
+
+**Give drivers node IDs 0 to 13.** The firmware accepts `#CANID 14` and `15`, but the
+bootloader then keeps its old board ID and a firmware update over CAN cannot reach the driver.
+
+The firmware keeps
 the board ID in step with its CAN node ID when the configuration is saved: `#Save` or Send_Save_config writes the
-node ID into the bootloader's board ID, so a driver answers the host tools under its node ID. A node ID that is set
+node ID into the bootloader's board ID, so a driver answers the host tools under its node ID.
+
+A node ID that is set
 but not saved is not the board ID yet. A
 replacement board ships as ID 0; two boards with the same ID on one bus corrupt each other's flash stream, so
 give the new board its ID alone on the bus first (`set-id` in the host tool).
@@ -53,18 +61,27 @@ give the new board its ID alone on the bus first (`set-id` in the host tool).
 ## Transports and protocol
 
 Over **CAN** (1 Mbit/s, standard 11-bit identifiers) the host commands on identifier `0x700` with 8 data bytes
-(`board_id`, `cmd`, two parameters); the board replies on `0x701 + board_id` with 5 bytes (`board_id`, `cmd`,
-error code, a 16-bit parameter); the firmware image streams in bulk frames on `(board_id << 7) | sequence`,
-16 frames of 8 bytes per chunk, with no reply per frame. Over **UART** (256000 baud) the same commands travel in
-framed packets `[0xBB][CMD][LEN][BOARD_ID][DATA…][CRC16]` with the same 5-byte reply, but the first four have other
-numbers.
+(`board_id`, `cmd`, two parameters). The board replies on `0x701 + board_id` with 5 bytes (`board_id`, `cmd`,
+error code, a 16-bit parameter).
+
+The firmware image streams in bulk frames on `(board_id << 7) | sequence`,
+16 frames of 8 bytes per chunk, with no reply per frame.
+
+Over **UART** (256000 baud) the same commands travel in framed packets `[0xBB][CMD][LEN][BOARD_ID][DATA…][CRC16]`
+with the same 5-byte reply, but the first four have other numbers.
 
 Commands over CAN: `WBUF` (1), `WPAGE` (2), `WCRC` (3), `PING` (4), `SET_ID` (5), `ERASE_APP` (6),
-`STREAM_BEGIN` (7), `STREAM_STATUS` (8). Over UART: `PING` (1), `WBUF` (2), `WPAGE` (3), `WCRC` (4), and the
+`STREAM_BEGIN` (7), `STREAM_STATUS` (8).
+
+Over UART: `PING` (1), `WBUF` (2), `WPAGE` (3), `WCRC` (4), and the
 others as over CAN, plus `STREAM_DATA` (9), which carries the stream frames. Error codes: `0` OK, `1` invalid offset, `2` invalid CRC, `3` flash write failed, `4` invalid
-page number. A flash is: ping, reset the firmware if it answers, ping until the bootloader answers, `ERASE_APP`
+page number.
+
+A flash is: ping, reset the firmware if it answers, ping until the bootloader answers, `ERASE_APP`
 (about 3.5 s), then for each 1 KB page `STREAM_BEGIN`, 8 chunks of 16 frames, `STREAM_STATUS`, `WPAGE` with the
-page's CRC32; finally `WCRC` with the page count and the image's CRC32. The bootloader stores the CRC and
+page's CRC32; finally `WCRC` with the page count and the image's CRC32.
+
+The bootloader stores the CRC and
 reboots into the new firmware. The full wire protocol is in the bootloader repository's `docs/PROTOCOL.md`.
 
 ## The host side
@@ -81,7 +98,9 @@ reboots into the new firmware. The full wire protocol is in the bootloader repos
 
 An interrupted flash leaves an invalid CRC; the bootloader refuses to start the firmware and waits, so the board is
 not lost: flash again. A board that answers nothing at all: power-cycle it with the host already polling, to catch
-the 2 s window. The one thing the tools refuse, and that would need a programming adapter to undo, is flashing an
+the 2 s window.
+
+The one thing the tools refuse, and that would need a programming adapter to undo, is flashing an
 image linked for `0x08000000` (a firmware from the `main` branch) over the firmware region.
 
 ## Installing it

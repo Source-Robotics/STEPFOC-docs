@@ -40,7 +40,7 @@ between firmware releases. The text and the images are licensed CC BY-SA 4.0, th
 
     ---
 
-    [One page](https://docs.source-robotics.com/STEPFOC-docs/109/quick-start/) from the box to a calibrated motor that follows commands, through Motor GUI or the
+    [Four short parts](https://docs.source-robotics.com/STEPFOC-docs/109/quick-start/) from the box to a calibrated motor that follows commands, through Motor GUI or the
     terminal, with a link into the manual at every step.
 
 -   :material-book-open-variant: **The manual**

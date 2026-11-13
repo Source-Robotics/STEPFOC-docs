@@ -19,7 +19,9 @@ commands only work with the flag set.
 
 After every power-up the gripper has to find its end stops: `#Gripcal` or Send_gripper_calibrate. The jaws open
 until they stop, then close until they stop, slowly and at 500 mA; the positions become 0 (open) and 255 (closed).
-The driver prints nothing when it is done. If it has not found both end stops within about 24 s it gives up, and
+The driver prints nothing when it is done.
+
+If it has not found both end stops within about 24 s it gives up, and
 the gripper stays uncalibrated. Check the result with `#Gripinfo` (`Gripper calibrated is: 1`) or the
 `gripper_calibrated` bit of Respond_Gripper_data_pack: a move is carried out only once the gripper is calibrated.
 The motor itself must be calibrated (`#Cal`) and saved before that, once.
@@ -52,7 +54,9 @@ and the object detection:
 
 An empty Send_gripper_data_pack (0 bytes) only asks for the state. The answer to a 5-byte command goes out
 before the driver acts on it, so its object detection and error bits are still those of the moment before
-(KI-6); the answers to the next frames show the new move. The action bit in the answer is a copy of the last
+(KI-6); the answers to the next frames show the new move.
+
+The action bit in the answer is a copy of the last
 command's action bit and stays 1 after the move ends (KI-8): the object detection tells when it has ended.
 
 Send_gripper_data_pack's E-stop bit raises the

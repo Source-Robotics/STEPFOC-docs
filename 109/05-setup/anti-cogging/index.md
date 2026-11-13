@@ -1,9 +1,11 @@
 # Encoder table and anti-cogging
 
-Firmware 109 measures two corrections on the drive itself, with nothing but the motor on the bench: the
-**encoder table**, which corrects the small error of the encoder's angle reading, and the **anti-cogging**, a
-current that cancels the motor's own torque ripple. After a calibration both run by themselves
-([What follows the calibration](https://docs.source-robotics.com/STEPFOC-docs/109/05-setup/calibration/#what-follows-the-calibration)); this page explains what they are,
+Firmware 109 measures two corrections on the drive itself, with nothing but the motor on the bench. The
+**encoder table** corrects the small error of the encoder's angle reading. The **anti-cogging** is a current that
+cancels the motor's own torque ripple.
+
+After a calibration both run by themselves
+([What follows the calibration](https://docs.source-robotics.com/STEPFOC-docs/109/05-setup/calibration/#what-follows-the-calibration)). This page explains what they are,
 how to run them again, and how to check them.
 
 !!! danger "The motor turns"
@@ -13,65 +15,87 @@ how to run them again, and how to check them.
 
 ## The encoder table
 
-The magnetic encoder reads the shaft angle with a small error that changes slowly around the turn: the magnet is
-never exactly on the axis, and the chip itself is not perfectly linear. On the bench NEMA 17 it was 0.65° peak to
-peak. The commutation multiplies it by the pole pairs, so on a 50-pole-pair stepper the field is up to 32
-electrical degrees off at places, which costs torque and makes the current uneven around the turn.
+The magnetic encoder reads the shaft angle with a small error that changes slowly around the turn. The magnet is
+never exactly on the axis, and the chip itself is not perfectly linear. On the bench NEMA 17 it was 0.61° peak to
+peak.
+
+The commutation multiplies it by the pole pairs. On a 50-pole-pair stepper the field is then up to about 18
+electrical degrees off at places: the 0.61° spans about 31° electrical, and the electrical offset sits near its
+middle. That costs torque and makes the current uneven around the turn.
 
 To measure it, the driver turns the field open loop, one shaft revolution forward and one back at 2048 ticks/s
-(about 20 s), with a current of 80 % of the current limit holding the rotor to the field. At each 1/128 of a turn
-it records how far the encoder's angle is from the field's. Forward and backward are averaged, so friction, which
-pulls the rotor behind the field in each direction, cancels; the stepper's own pull towards its detents is left
-out by keeping only the harmonics 1 to 16 per turn. The result is a table of 128 corrections. From then on the
-encoder reading is corrected with it, and the electrical offset is moved by the table's mean error, so the
-commutation stays right.
+(about 20 s). A current of 80 % of the current limit holds the rotor to the field.
+
+At each 1/128 of a turn it records how far the encoder's angle is from the field's. Forward and backward are
+averaged, so friction, which pulls the rotor behind the field in each direction, cancels. The stepper's own pull
+towards its detents is left out by keeping only the harmonics 1 to 16 per turn.
+
+![Illustration, not a measurement: friction pulls the forward and the backward pass to either side of the encoder's error, and the detents add a fast ripple; their average, kept to the harmonics 1 to 16 per turn, is the table.](https://docs.source-robotics.com/STEPFOC-docs/109/assets/anti-cogging/encoder_measurement.svg){ width="800" }
+![Illustration, not a measurement: friction pulls the forward and the backward pass to either side of the encoder's error, and the detents add a fast ripple; their average, kept to the harmonics 1 to 16 per turn, is the table.](https://docs.source-robotics.com/STEPFOC-docs/109/assets/anti-cogging/encoder_measurement_dark.svg){ width="800" }
+
+The result is a table of 128 corrections. From then on the encoder reading is corrected with it. The electrical
+offset is moved by the table's mean error, so the commutation stays right.
+
+![The encoder table of the bench NEMA 17: the encoder's error at each 1/128 of a turn, 0.61° peak to peak, about 31° electrical on the right-hand scale; the dashed line is its once-per-turn part.](https://docs.source-robotics.com/STEPFOC-docs/109/assets/anti-cogging/encoder_table.svg){ width="800" }
+![The encoder table of the bench NEMA 17: the encoder's error at each 1/128 of a turn, 0.61° peak to peak, about 31° electrical on the right-hand scale; the dashed line is its once-per-turn part.](https://docs.source-robotics.com/STEPFOC-docs/109/assets/anti-cogging/encoder_table_dark.svg){ width="800" }
 
 A table over 4° peak to peak, or one that would move the offset by more than 60 electrical degrees, is rejected
 as implausible: the magnet is loose or far off its place.
 
 ## Anti-cogging
 
-A stepper pulls towards its detent positions, four times per electrical turn, and errors in the current
-measurement add a ripple once and twice per electrical turn. At low speed both show as a ripple in the speed and
-the position. Anti-cogging adds a current to the current setpoint that cancels it: a function of the electrical
-angle, added in velocity and position modes.
+A stepper pulls towards its detent positions, four times per electrical turn. Errors in the current measurement
+add a ripple once and twice per electrical turn.
 
-To find it, the driver runs in velocity mode at 1500 ticks/s (parameter 44), records the current the velocity
-loop asks for in 256 bins over the electrical angle for one motor revolution forward and one back, and averages
-the two directions, each without its mean, so friction drops out. From that it keeps two forms of the same
-correction:
+At low speed both show as a ripple in the speed and the position. Anti-cogging adds a current to the current
+setpoint that cancels it: a function of the electrical angle, added in velocity and position modes.
+
+To find it, the driver runs in velocity mode at 1500 ticks/s (parameter 44), one motor revolution forward and one
+back. It records the current the velocity loop asks for in 256 bins over the electrical angle. Then it averages
+the two directions, each without its mean, so friction drops out.
+
+From that it keeps two forms of the same correction:
 
 - **harmonics** (parameter 37 = 1): the 8 largest of the harmonics 1 to 32 of the electrical angle, each
   a·cos(h·θ) + b·sin(h·θ) in mA;
 - **table** (parameter 37 = 2): 256 values in mA over one electrical turn, interpolated between them.
 
+![The anti-cogging of the bench NEMA 17 over one electrical turn, identified at 1500 ticks/s before the drive had the encoder table and the zero trim: above, its two forms; below, the current the velocity loop asks for with it off and on.](https://docs.source-robotics.com/STEPFOC-docs/109/assets/anti-cogging/anticogging.svg){ width="800" }
+![The anti-cogging of the bench NEMA 17 over one electrical turn, identified at 1500 ticks/s before the drive had the encoder table and the zero trim: above, its two forms; below, the current the velocity loop asks for with it off and on.](https://docs.source-robotics.com/STEPFOC-docs/109/assets/anti-cogging/anticogging_dark.svg){ width="800" }
+
 The identification switches the harmonics on. On the bench both forms were equally good. Parameter 38 scales the
 correction from 0 to 200 % for experiments; 100 % is as identified.
 
 The angle here comes from the encoder alone, without the calibration's offset. The part of the correction that
-comes from the current measurement is tied to the motor's electrical angle, though, which the offset defines:
-that is why `#Calangle` identifies the anti-cogging again.
+comes from the current measurement is tied to the motor's electrical angle, though, which the offset defines.
+That is why `#Calangle` identifies the anti-cogging again.
 
 The identification records the current the loops ask for, so it depends a little on the gains. After a large
 change of the current or velocity gains, identify it again.
 
 ### The current-sense zero trim
 
-The once-per-electrical-turn part of the anti-cogging is mostly an error of the current-sense zero (on the bench
-1.6 mA of ripple per ADC count of zero error). The identification **with the trim** reads both zero errors from it,
-corrects the zeros, and identifies again on the corrected zeros.
-If the 1st harmonic did not drop by at least 30 % and is still above 2.0 mA,
-the zeros go back and the anti-cogging is identified once more without the trim; the state then reads 11, done
-without the trim. A 1st harmonic under 1.5 mA is left alone, and one run moves a zero by at most 30 counts. The
-trims (parameters 59 and 60, up to ±60 counts) are saved with the encoder table and added to the zero the driver
-measures at every start-up. On the bench drive the trim took the 1st harmonic from 8.8 to 0.2 mA in one run.
+The once-per-electrical-turn part of the anti-cogging is mostly an error of the current-sense zero. On the bench it
+was 1.6 mA of ripple per ADC count of zero error.
+
+The identification **with the trim** reads both zero errors from it and corrects the zeros. Then it identifies
+again on the corrected zeros.
+
+![The harmonics of the anti-cogging the drive identified on the bench NEMA 17, with the current-sense zeros as measured and with the zeros corrected by hand, as the trim corrects them: the 1st harmonic drops, the 2nd and 4th stay.](https://docs.source-robotics.com/STEPFOC-docs/109/assets/anti-cogging/zero_trim.svg){ width="800" }
+![The harmonics of the anti-cogging the drive identified on the bench NEMA 17, with the current-sense zeros as measured and with the zeros corrected by hand, as the trim corrects them: the 1st harmonic drops, the 2nd and 4th stay.](https://docs.source-robotics.com/STEPFOC-docs/109/assets/anti-cogging/zero_trim_dark.svg){ width="800" }
+
+If the 1st harmonic did not drop by at least 30 % and is still above 2.0 mA, the zeros go back. The anti-cogging
+is then identified once more without the trim, and the state reads 11, done without the trim.
+
+A 1st harmonic under 1.5 mA is left alone, and one run moves a zero by at most 30 counts.
+
+The trims (parameters 59 and 60, up to ±60 counts) are saved with the encoder table. They are added to the zero
+the driver measures at every start-up. On the bench drive the trim took the 1st harmonic from 8.8 to 0.2 mA in
+one run. The plot above shows a correction by hand, 8.9 to 1.0 mA; the drive's own trim did better.
 
 ## Running them
 
-The driver must be calibrated and without an error. Both runs keep the CAN watchdog fed while they go, end by
-holding the position the shaft reached, and stop at once when a host sends a command (a motion command, Idle) or
-an error comes up; nothing is saved then. While a run turns the motor a capture is not armed, and during the
-anti-cogging run parameters 34 and 35 refuse a write: the runs use the capture's memory and the histogram.
+The driver must be calibrated and without an error. Each run has a UART command and a CAN parameter:
 
 | What | UART | CAN: Send_Parameter |
 |---|---|---|
@@ -84,13 +108,32 @@ anti-cogging run parameters 34 and 35 refuse a write: the runs use the capture's
 | the anti-cogging with the trim, saved | `#Par 43,5` | 43 = 5 |
 | stop a run | `#Encal stop`, `#Cogcal stop` | 52 = 0, 43 = 0 |
 
+`#Encal stop` does not stop the anti-cogging part of a combined run (`#Encal all`). `#Cogcal stop` stops a run
+in either part, and so do 52 = 0 and 43 = 0 over CAN.
+
+1. Make sure the shaft is free: nothing on it and nothing it could drive.
+2. Send the run's command from the table, on the UART or over CAN.
+3. Send nothing else while the motor turns, one revolution forward and one back for each run.
+4. Read the result with `#Encal state` or `#Cogcal state`, or parameter 52 or 43 over CAN.
+
+!!! success "Check"
+    The state reads 3, done, or 11, done without the trim. The motor holds the position the shaft reached. Any
+    other state is in the table "When a run fails" under [Checking them](#checking-them).
+
+Both runs keep the CAN watchdog fed while they go, and end by holding the position the shaft reached. They stop at
+once when a host sends a command (a motion command, Idle) or an error comes up. Nothing is saved then.
+
+While a run turns the motor a capture is not armed. During the anti-cogging run parameters 34 and 35 refuse a
+write: the runs use the capture's memory and the histogram.
+
 A save from a run is the whole configuration, as `#Save` writes it. After a change of the motor, the magnet or
 its position, run the encoder table and the anti-cogging again, in that order, or calibrate again.
 
-Two guards keep a correction from running on the wrong data: parameter 37 refuses 1 or 2 while no set is stored
-for that form, and an encoder table measured on its own (52 = 1 or 2) switches an anti-cogging set from before
-off, because that set was found on the uncorrected encoder; the anti-cogging state then reads 10 until it is
-identified again.
+Two guards keep a correction from running on the wrong data:
+
+- parameter 37 refuses 1 or 2 while no set is stored for that form;
+- an encoder table measured on its own (52 = 1 or 2) switches an anti-cogging set from before off, because that
+  set was found on the uncorrected encoder. The anti-cogging state then reads 10 until it is identified again.
 
 ## Checking them
 
@@ -108,16 +151,19 @@ In force:
   after #Calangle (parameter 56): anti-cogging, then save
 ```
 
-(here with the values the bench drive measured). While a run goes, a line `running: encoder table` or
-`running: anti-cogging identification` follows. `#Encal state` and `#Cogcal state` print one run's state without
-starting it; after a finished identification (state 3, or 11 without the trim) it also lists the harmonics.
+The example shows the values the bench drive measured. While a run goes, a line `running: encoder table` or
+`running: anti-cogging identification` follows.
+
+`#Encal state` and `#Cogcal state` print one run's state without starting it. After a finished identification
+(state 3, or 11 without the trim) it also lists the harmonics.
 
 Over CAN the same is in the parameters (the [parameter table](https://docs.source-robotics.com/STEPFOC-docs/109/reference/can/parameters/#every-parameter)):
 
 | Parameter | What it tells | On the bench NEMA 17 |
 |---|---|---|
 | 52 | the encoder table's state: 3 done, 4 aborted, 5 error or not calibrated, 6 the rotor did not follow, 7 rejected | 3 |
-| 54, 55 | the table's error peak to peak and its once-per-turn part, 0.01° of the shaft | 61-65 (0.61-0.65°); two runs within 0.021° |
+| 54 | the table's error peak to peak, 0.01° of the shaft | 61-65 (0.61-0.65°); two runs within 0.021° |
+| 55 | the amplitude of its once-per-turn part, 0.01° of the shaft | 19 (0.19°) |
 | 57 | how far the last table moved the electrical offset, 0.1° electrical | −25, then −1 on a second run |
 | 43 | the anti-cogging state: 3 done, 11 done without the trim, 6 the shaft did not turn | 3 |
 | 45 | the cogging current found, 0.1 mA rms | 71 (7.1 mA) |
@@ -126,9 +172,13 @@ Over CAN the same is in the parameters (the [parameter table](https://docs.sourc
 | 79 | the bits of what is in force, see [What is in force](https://docs.source-robotics.com/STEPFOC-docs/109/reference/can/parameters/#what-is-in-force-parameter-79) | |
 
 With the anti-cogging on, the bench motor's speed ripple that repeats with the angle was 1.2 to 2 times smaller
-at 1500 to 6000 ticks/s, and the position ripple 1.9 to 2.5 times smaller. A free motor gains little from the
-encoder table in these numbers (its current varied 2.5 to 3 times less around the turn, but a free motor needs
-little current); a loaded one gains more.
+at 1500 to 6000 ticks/s. The position ripple was 1.9 to 2.5 times smaller.
+
+![The speed of the bench NEMA 17 turning at 6000 ticks/s, minus its mean, before the drive had the encoder table and the zero trim: with the anti-cogging on, the part that repeats with the angle is about half as large.](https://docs.source-robotics.com/STEPFOC-docs/109/assets/anti-cogging/anticogging_speed.svg){ width="800" }
+![The speed of the bench NEMA 17 turning at 6000 ticks/s, minus its mean, before the drive had the encoder table and the zero trim: with the anti-cogging on, the part that repeats with the angle is about half as large.](https://docs.source-robotics.com/STEPFOC-docs/109/assets/anti-cogging/anticogging_speed_dark.svg){ width="800" }
+
+A free motor gains little from the encoder table in these numbers. Its current varied 2.5 to 3 times less around
+the turn, but a free motor needs little current. A loaded one gains more.
 
 Send_Buffer_Read reads the corrections themselves: kind 4 the encoder table (128 values in 1/16 count), kind 2
 the harmonics, kind 3 the anti-cogging table ([Respond_Buffer_Data](https://docs.source-robotics.com/STEPFOC-docs/109/reference/can/parameters/#respond_buffer_data)).
@@ -154,5 +204,5 @@ When a run fails:
 `#Save` keeps the switches with the corrections. `#Default` clears both corrections and the trims.
 
 !!! note "Spectral Micro"
-    The Spectral Micro firmware 109 has the same encoder table and anti-cogging, but runs neither after a
-    calibration until they are tested on its bench, and skips the zero trim. Its manual says more.
+    The Spectral Micro firmware 109 has the same encoder table and anti-cogging. It runs neither after a
+    calibration until they are tested on its bench, and it skips the zero trim. Its manual says more.

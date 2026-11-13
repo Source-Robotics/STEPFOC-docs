@@ -1,6 +1,6 @@
 # Connectors and pinout
 
-![The connectors. The motor coils go to A+, A−, B+, B−; the supply to DC+ and DC−.](https://docs.source-robotics.com/STEPFOC-docs/109/assets/STEPFOC_CONN.webp){ width="900" }
+![The connectors. The motor coils go to A+, A−, B+, B−; the supply to DC+ and DC−.](https://docs.source-robotics.com/STEPFOC-docs/109/assets/STEPFOC_CONN_white.webp){ width="900" }
 
 | Connector | Pins | Type | Cable |
 |---|---|---|---|

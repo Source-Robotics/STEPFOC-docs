@@ -1,11 +1,16 @@
 # Motor parameters and calibration
 
-Calibration teaches the driver its motor: it checks the magnet and the supply, takes the motor's resistance,
-inductance and pole pairs from you, computes the current loop gains, spins the motor in open loop to learn the
-direction of the wiring, finds the angle offset between the encoder and the motor's electrical zero, and measures
-the motor constants Kt, KV and the flux linkage. From firmware 109 two more runs follow by themselves, the
-[encoder table and the anti-cogging](https://docs.source-robotics.com/STEPFOC-docs/109/05-setup/anti-cogging/), and then the driver saves everything. It runs once per
-motor; the result is kept by saving.
+Calibration teaches the driver its motor. It:
+
+- checks the magnet and the supply;
+- takes the motor's resistance, inductance and pole pairs from you;
+- computes the current loop gains;
+- spins the motor in open loop to learn the direction of the wiring;
+- finds the angle offset between the encoder and the motor's electrical zero;
+- measures the motor constants Kt, KV and the flux linkage.
+
+From firmware 109 two more runs follow by themselves, the [encoder table and the anti-cogging](https://docs.source-robotics.com/STEPFOC-docs/109/05-setup/anti-cogging/),
+and then the driver saves everything. It runs once per motor; the result is kept by saving.
 
 !!! danger "The motor turns"
     Calibration spins the motor in both directions, fast at times. Fix the motor to the bench and take everything
@@ -18,7 +23,9 @@ motor; the result is kept by saving.
 ## 1. Restore the defaults
 
 The EEPROM of a new driver, or of one that ran another motor, can hold values that do not fit, such as another
-motor's parameters. Calibration starts from what is there, so start from the factory values. (A damaged
+motor's parameters. Calibration starts from what is there, so start from the factory values.
+
+(A damaged
 configuration should not show up with firmware 106 and newer, which checks the stored blocks at power-up and
 replaces a damaged one with the defaults; if `#Info` still shows `-1` somewhere, restoring the defaults fixes it.)
 
@@ -41,6 +48,12 @@ STEPFOC does not measure the resistance and inductance of a stepper (the Spectra
 enter them from the motor's datasheet, as the values of **one coil**, and the pole pairs. Calibration fails on a
 value left at 0, and accepts only 50, 75, 100 or 125 pole pairs.
 
+!!! tip "We recommend a Motor GUI preset"
+    In Motor GUI's **Presets** tab, a preset enters these values for you, with safe limits and gains. For a Source
+    Robotics product, pick its preset. For any other stepper, pick *Generic motor* and type the pole pairs, the
+    resistance and the inductance from the datasheet: the preset writes them with a low current limit and soft
+    loops, so the motor calibrates safely. More: [Motor GUI](https://docs.source-robotics.com/STEPFOC-docs/109/05-setup/motor-gui/).
+
 === "Motor GUI"
     In the motor settings enter *Pole pairs* (50 for a 1.8° motor, 75 for 1.2°, 100 for 0.9°, 125 for 0.72°),
     *Resistance* in ohms and *Inductance* in henries, and apply them.
@@ -60,7 +73,9 @@ value left at 0, and accepts only 50, 75, 100 or 125 pole pairs.
 ![The three values on a typical datasheet, here for the 17HS16-2004S1: 1.8°, 1.1 Ω, 2.6 mH.](https://docs.source-robotics.com/STEPFOC-docs/109/assets/Motor_specs.webp){ width="900" }
 
 Calibration computes the current loop gains from R, L and the current loop bandwidth, 160 Hz by default:
-Kp = ω·L and Ki = ω·R, with ω = 2π × the bandwidth. The firmware keeps Ki per control loop, so `Ki_iq` in the
+Kp = ω·L and Ki = ω·R, with ω = 2π × the bandwidth.
+
+The firmware keeps Ki per control loop, so `Ki_iq` in the
 log is about ω·R × 160 µs. Leave the bandwidth for now;
 [Current limit and loop tuning](https://docs.source-robotics.com/STEPFOC-docs/109/05-setup/tuning/) comes back to it. (Firmware 108 and older divided both gains by 7,
 which gave a loop of about 70 Hz.)
@@ -143,7 +158,9 @@ Half a second after `Calibration success!` of a `#Cal` the driver starts two run
 succeed, everything is saved.
 
 The motor turns slowly, one turn forward and one back for each run, so keep the shaft free for about a minute
-more; `#Info` shows `running: …` under `In force:` while they go. A command from a host (a motion command,
+more; `#Info` shows `running: …` under `In force:` while they go.
+
+A command from a host (a motion command,
 `#Idle`) stops them; then nothing is saved, and the calibration is kept only if you `#Save` it.
 [Encoder table and anti-cogging](https://docs.source-robotics.com/STEPFOC-docs/109/05-setup/anti-cogging/) explains both and how to check them. `#Cal` always runs them;
 `#Calonly` never does.
@@ -208,7 +225,9 @@ shaft between calibration and use: fix the magnet and calibrate again.
 `#Calangle` runs an angle-offset search on its own, with an older routine than the one `#Cal` uses: it gives up
 after about two minutes and keeps the offset it reached. From firmware 109, when parameter 56 is not 0, the
 anti-cogging is identified again afterwards and everything is saved, because the anti-cogging depends on the
-offset. After a timeout nothing follows and nothing is saved. From firmware 109 `#Calangle` is refused while the
+offset.
+
+After a timeout nothing follows and nothing is saved. From firmware 109 `#Calangle` is refused while the
 driver is in error: it prints `Calangle: not started, the drive is in error (#Error, #Clear)`. After a change of
 motor, magnet or wiring, run the whole `#Cal` instead.
 

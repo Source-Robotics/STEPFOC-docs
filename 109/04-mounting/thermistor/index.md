@@ -13,12 +13,15 @@ default; use it on any motor that runs near its rated current for long.
 
 ## Fitting it
 
-A stepper is sealed: the windings cannot be reached. Place the thermistor on the motor housing, as close to the
+A stepper is sealed: the windings cannot be reached.
+
+Place the thermistor on the motor housing, as close to the
 windings as possible: either glued to the side of the housing, or in one of the four screw holes of the motor's
 bottom with the screw removed, which puts it deep in the stack. Thermal cement holds it and conducts the heat.
 
 <figure markdown="span">
   ![Thermal cement](https://docs.source-robotics.com/STEPFOC-docs/109/assets/Thermal_cement.webp){ width="220" }
+  ![Thermal cement](https://docs.source-robotics.com/STEPFOC-docs/109/assets/Thermal_cement_dark.webp){ width="220" }
   <figcaption>Thermal cement: it sets hard and conducts heat. Thermal paste stays soft and lets the bead move, ordinary glue insulates it. <a href="https://s.click.aliexpress.com/e/_c3dBOwTD" target="_blank" rel="noopener">Where to buy it</a>.</figcaption>
 </figure>
 

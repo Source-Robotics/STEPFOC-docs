@@ -2,7 +2,9 @@
 
 A driver running release 103 or older from the `main` branch has no bootloader: its firmware starts at the
 beginning of the flash. A driver that reports 103 may have the bootloader all the same; check first, as in
-[Drivers that report 103](https://docs.source-robotics.com/STEPFOC-docs/109/07-firmware/releases/#drivers-that-report-103). To
+[Drivers that report 103](https://docs.source-robotics.com/STEPFOC-docs/109/07-firmware/releases/#drivers-that-report-103).
+
+To
 run any release from 105 on, which is linked to start above the bootloader, the bootloader must be installed
 once, with a programming adapter on the JTAG connector. After that, every update goes over UART or CAN.
 
@@ -33,6 +35,7 @@ once, with a programming adapter on the JTAG connector. After that, every update
     STM32CubeProgrammer; the ST-LINK Utility runs on Windows only. The adapter needs no driver.
 
 ![The JTAG pads, marked 3V3, GND, SWCLK, SWDIO. The adapter is pressed onto them; a little pressure makes the contact.](https://docs.source-robotics.com/STEPFOC-docs/109/assets/STEPFOC_JTAG.webp){ width="700" }
+![The JTAG pads, marked 3V3, GND, SWCLK, SWDIO. The adapter is pressed onto them; a little pressure makes the contact.](https://docs.source-robotics.com/STEPFOC-docs/109/assets/STEPFOC_JTAG_dark.webp){ width="700" }
 
 ## Steps
 

@@ -15,7 +15,8 @@ on the motor shaft's axis.
 ![Board dimensions and hole pattern. The drawing is of the Spectral Micro, which has the same outline and hole pattern.](https://docs.source-robotics.com/STEPFOC-docs/109/assets/micro_dimensions.webp){ width="600" }
 ![Board dimensions and hole pattern. The drawing is of the Spectral Micro, which has the same outline and hole pattern.](https://docs.source-robotics.com/STEPFOC-docs/109/assets/micro_dimensions_dark.webp){ width="600" }
 
-![The STEP model.](https://docs.source-robotics.com/STEPFOC-docs/109/assets/STEPFOC_STEP.webp){ width="520" }
+![The board's model, from its STEP file: the PCB and everything mounted on it.](https://docs.source-robotics.com/STEPFOC-docs/109/assets/renders/stepfoc_board_studio.webp){ width="620" }
+![The board's model, from its STEP file: the PCB and everything mounted on it.](https://docs.source-robotics.com/STEPFOC-docs/109/assets/renders/stepfoc_board_studio_dark.webp){ width="620" }
 
 The STEP files of the board, the magnet spacers for different motor lengths and the tool for pressing the magnet
 onto the shaft are in the firmware repository:

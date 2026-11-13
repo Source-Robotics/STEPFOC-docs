@@ -2,7 +2,9 @@
 
 STEPFOC is a field-oriented controller for bipolar stepper motors. It sits on the back of a NEMA 17 motor, reads
 the rotor position from a magnet on the motor shaft, and drives the two coils with sinusoidal currents the way a
-servo drive does, instead of the fixed step currents of a conventional stepper driver. The result is a stepper that
+servo drive does, instead of the fixed step currents of a conventional stepper driver.
+
+The result is a stepper that
 runs quietly and efficiently, never loses steps, reports its position, and can be commanded in position, speed,
 current (torque) or impedance.
 
@@ -30,12 +32,14 @@ The connectors and their pinout are in [Connectors and pinout](https://docs.sour
 
 The firmware closes three nested loops on the motor: a current (torque) loop, a velocity loop around it and a
 position loop around that, plus an impedance (PD) loop that makes the motor behave like a spring and damper.
+
 A command picks the loop: a current setpoint, a speed, a position or a PD setpoint. Open-loop stepping, a
 voltage-torque mode and a homing mode against a sensor exist beside them; [Control modes](https://docs.source-robotics.com/STEPFOC-docs/109/06-operation/modes/)
 describes each.
 
 The driver protects itself and the motor: it stops on a supply voltage outside the limits, on an encoder fault (no
 magnet), on a motor over-temperature (with the thermistor), on an E-stop command and on a watchdog that runs out.
+
 The status LED and `#Error` tell which; see [Errors and recovery](https://docs.source-robotics.com/STEPFOC-docs/109/06-operation/errors/). It does not monitor
 its driver stage: a fault there is not reported.
 

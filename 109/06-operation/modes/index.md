@@ -37,7 +37,9 @@ passing through idle; a fault is any of the errors on [Errors and recovery](http
 ## Braking in idle
 
 In idle the driver brakes: it keeps both coils shorted through the driver stage, so the motor resists being
-turned. It does so at every power-up, and also with an error, which puts the driver in idle. `#Coast` (or
+turned. It does so at every power-up, and also with an error, which puts the driver in idle.
+
+`#Coast` (or
 Send_Settings over CAN) lets the motor coast instead, with the coils open, until the next power-up: `#Save` does
 not keep it. `#Brake` brakes again.
 
@@ -108,10 +110,13 @@ None of these settings is saved.
 ## Positive rotation
 
 ![Positive rotation is counter-clockwise looking at the encoder magnet. A positive current turns the motor that way, a positive speed too, and the position grows.](https://docs.source-robotics.com/STEPFOC-docs/109/assets/STEPFOC_ORIENTATION.webp){ width="700" }
+![Positive rotation is counter-clockwise looking at the encoder magnet. A positive current turns the motor that way, a positive speed too, and the position grows.](https://docs.source-robotics.com/STEPFOC-docs/109/assets/STEPFOC_ORIENTATION_dark.webp){ width="700" }
 
 ## Which mode am I in?
 
 `#Mode` prints the mode: `Idle mode`, `Position control`, `Speed control`, `Current control`, `PD control`,
-`Open loop`, `Gripper mode` or `Gripper calib mode`. In this firmware release the voltage-torque mode reads
+`Open loop`, `Gripper mode` or `Gripper calib mode`.
+
+In this firmware release the voltage-torque mode reads
 `Gripper mode` too (a leftover label), and HALL mode, the angle-offset search (`#Calangle`), open-loop steps
 (`#gosteps`), gripper mode and the encoder-table run print nothing. The behaviour of the motor is the reliable check there.

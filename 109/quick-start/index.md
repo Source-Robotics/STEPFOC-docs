@@ -1,14 +1,30 @@
 # Quick start
 
-From the box to a calibrated motor that follows commands, on one page. The quickest way through is
-[Motor GUI](https://motorgui.com/) in the browser; every step also shows the terminal commands, and ends with a
-link to the chapter that explains it. Follow the link when a step is not clear or something fails.
+From the box to a calibrated motor that follows commands, in four parts. The quickest way through is
+[Motor GUI](https://motorgui.com/) in the browser; every step also shows the terminal commands.
 
 !!! danger "Read first"
     Reversed supply polarity, a daisy-chain cable the wrong way round, or 5 V on the UART port destroys the driver.
     The motor turns during calibration. The [Safety](https://docs.source-robotics.com/STEPFOC-docs/109/02-safety/) chapter is two minutes long.
 
-## 1. What you need
+## Before you start
+
+You start from the box: a driver, a motor and the parts below. The wiring needs a multimeter and a soldering iron.
+
+Nothing else is assumed: no experience with motor drivers, a terminal or a program.
+
+## The four parts
+
+| Part | What you do | What you end with |
+|---|---|---|
+| [1. Fit the motor](https://docs.source-robotics.com/STEPFOC-docs/109/quick-start/1-motor/) | Fit the magnet, mount the board on the motor, solder the coils | A driver on its motor, wired |
+| [2. Connect](https://docs.source-robotics.com/STEPFOC-docs/109/quick-start/2-connect/) | Connect the supply and the PC, open Motor GUI or a terminal | A driver that talks to your PC |
+| [3. Calibrate](https://docs.source-robotics.com/STEPFOC-docs/109/quick-start/3-calibrate/) | Restore the defaults, enter the motor's values, calibrate, set the current limit, save | A calibrated driver that keeps its settings |
+| [4. First moves](https://docs.source-robotics.com/STEPFOC-docs/109/quick-start/4-first-moves/) | Turn the motor at a speed, move it to a position, stop it | A motor that follows commands |
+
+Each step links the page that explains it. Follow the link when a step is not clear or something fails.
+
+## What you need
 
 | | Where to get it |
 |---|---|
@@ -23,195 +39,4 @@ link to the chapter that explains it. Follow the link when a step is not clear o
 | Optional: **100 kΩ NTC thermistor** for motor temperature protection | [thermistor](https://source-robotics.com/products/100k-ntc-thermistor) |
 | **Software**: Motor GUI in Chrome or Edge, or a serial terminal | [motorgui.com](https://motorgui.com/); PuTTY, the PlatformIO monitor or the Arduino serial monitor |
 
-Read in more detail: [What you need](https://docs.source-robotics.com/STEPFOC-docs/109/01-overview/what-you-need/).
-
-## 2. Fit the magnet
-
-Press the magnet onto the rear shaft, centred, and glue it. It must end up about **1 mm** above the encoder chip
-in the middle of the board, and it must not be able to turn on the shaft. A magnet that slips is the usual cause of
-a calibration that "succeeds" and a motor that then runs badly.
-
-Read in more detail: [The encoder magnet](https://docs.source-robotics.com/STEPFOC-docs/109/04-mounting/magnet/).
-
-!!! success "Check"
-    The magnet sits centred on the shaft, and once the glue has set it does not move when you push it with a
-    finger. If it does: [The encoder magnet](https://docs.source-robotics.com/STEPFOC-docs/109/04-mounting/magnet/).
-
-## 3. Mount the board
-
-Remove the motor's four rear screws, put the spacer on, the board on the spacer with the encoder chip towards the
-magnet, and the longer screws in. Check the gap: 1 mm, not touching.
-
-Read in more detail: [Mounting on the motor](https://docs.source-robotics.com/STEPFOC-docs/109/04-mounting/mounting/).
-
-!!! success "Check"
-    The board sits parallel to the back of the motor, about 1 mm above the magnet, and the shaft turns by hand
-    without the magnet touching the chip. If not: [Mounting on the motor](https://docs.source-robotics.com/STEPFOC-docs/109/04-mounting/mounting/).
-
-## 4. Wire the motor
-
-Find the two coils with a multimeter (the two wires of a coil show a few ohms; wires of different coils show
-nothing). Solder one coil to **A+ and A−**, the other to **B+ and B−**. Which coil is which, and which way round,
-does not matter: calibration detects it.
-
-Read in more detail: [Wiring the stepper](https://docs.source-robotics.com/STEPFOC-docs/109/04-mounting/wiring/).
-
-!!! success "Check"
-    With the driver unpowered, a multimeter shows the coil's resistance, a few ohms, between A+ and A− and
-    between B+ and B−, and no strand bridges two pads. If not: [Wiring the stepper](https://docs.source-robotics.com/STEPFOC-docs/109/04-mounting/wiring/).
-
-## 5. Connect power and the PC
-
-1. The supply to a power connector: **DC+ to positive, DC− to negative**. Check twice.
-2. The serial adapter to the UART connector with the UART cable (TX to RX, RX to TX; 3.3 V only).
-3. Power on. The LED blinks for about two seconds while the bootloader waits for a host, then the firmware
-   starts and the LED stays on steadily: the driver is not calibrated yet, which it reports as an error state.
-   (The serial adapter alone powers the driver's logic: it answers over UART without the supply, but reports a
-   Vbus error and will not calibrate or move.)
-
-=== "Motor GUI"
-    Open [motorgui.com](https://motorgui.com/) in Chrome or Edge, choose the serial connection and **Connect** on
-    the adapter's port. The driver's identity and state appear: hardware and firmware version, serial number,
-    *Not calibrated*, *No errors*. If nothing connects: the port, the cable's TX/RX, the browser (Web Serial needs
-    a Chromium browser).
-
-    Read in more detail: [Motor GUI](https://docs.source-robotics.com/STEPFOC-docs/109/05-setup/motor-gui/).
-
-=== "Terminal"
-    Open a terminal on the adapter's port, 256000 baud, line ending CR+LF, and type `#Info`. The driver prints its
-    hardware and firmware version, its calibration state and the motor parameters; `#Error` prints the active
-    errors.
-
-    Read in more detail: [The serial terminal](https://docs.source-robotics.com/STEPFOC-docs/109/05-setup/terminal/).
-
-Read in more detail: [Power and the CAN daisy chain](https://docs.source-robotics.com/STEPFOC-docs/109/04-mounting/power-and-can/) ·
-[Connectors and pinout](https://docs.source-robotics.com/STEPFOC-docs/109/03-technical-data/connectors/).
-
-!!! success "Check"
-    The driver's identity and live state appear before you change settings. A missing connection is covered in
-    [Motor GUI](https://docs.source-robotics.com/STEPFOC-docs/109/05-setup/motor-gui/#opening-the-port) or [Troubleshooting](https://docs.source-robotics.com/STEPFOC-docs/109/08-troubleshooting/).
-
-## 6. Restore the defaults and enter the motor parameters
-
-First the factory defaults, so that calibration does not start from another motor's values or from junk in the
-EEPROM: *Default* in the Motor GUI settings, or `#Default` in the terminal. (It also resets the serial number,
-hardware version and batch date stored in the EEPROM; from firmware 109 it keeps the CAN node ID.) Then the
-parameters:
-
-From the motor's datasheet, for **one coil**: the pole pairs (50 for a 1.8° motor, 100 for 0.9°), the phase
-resistance in ohms, the phase inductance in henries (2.6 mH = 0.0026). STEPFOC does not measure these; calibration
-fails on a value left at 0.
-
-=== "Motor GUI"
-    Enter *Pole pairs*, *Resistance* and *Inductance* in the motor settings and apply them.
-
-=== "Terminal"
-    ```
-    #PP 50
-    #R 1.1
-    #L 0.0026
-    ```
-
-Read in more detail: [Motor parameters and calibration](https://docs.source-robotics.com/STEPFOC-docs/109/05-setup/calibration/).
-
-!!! success "Check"
-    `#Info` prints the values you entered as `Number of pole pairs`, `Single phase resistance` and `Single
-    phase Inductance` (Motor GUI shows them in the motor settings). None of them may be 0.
-
-## 7. Calibrate
-
-Fix the motor to the bench, nothing on the shaft, 24 V on the supply.
-
-=== "Motor GUI"
-    Start the calibration. The GUI switches to *Calibration mode* and shows the driver's log step by step.
-
-=== "Terminal"
-    ```
-    #Cal
-    ```
-
-The LED flashes, the motor turns in both directions, and the driver reports each step: the pole pairs, the magnet,
-the supply, the parameters you entered, the open-loop spin, the angle offset, the motor constants, and finally
-
-```
-Calibration success!
-Next, by itself: the encoder table, then anti-cogging (about a minute; keep the shaft free). Everything is saved when they finish (#Encal state, #Cogcal state)
-Going to idle!
-```
-
-Keep the shaft free for about a minute more: the driver goes on to measure the encoder table and the anti-cogging,
-and saves everything when they succeed.
-
-A failed step names itself, and the log ends with `Calibration failed!`. `Magnet test: Failed` is the magnet;
-`Phase order is wrong!` means the motor did not turn or did not respond: check the four wires, the supply, and
-that the magnet does not slip.
-
-Read in more detail: [Motor parameters and calibration](https://docs.source-robotics.com/STEPFOC-docs/109/05-setup/calibration/), with the whole log and every
-message.
-
-!!! success "Check"
-    The calibration log ends with `Calibration success!`. If it does not, use the failed step in
-    [Calibration troubleshooting](https://docs.source-robotics.com/STEPFOC-docs/109/05-setup/calibration/#troubleshooting); do not treat a stopped motor as
-    success.
-
-## 8. Set the current limit and save
-
-The current limit is the motor's rated phase current in mA. It is 1700 mA after `#Default`, more than a small
-motor's rating. Calibration uses its own 1600 mA for its steps and puts the limit back when it ends, and the encoder
-table after it runs at 80 % of the limit, so on a small motor set it before step 7; set it now in any case.
-
-=== "Motor GUI"
-    Set the current limit in the limits, then **Save** (the GUI warns about unsaved changes until you do).
-
-=== "Terminal"
-    ```
-    #Ilim 1500
-    #Save
-    ```
-
-Without saving, the calibration is gone at the next power cycle. The LED now shows three short flashes and a
-pause: normal operation.
-
-Read in more detail: [Current limit and loop tuning](https://docs.source-robotics.com/STEPFOC-docs/109/05-setup/tuning/) ·
-[Saving the configuration](https://docs.source-robotics.com/STEPFOC-docs/109/05-setup/saving/).
-
-!!! success "Check"
-    After **Save**, Motor GUI no longer marks unsaved changes, and after a power cycle `#Info` prints
-    `Calibrated`. [Saving](https://docs.source-robotics.com/STEPFOC-docs/109/05-setup/saving/) explains which settings are kept.
-
-## 9. Move it
-
-=== "Motor GUI"
-    Use the jog controls: *Jog velocity* turns the motor at a speed, *Jog position* moves it to a position, *Jog
-    current* applies a torque; *Send setpoint* sends a value in the current control mode. The plots show position,
-    speed and current while it moves.
-
-=== "Terminal"
-    ```
-    #V 16384        one revolution per second
-    #V 0
-    #P 0            back to where it started
-    #P 16384        one revolution forward
-    #Idle
-    ```
-
-Position is in encoder ticks, 16384 per revolution; speed in ticks per second; current in mA. If the motor hums
-or whines, lower the current limit or tune the loops.
-
-Read in more detail: [Control modes](https://docs.source-robotics.com/STEPFOC-docs/109/06-operation/modes/) · [Current limit and loop tuning](https://docs.source-robotics.com/STEPFOC-docs/109/05-setup/tuning/).
-
-!!! success "Check"
-    The position and speed feedback follow the request, and **Idle** stops driving the motor. A motor that
-    does not follow needs [Troubleshooting](https://docs.source-robotics.com/STEPFOC-docs/109/08-troubleshooting/) before a load is attached.
-
-## 10. Where to go next
-
-| You want to | Read |
-|---|---|
-| get to know Motor GUI: the screen, the plots, recordings, several motors | [Motor GUI](https://docs.source-robotics.com/STEPFOC-docs/109/05-setup/motor-gui/), [Working in Motor GUI](https://docs.source-robotics.com/STEPFOC-docs/109/06-operation/motor-gui/) |
-| control the driver from a program over CAN | [Over CAN](https://docs.source-robotics.com/STEPFOC-docs/109/06-operation/can/), then [With Python](https://docs.source-robotics.com/STEPFOC-docs/109/06-operation/python/) |
-| put several drivers on one bus | give each a node ID and terminate the ends: [Power and the CAN daisy chain](https://docs.source-robotics.com/STEPFOC-docs/109/04-mounting/power-and-can/) |
-| protect the motor from overheating | [Thermistor](https://docs.source-robotics.com/STEPFOC-docs/109/04-mounting/thermistor/) |
-| update the firmware | [Firmware](https://docs.source-robotics.com/STEPFOC-docs/109/07-firmware/) |
-| look up a message or a command | [API reference](https://docs.source-robotics.com/STEPFOC-docs/109/reference/) |
-| understand why it does not work | [Errors and recovery](https://docs.source-robotics.com/STEPFOC-docs/109/06-operation/errors/), [Troubleshooting](https://docs.source-robotics.com/STEPFOC-docs/109/08-troubleshooting/) |
+More: [What you need](https://docs.source-robotics.com/STEPFOC-docs/109/01-overview/what-you-need/).
